@@ -109,22 +109,17 @@ async function createVideoElement(phaser) {
     var video = document.createElement("video");
     video.playsinline = true;
     video.srcObject = mediaStream;
-    // video.src = mediaStream;
     video.width = 320;
     video.height = 240;
     video.autoplay = true;
-    // phaser.add.dom(100, 100, video);
 
-    const phaserVideo = new Phaser.GameObjects.Video(phaser, 100, 100);
-    // phaserVideo.active = true;
+    const phaserVideo = new Phaser.GameObjects.Video(phaser, 500, 500);
     phaserVideo.width = 320;
     phaserVideo.height = 240;
-
     phaserVideo.video = video;
-
     phaser.add.existing(phaserVideo);
   } catch (e) {
-    console.log("getUserMedia error", e.message, e.name);
+    console.log("error", e.message, e.name);
   }
 }
 
