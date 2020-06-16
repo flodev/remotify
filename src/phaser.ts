@@ -84,7 +84,12 @@ const config = {
   },
 };
 
-let player;
+let lastX;
+let lastY;
+let playerContainer;
+let playerMask;
+let flomas;
+let playerImage;
 let cursors;
 
 new Phaser.Game(config);
@@ -99,7 +104,7 @@ async function preload() {
   this.load.image("player", "assets/avatars/player.png");
 }
 
-async function createVideoElement(phaser) {
+async function createVideoElement(phaser, mask) {
   try {
     const constraints = {
       video: true,
@@ -113,11 +118,14 @@ async function createVideoElement(phaser) {
     video.height = 240;
     video.autoplay = true;
 
-    const phaserVideo = new Phaser.GameObjects.Video(phaser, 500, 500);
+    const phaserVideo = new Phaser.GameObjects.Video(phaser, 0, -40);
+
     phaserVideo.width = 320;
     phaserVideo.height = 240;
+    phaserVideo.setScale(0.1, 0.1);
     phaserVideo.video = video;
-    phaser.add.existing(phaserVideo);
+    // phaserVideo.setMask(mask);
+    return phaserVideo;
   } catch (e) {
     console.log("error", e.message, e.name);
   }
@@ -140,29 +148,64 @@ async function create() {
   const tileset = map.addTilesetImage("room", "roomi");
   var layer = map.createStaticLayer("walls", tileset, 0, 0);
   layer.setCollisionByProperty({ collides: true });
-  player = this.physics.add.image(400, 400, "player");
-  this.physics.add.collider(player, layer);
+  playerImage = new Phaser.GameObjects.Image(this, 0, 0, "player");
+  // playerMask = getMask(this);
+  // playerImage.setMask(playerMask);
+  playerContainer = this.add.container(400, 400);
+  playerContainer.setSize(100, 100);
+  this.physics.world.enable(playerContainer);
+  this.physics.add.collider(playerContainer, layer);
+  flomas = new Phaser.GameObjects.Graphics(this);
+  flomas.fillCircle(400, 360, 20);
+  flomas.fillStyle(0xffffff);
+  // const videoMask = getMask(this);
+
   cursors = this.input.keyboard.createCursorKeys();
 
-  await createVideoElement(this);
+  const phaserVideo = await createVideoElement(this);
+  playerContainer.add(playerImage);
+
+  phaserVideo?.setMask(phaserVideo?.createBitmapMask(flomas));
+  this.add.existing(phaserVideo);
+  playerContainer.add(phaserVideo);
   // this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
   // this.cameras.main.setScroll(95, 100);
   // @ts-ignore
 }
 
+function getMask(phaser) {
+  const maskGraphic = new Phaser.GameObjects.Graphics(phaser);
+  // const maskGraphic = this.add.graphics(0, 0);
+  maskGraphic.fillStyle(0xffffff);
+  // maskGraphic.arc(5, 5, 5);
+  // maskGraphic.fillCircleShape(circle);
+  maskGraphic.fillCircle(400, 400, 20);
+  // maskGraphic.fillPath();
+  return maskGraphic.createGeometryMask();
+}
+
 function updateDirect() {
-  player.body.setVelocity(0);
+  if (lastX === undefined) {
+    lastX = playerContainer.x;
+    lastY = playerContainer.y;
+  }
+  playerContainer.body.setVelocity(0);
   if (cursors.left.isDown) {
-    // player.setAngle(-90);
-    player.body.setVelocityX(-100);
+    // playerContainer.setAngle(-90);
+    playerContainer.body.setVelocityX(-100);
   } else if (cursors.right.isDown) {
-    // player.setAngle(90);
-    player.body.setVelocityX(100);
+    // playerContainer.setAngle(90);
+    playerContainer.body.setVelocityX(100);
   }
 
   if (cursors.up.isDown) {
-    player.body.setVelocityY(-100);
+    playerContainer.body.setVelocityY(-100);
   } else if (cursors.down.isDown) {
-    player.body.setVelocityY(100);
+    playerContainer.body.setVelocityY(100);
   }
+  flomas.x += playerContainer.x - lastX;
+  flomas.y += playerContainer.y - lastY;
+
+  lastX = playerContainer.x;
+  lastY = playerContainer.y;
 }
