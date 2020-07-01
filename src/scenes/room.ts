@@ -6,6 +6,8 @@ let playerContainer: Phaser.GameObjects.Container;
 let playerImage;
 let cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
+const PLAYER_OFFSET = -40;
+
 export class RoomScene extends Phaser.Scene {
   preload() {
     this.load.tilemapTiledJSON("room-map", "assets/tilemaps/room.json");
@@ -28,7 +30,11 @@ export class RoomScene extends Phaser.Scene {
       video.height = 240;
       video.autoplay = true;
 
-      const phaserVideo = new Phaser.GameObjects.Video(this, 0, -40);
+      const phaserVideo = new Phaser.GameObjects.Video(
+        this,
+        0,
+        -40 + PLAYER_OFFSET
+      );
 
       phaserVideo.width = 320;
       phaserVideo.height = 240;
@@ -61,7 +67,12 @@ export class RoomScene extends Phaser.Scene {
     // map.putTileAt(1, 0, 0);
     layer.setCollisionByProperty({ collides: true });
     layer.setCollision(1);
-    playerImage = new Phaser.GameObjects.Image(this, 0, 0, "player");
+    playerImage = new Phaser.GameObjects.Image(
+      this,
+      0,
+      PLAYER_OFFSET,
+      "player"
+    );
     // layer.tilemap.putTileAt(, 10, 10);
     map.putTileAt(1, 10, 10);
 
@@ -70,11 +81,11 @@ export class RoomScene extends Phaser.Scene {
     // playerMask = getMask(this);
     // playerImage.setMask(playerMask);
     playerContainer = this.add.container(400, 400);
-    playerContainer.setSize(100, 100);
+    playerContainer.setSize(80, 10);
     this.physics.world.enable(playerContainer);
     this.physics.add.collider(playerContainer, layer);
     flomas = new Phaser.GameObjects.Graphics(this);
-    flomas.fillCircle(400, 360, 20);
+    flomas.fillCircle(400, 360 + PLAYER_OFFSET, 20);
     flomas.fillStyle(0xffffff);
     // const videoMask = getMask(this);
 
