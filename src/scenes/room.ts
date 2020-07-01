@@ -56,9 +56,17 @@ export class RoomScene extends Phaser.Scene {
     // @ts-ignore
     const map = this.make.tilemap({ key: "room-map" });
     const tileset = map.addTilesetImage("room", "roomi");
-    var layer = map.createStaticLayer("walls", tileset, 0, 0);
+    var layer = map.createDynamicLayer("walls", tileset, 0, 0);
+
+    // map.putTileAt(1, 0, 0);
     layer.setCollisionByProperty({ collides: true });
+    layer.setCollision(1);
     playerImage = new Phaser.GameObjects.Image(this, 0, 0, "player");
+    // layer.tilemap.putTileAt(, 10, 10);
+    map.putTileAt(1, 10, 10);
+
+    const tile = map.getTileAt(10, 10);
+    tile.properties = { collides: true };
     // playerMask = getMask(this);
     // playerImage.setMask(playerMask);
     playerContainer = this.add.container(400, 400);
@@ -84,6 +92,7 @@ export class RoomScene extends Phaser.Scene {
     });
     this.cameras.main.startFollow(playerContainer, true, 0.08, 0.08);
     this.cameras.main.setZoom(1);
+    // this.textures.addCanvas
     // this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     // this.cameras.main.setScroll(95, 100);
     // @ts-ignore
