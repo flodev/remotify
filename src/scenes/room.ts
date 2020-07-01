@@ -78,6 +78,12 @@ export class RoomScene extends Phaser.Scene {
     phaserVideo?.setMask(phaserVideo?.createBitmapMask(flomas));
     this.add.existing(phaserVideo!);
     playerContainer.add(phaserVideo!);
+
+    this.input.on("pointerdown", () => {
+      console.log("mouse down?");
+    });
+    this.cameras.main.startFollow(playerContainer, true, 0.08, 0.08);
+    this.cameras.main.setZoom(1);
     // this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     // this.cameras.main.setScroll(95, 100);
     // @ts-ignore
