@@ -1,4 +1,6 @@
 import Phaser, { GameObjects } from "phaser";
+var easystarjs = require("easystarjs");
+var easystar = new easystarjs.js();
 let lastX: number;
 let lastY: number;
 let flomas: Phaser.GameObjects.Graphics;
@@ -61,6 +63,7 @@ export class RoomScene extends Phaser.Scene {
     // });
     // @ts-ignore
     const map = this.make.tilemap({ key: "room-map" });
+
     const tileset = map.addTilesetImage("room", "roomi");
     var layer = map.createDynamicLayer("walls", tileset, 0, 0);
 
@@ -98,11 +101,57 @@ export class RoomScene extends Phaser.Scene {
     this.add.existing(phaserVideo!);
     playerContainer.add(phaserVideo!);
 
-    this.input.on("pointerdown", () => {
-      console.log("mouse down?");
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      const clickedTile = map.getTileAtWorldXY(
+        pointer.worldX,
+        pointer.worldY,
+        true,
+        this.cameras.main,
+        layer
+      );
+      const playerTile = map.getTileAtWorldXY(
+        playerContainer.x,
+        playerContainer.y,
+        true
+      );
+      playerTile.tint = 0xfff;
+      clickedTile.tint = 0xfff;
+      clickedTile.visible = true;
+      playerTile.visible = true;
+      console.log(playerTile.x, playerTile.y, clickedTile.x, clickedTile.y);
+      const returnvalue = easystar.findPath(
+        playerTile.x,
+        playerTile.y,
+        clickedTile.x,
+        clickedTile.y,
+        function (...args: any) {
+          console.log("path", args);
+        }
+      );
+      easystar.calculate();
+      console.log("returnvalue", returnvalue);
     });
     this.cameras.main.startFollow(playerContainer, true, 0.08, 0.08);
     this.cameras.main.setZoom(1);
+    const allTiles = map.getTilesWithin();
+    console.log("allTiles", allTiles);
+
+    const grid: any[] = [];
+    let prevY: number = allTiles[0].y;
+    let col: number[] = [];
+    allTiles.forEach((tile) => {
+      if (tile.y !== prevY) {
+        grid.push(col);
+        col = [tile.index];
+        prevY = tile.y;
+      } else {
+        col.push(tile.index);
+      }
+    });
+    easystar.setGrid(grid);
+    easystar.setAcceptableTiles([9]);
+    easystar.enableDiagonals();
+    easystar.enableSync();
     // this.textures.addCanvas
     // this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     // this.cameras.main.setScroll(95, 100);
