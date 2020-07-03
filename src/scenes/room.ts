@@ -92,6 +92,18 @@ export class RoomScene extends Phaser.Scene {
     flomas.fillStyle(0xffffff);
     // const videoMask = getMask(this);
 
+  //   var curve = new Phaser.Curves.Spline([
+  //     100, 500,
+  //     260, 450,
+  //     300, 250,
+  //     550, 145,
+  //     745, 256
+  // ]);
+
+  //   var r = this.add.curve(400, 300, curve);
+  //   r.setStrokeStyle(2, 0xff0000);
+
+
     cursors = this.input.keyboard.createCursorKeys();
 
     const phaserVideo = await this.createVideoElement();
@@ -102,6 +114,7 @@ export class RoomScene extends Phaser.Scene {
     playerContainer.add(phaserVideo!);
 
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      const playerContainerBody = playerContainer.body as Phaser.Physics.Arcade.Body;
       const clickedTile = map.getTileAtWorldXY(
         pointer.worldX,
         pointer.worldY,
@@ -114,18 +127,40 @@ export class RoomScene extends Phaser.Scene {
         playerContainer.y,
         true
       );
-      playerTile.tint = 0xfff;
-      clickedTile.tint = 0xfff;
-      clickedTile.visible = true;
-      playerTile.visible = true;
-      console.log(playerTile.x, playerTile.y, clickedTile.x, clickedTile.y);
+
+      const graphics = this.add.graphics();
+      graphics.lineStyle(2, 0xffffff, 1);
+      graphics.fillStyle(0xffff00, 1);
+      graphics.fillCircle(playerContainer.x, playerContainer.y, 8);
+
       const returnvalue = easystar.findPath(
         playerTile.x,
         playerTile.y,
         clickedTile.x,
         clickedTile.y,
-        function (...args: any) {
-          console.log("path", args);
+        (points: Array<{ x: number; y: number }>) => {
+          if (!points) {
+            return
+          }
+          const splinePoints = points.map(point => map.getTileAt(point.x, point.y))
+            .filter(tile => !!tile)
+            .map(tile => ([tile.getCenterX(this.cameras.main), tile.getCenterY(this.cameras.main)]))
+
+          const spline = new Phaser.Curves.Spline(splinePoints)
+          const startPoint = spline.getStartPoint()
+
+          splinePoints.forEach(([x, y]) => {
+            const graphics = this.add.graphics();
+            graphics.lineStyle(2, 0xffffff, 1);
+            graphics.fillStyle(0xffff00, 1);
+            graphics.fillCircle(x, y, 8);
+          })
+
+          // var r = this.add.curve(splinePoints[0][0], splinePoints[0][1], spline);
+          // r.setOrigin(0, 0)
+          // r.setStrokeStyle(2, 0xff0000);
+
+          // console.log("path", path);
         }
       );
       easystar.calculate();
