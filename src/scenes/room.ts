@@ -1,4 +1,5 @@
 import Phaser, { GameObjects } from "phaser";
+import { setDebugPoint } from "../utils/setDebugPoint";
 var easystarjs = require("easystarjs");
 var easystar = new easystarjs.js();
 let lastX: number;
@@ -11,6 +12,9 @@ let cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 const PLAYER_OFFSET = -40;
 
 export class RoomScene extends Phaser.Scene {
+  private movePoints = Array<number[]>()
+  private currentMovePoint?: number[]
+
   preload() {
     this.load.tilemapTiledJSON("room-map", "assets/tilemaps/room.json");
     this.load.image("roomi", "assets/tilemaps/tilemap.png");
@@ -84,7 +88,7 @@ export class RoomScene extends Phaser.Scene {
     // playerMask = getMask(this);
     // playerImage.setMask(playerMask);
     playerContainer = this.add.container(400, 400);
-    playerContainer.setSize(80, 10);
+    playerContainer.setSize(30, 10);
     this.physics.world.enable(playerContainer);
     this.physics.add.collider(playerContainer, layer);
     flomas = new Phaser.GameObjects.Graphics(this);
@@ -128,11 +132,6 @@ export class RoomScene extends Phaser.Scene {
         true
       );
 
-      const graphics = this.add.graphics();
-      graphics.lineStyle(2, 0xffffff, 1);
-      graphics.fillStyle(0xffff00, 1);
-      graphics.fillCircle(playerContainer.x, playerContainer.y, 8);
-
       const returnvalue = easystar.findPath(
         playerTile.x,
         playerTile.y,
@@ -142,23 +141,23 @@ export class RoomScene extends Phaser.Scene {
           if (!points) {
             return
           }
-          const splinePoints = points.map(point => map.getTileAt(point.x, point.y))
+          const newPoints = points.map(point => map.getTileAt(point.x, point.y))
             .filter(tile => !!tile)
             .map(tile => ([tile.getCenterX(this.cameras.main), tile.getCenterY(this.cameras.main)]))
 
-          const spline = new Phaser.Curves.Spline(splinePoints)
-          const startPoint = spline.getStartPoint()
+          this.movePoints.splice(0, this.movePoints.length, ...newPoints)
 
-          splinePoints.forEach(([x, y]) => {
-            const graphics = this.add.graphics();
-            graphics.lineStyle(2, 0xffffff, 1);
-            graphics.fillStyle(0xffff00, 1);
-            graphics.fillCircle(x, y, 8);
+          const spline = new Phaser.Curves.Spline(this.movePoints)
+
+          this.movePoints.forEach(([x, y]) => {
+            setDebugPoint(this, x, y)
           })
 
-          // var r = this.add.curve(splinePoints[0][0], splinePoints[0][1], spline);
-          // r.setOrigin(0, 0)
-          // r.setStrokeStyle(2, 0xff0000);
+          // const graphics = this.add.graphics();
+          // spline.draw(graphics, 64);
+
+          // var r = this.add.curve(playerContainer.x, playerContainer.y, spline);
+          // r.setOrigin(playerContainer.x, playerContainer.y)
 
           // console.log("path", path);
         }
@@ -169,7 +168,6 @@ export class RoomScene extends Phaser.Scene {
     this.cameras.main.startFollow(playerContainer, true, 0.08, 0.08);
     this.cameras.main.setZoom(1);
     const allTiles = map.getTilesWithin();
-    console.log("allTiles", allTiles);
 
     const grid: any[] = [];
     let prevY: number = allTiles[0].y;
@@ -185,7 +183,7 @@ export class RoomScene extends Phaser.Scene {
     });
     easystar.setGrid(grid);
     easystar.setAcceptableTiles([9]);
-    easystar.enableDiagonals();
+    // easystar.enableDiagonals();
     easystar.enableSync();
     // this.textures.addCanvas
     // this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -210,7 +208,7 @@ export class RoomScene extends Phaser.Scene {
       lastY = playerContainer.y;
     }
     const playerContainerBody = playerContainer.body as Phaser.Physics.Arcade.Body;
-    playerContainerBody.setVelocity(0);
+    // playerContainerBody.setVelocity(0);
     if (cursors.left!.isDown) {
       // playerContainer.setAngle(-90);
       playerContainerBody.setVelocityX(-100);
@@ -224,10 +222,41 @@ export class RoomScene extends Phaser.Scene {
     } else if (cursors.down!.isDown) {
       playerContainerBody.setVelocityY(100);
     }
+    this.movePlayer()
+
     flomas.x += playerContainer.x - lastX;
     flomas.y += playerContainer.y - lastY;
 
     lastX = playerContainer.x;
     lastY = playerContainer.y;
+    this.stopMovementIfPointReached()
+  }
+
+  movePlayer = () => {
+    if (this.movePoints.length && !this.currentMovePoint) {
+      this.currentMovePoint = this.movePoints.shift()
+      console.log('move to ', this.currentMovePoint)
+      this.physics.moveTo(playerContainer, this.currentMovePoint![0], this.currentMovePoint![1], 200)
+    }
+  }
+
+  stopMovementIfPointReached = () => {
+    if (!this.currentMovePoint) {
+      return
+    }
+    const playerContainerBody = playerContainer.body as Phaser.Physics.Arcade.Body;
+    var distance = Phaser.Math.Distance.Between(playerContainer.x, playerContainer.y, this.currentMovePoint[0], this.currentMovePoint[1]);
+
+    if (playerContainerBody.speed > 0)
+    {
+
+        //  4 is our distance tolerance, i.e. how close the source can get to the target
+        //  before it is considered as being there. The faster it moves, the more tolerance is required.
+        if (distance < 1)
+        {
+            playerContainerBody.reset(this.currentMovePoint[0], this.currentMovePoint[1]);
+            this.currentMovePoint = undefined
+        }
+    }
   }
 }
