@@ -1,57 +1,28 @@
 import Phaser, { GameObjects } from "phaser";
 import { setDebugPoint } from "../utils/setDebugPoint";
+import { Player } from "../gameobjects/player";
+import { getGrid } from "../utils/getGrid";
 var easystarjs = require("easystarjs");
 var easystar = new easystarjs.js();
-let lastX: number;
-let lastY: number;
-let flomas: Phaser.GameObjects.Graphics;
-let playerContainer: Phaser.GameObjects.Container;
-let playerImage;
+
 let cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
-const PLAYER_OFFSET = -40;
 
 export class RoomScene extends Phaser.Scene {
-  private movePoints = Array<number[]>()
-  private currentMovePoint?: number[]
+  private player: Player
+
+  constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
+    super(config)
+    this.player = new Player(this)
+  }
 
   preload() {
     this.load.tilemapTiledJSON("room-map", "assets/tilemaps/room.json");
     this.load.image("roomi", "assets/tilemaps/tilemap.png");
-    this.load.image("player", "assets/avatars/player.png");
+    this.player.load()
   }
 
-  async createVideoElement() {
-    try {
-      const constraints = {
-        video: true,
-        audio: true,
-      };
-      const mediaStream = await navigator.mediaDevices.getUserMedia(
-        constraints
-      );
-      var video = document.createElement("video");
-      video.srcObject = mediaStream;
-      video.width = 320;
-      video.height = 240;
-      video.autoplay = true;
 
-      const phaserVideo = new Phaser.GameObjects.Video(
-        this,
-        0,
-        -40 + PLAYER_OFFSET
-      );
-
-      phaserVideo.width = 320;
-      phaserVideo.height = 240;
-      phaserVideo.setScale(0.1, 0.1);
-      phaserVideo.video = video;
-      // phaserVideo.setMask(mask);
-      return phaserVideo;
-    } catch (e) {
-      console.log("error", e.message, e.name);
-    }
-  }
 
   async create() {
     // @ts-ignore
@@ -66,6 +37,8 @@ export class RoomScene extends Phaser.Scene {
     //   loop: -1,
     // });
     // @ts-ignore
+    cursors = this.input.keyboard.createCursorKeys();
+
     const map = this.make.tilemap({ key: "room-map" });
 
     const tileset = map.addTilesetImage("room", "roomi");
@@ -74,12 +47,7 @@ export class RoomScene extends Phaser.Scene {
     // map.putTileAt(1, 0, 0);
     layer.setCollisionByProperty({ collides: true });
     layer.setCollision(1);
-    playerImage = new Phaser.GameObjects.Image(
-      this,
-      0,
-      PLAYER_OFFSET,
-      "player"
-    );
+
     // layer.tilemap.putTileAt(, 10, 10);
     map.putTileAt(1, 10, 10);
 
@@ -87,13 +55,11 @@ export class RoomScene extends Phaser.Scene {
     tile.properties = { collides: true };
     // playerMask = getMask(this);
     // playerImage.setMask(playerMask);
-    playerContainer = this.add.container(400, 400);
-    playerContainer.setSize(30, 10);
-    this.physics.world.enable(playerContainer);
-    this.physics.add.collider(playerContainer, layer);
-    flomas = new Phaser.GameObjects.Graphics(this);
-    flomas.fillCircle(400, 360 + PLAYER_OFFSET, 20);
-    flomas.fillStyle(0xffffff);
+    await this.player.create()
+
+    this.physics.world.enable(this.player.getContainer());
+    this.physics.add.collider(this.player.getContainer(), layer);
+
     // const videoMask = getMask(this);
 
   //   var curve = new Phaser.Curves.Spline([
@@ -108,17 +74,8 @@ export class RoomScene extends Phaser.Scene {
   //   r.setStrokeStyle(2, 0xff0000);
 
 
-    cursors = this.input.keyboard.createCursorKeys();
-
-    const phaserVideo = await this.createVideoElement();
-    playerContainer.add(playerImage);
-
-    phaserVideo?.setMask(phaserVideo?.createBitmapMask(flomas));
-    this.add.existing(phaserVideo!);
-    playerContainer.add(phaserVideo!);
 
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      const playerContainerBody = playerContainer.body as Phaser.Physics.Arcade.Body;
       const clickedTile = map.getTileAtWorldXY(
         pointer.worldX,
         pointer.worldY,
@@ -127,8 +84,8 @@ export class RoomScene extends Phaser.Scene {
         layer
       );
       const playerTile = map.getTileAtWorldXY(
-        playerContainer.x,
-        playerContainer.y,
+        this.player.getContainer().x,
+        this.player.getContainer().y,
         true
       );
 
@@ -145,19 +102,13 @@ export class RoomScene extends Phaser.Scene {
             .filter(tile => !!tile)
             .map(tile => ([tile.getCenterX(this.cameras.main), tile.getCenterY(this.cameras.main)]))
 
-          this.movePoints.splice(0, this.movePoints.length, ...newPoints)
-
-          const spline = new Phaser.Curves.Spline(this.movePoints)
-
-          this.movePoints.forEach(([x, y]) => {
-            setDebugPoint(this, x, y)
-          })
+          this.player.setMovePoints(newPoints)
 
           // const graphics = this.add.graphics();
           // spline.draw(graphics, 64);
 
-          // var r = this.add.curve(playerContainer.x, playerContainer.y, spline);
-          // r.setOrigin(playerContainer.x, playerContainer.y)
+          // var r = this.add.curve(this.container.x, this.container.y, spline);
+          // r.setOrigin(this.container.x, this.container.y)
 
           // console.log("path", path);
         }
@@ -165,23 +116,10 @@ export class RoomScene extends Phaser.Scene {
       easystar.calculate();
       console.log("returnvalue", returnvalue);
     });
-    this.cameras.main.startFollow(playerContainer, true, 0.08, 0.08);
-    this.cameras.main.setZoom(1);
-    const allTiles = map.getTilesWithin();
 
-    const grid: any[] = [];
-    let prevY: number = allTiles[0].y;
-    let col: number[] = [];
-    allTiles.forEach((tile) => {
-      if (tile.y !== prevY) {
-        grid.push(col);
-        col = [tile.index];
-        prevY = tile.y;
-      } else {
-        col.push(tile.index);
-      }
-    });
-    easystar.setGrid(grid);
+    this.cameras.main.startFollow(this.player.getContainer(), true, 0.08, 0.08);
+    this.cameras.main.setZoom(1);
+    easystar.setGrid(getGrid(map.getTilesWithin()))
     easystar.setAcceptableTiles([9]);
     // easystar.enableDiagonals();
     easystar.enableSync();
@@ -191,72 +129,8 @@ export class RoomScene extends Phaser.Scene {
     // @ts-ignore
   }
 
-  getMask() {
-    const maskGraphic = new Phaser.GameObjects.Graphics(this);
-    // const maskGraphic = this.add.graphics(0, 0);
-    maskGraphic.fillStyle(0xffffff);
-    // maskGraphic.arc(5, 5, 5);
-    // maskGraphic.fillCircleShape(circle);
-    maskGraphic.fillCircle(400, 400, 20);
-    // maskGraphic.fillPath();
-    return maskGraphic.createGeometryMask();
-  }
-
   update() {
-    if (lastX === undefined) {
-      lastX = playerContainer.x;
-      lastY = playerContainer.y;
-    }
-    const playerContainerBody = playerContainer.body as Phaser.Physics.Arcade.Body;
-    // playerContainerBody.setVelocity(0);
-    if (cursors.left!.isDown) {
-      // playerContainer.setAngle(-90);
-      playerContainerBody.setVelocityX(-100);
-    } else if (cursors.right!.isDown) {
-      // playerContainer.setAngle(90);
-      playerContainerBody.setVelocityX(100);
-    }
-
-    if (cursors.up!.isDown) {
-      playerContainerBody.setVelocityY(-100);
-    } else if (cursors.down!.isDown) {
-      playerContainerBody.setVelocityY(100);
-    }
-    this.movePlayer()
-
-    flomas.x += playerContainer.x - lastX;
-    flomas.y += playerContainer.y - lastY;
-
-    lastX = playerContainer.x;
-    lastY = playerContainer.y;
-    this.stopMovementIfPointReached()
+    this.player.update(cursors)
   }
 
-  movePlayer = () => {
-    if (this.movePoints.length && !this.currentMovePoint) {
-      this.currentMovePoint = this.movePoints.shift()
-      console.log('move to ', this.currentMovePoint)
-      this.physics.moveTo(playerContainer, this.currentMovePoint![0], this.currentMovePoint![1], 200)
-    }
-  }
-
-  stopMovementIfPointReached = () => {
-    if (!this.currentMovePoint) {
-      return
-    }
-    const playerContainerBody = playerContainer.body as Phaser.Physics.Arcade.Body;
-    var distance = Phaser.Math.Distance.Between(playerContainer.x, playerContainer.y, this.currentMovePoint[0], this.currentMovePoint[1]);
-
-    if (playerContainerBody.speed > 0)
-    {
-
-        //  4 is our distance tolerance, i.e. how close the source can get to the target
-        //  before it is considered as being there. The faster it moves, the more tolerance is required.
-        if (distance < 1)
-        {
-            playerContainerBody.reset(this.currentMovePoint[0], this.currentMovePoint[1]);
-            this.currentMovePoint = undefined
-        }
-    }
-  }
 }
