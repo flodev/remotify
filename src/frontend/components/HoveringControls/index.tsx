@@ -1,12 +1,26 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useState } from 'react'
 import {MenuOutlined} from '@ant-design/icons'
-
+import classNames from './style'
+import {Drawer} from 'antd'
 
 
 export const HoveringControls = () => {
+  const [visible, setVisible] = useState(false)
   return (
-    <div className="hovering-controls">
-      <MenuOutlined className="hovering-controls-munu-icon"/>
+    <div className={classNames.hoveringControls}>
+      <MenuOutlined className={classNames.icon} style={{color: '#fff'}} onClick={() => setVisible(true)}/>
+
+      <Drawer
+          title="Basic Drawer"
+          placement="left"
+          closable={false}
+          onClose={() => setVisible(false)}
+          visible={visible}
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Drawer>
     </div>
   )
 }

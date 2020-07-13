@@ -21,25 +21,28 @@ import { RoomScene } from "./scenes/room";
 
 // }
 
-const config = {
-  type: Phaser.WEBGL,
-  parent: "phaser-example",
-  width: "100%",
-  height: "100%",
-  dom: {
-    createContainer: true,
-  },
-  // plugins: {
-  //   global: [{ key: "VideoStreamPlugin", plugin: VideoStreamPlugin, start: true }],
-  // },
-  physics: {
-    default: "arcade",
-    arcade: {
-      debug: true,
-      gravity: { y: 0 },
-    },
-  },
-  scene: RoomScene,
-};
 
-new Phaser.Game(config);
+export const initiateGame = () => {
+  const config = {
+    type: Phaser.WEBGL,
+    width: "100%",
+    height: "100%",
+    dom: {
+      createContainer: true,
+    },
+    antialias: true,
+    // plugins: {
+    //   global: [{ key: "VideoStreamPlugin", plugin: VideoStreamPlugin, start: true }],
+    // },
+    physics: {
+      default: "arcade",
+      arcade: {
+        debug: true,
+        gravity: { y: 0 },
+      },
+    },
+    scene: RoomScene,
+  };
+
+  new Phaser.Game(config);
+}

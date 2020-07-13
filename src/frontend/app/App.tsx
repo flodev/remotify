@@ -1,12 +1,15 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {HoveringControls} from '../components'
+import {initiateGame} from '../../game/phaser'
 import './App.css';
 import 'antd/dist/antd.css';
 
-function App() {
+export const App = () => {
+  useEffect(() => {
+    initiateGame()
+  })
   return (
     <HoveringControls />
   );
 }
 
-export default App;

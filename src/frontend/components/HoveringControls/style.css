@@ -1,4 +1,4 @@
-.hovering-controls {
+.hoveringControls {
   pointer-events: none;
   position: absolute;
   top: 0;
@@ -8,4 +8,6 @@
 }
 .icon {
   pointer-events: all;
+  font-size: 50px;
+  color: #fff;
 }
