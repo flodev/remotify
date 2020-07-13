@@ -22,8 +22,6 @@ export class RoomScene extends Phaser.Scene {
     this.player.load()
   }
 
-
-
   async create() {
     // @ts-ignore
     // const logo = this.add.image(400, 150, "logo");

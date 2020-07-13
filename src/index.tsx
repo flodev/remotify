@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './frontend/app/App';
 import * as serviceWorker from './serviceWorker';
-import './phaser'
+import './game/phaser'
 
 ReactDOM.render(
   <React.StrictMode>
