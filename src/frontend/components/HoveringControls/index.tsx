@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react'
 import {MenuOutlined} from '@ant-design/icons'
-import classNames from './style'
+import classNames from './style.scss'
 import {Drawer} from 'antd'
 import { useSubscription, gql } from '@apollo/client'
 

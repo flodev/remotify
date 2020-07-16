@@ -13,15 +13,20 @@
     "axios": "^0.19.2",
     "easystarjs": "^0.4.3",
     "graphql": "^15.3.0",
+    "i18next": "^19.6.1",
     "phaser": "^3.24.0",
     "postcss-modules": "^3.2.0",
     "react": "16.x",
     "react-dom": ">=16.9.0",
+    "react-i18next": "^11.7.0",
+    "react-router-dom": "^5.2.0",
     "subscriptions-transport-ws": "^0.9.17",
     "webrtc-adapter": "^7.6.3"
   },
   "scripts": {
-    "start": "parcel  -p 3000 watch index.html --no-hmr --no-autoinstall public/**/*"
+    "start": "parcel --no-autoinstall -p 3000 watch index.html --no-hmr public/**/*",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "browserslist": {
     "production": [
@@ -36,11 +41,23 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-links": "^5.3.19",
+    "@storybook/addons": "^5.3.19",
+    "@storybook/react": "^5.3.19",
     "@types/react": "^16.9.43",
+    "@types/react-router-dom": "^5.1.5",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.6.0",
     "node-sass": "^4.14.1",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-static-files-copy": "^2.4.3",
+    "react-docgen-typescript-loader": "^3.7.2",
     "sass": "^1.26.10",
+    "sass-loader": "^9.0.2",
+    "style-loader": "^1.2.1",
+    "ts-loader": "^8.0.1",
     "typescript": "^3.9.6",
     "typescript-plugin-css-modules": "^2.4.0"
   },
