@@ -22,7 +22,7 @@ import { RoomScene } from "./scenes/room";
 // }
 
 
-export const initiateGame = () => {
+export const initiateGame = (graphQl: ApolloClient) => {
   const config = {
     type: Phaser.WEBGL,
     width: "100%",
@@ -44,5 +44,6 @@ export const initiateGame = () => {
     scene: RoomScene,
   };
 
-  new Phaser.Game(config);
+  const game = new Phaser.Game(config);
+  game.registry.set('graphQl', graphQl)
 }

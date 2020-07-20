@@ -2,6 +2,7 @@ import Phaser, { GameObjects } from "phaser";
 import { setDebugPoint } from "../utils/setDebugPoint";
 import { Player } from "../gameobjects/player";
 import { getGrid } from "../utils/getGrid";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 var easystarjs = require("easystarjs");
 var easystar = new easystarjs.js();
 
@@ -23,6 +24,9 @@ export class RoomScene extends Phaser.Scene {
   }
 
   async create() {
+    const graphQl = this.registry.get('graphQl') as ApolloClient<InMemoryCache>
+    console.log('graphQl', graphQl)
+
     // @ts-ignore
     // const logo = this.add.image(400, 150, "logo");
     // // @ts-ignore
@@ -37,14 +41,47 @@ export class RoomScene extends Phaser.Scene {
     // @ts-ignore
     cursors = this.input.keyboard.createCursorKeys();
 
-    const map = this.make.tilemap({ key: "room-map" });
+    const map = this.make.tilemap({
+      tileWidth: 30,
+      tileHeight: 30,
+      data: [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 2, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+       ]
+     });
 
-    const tileset = map.addTilesetImage("room", "roomi");
-    var layer = map.createDynamicLayer("walls", tileset, 0, 0);
+    const tileset = map.addTilesetImage("room", "roomi", 30, 30, 0, 0, 0);
+    tileset.firstgid = 1
+    var layer = map.createDynamicLayer(0, tileset, 0, 0);
 
     // map.putTileAt(1, 0, 0);
-    layer.setCollisionByProperty({ collides: true });
-    layer.setCollision(1);
+    layer.setCollision([1,2,3,4,5,6,7,8])
+    // layer.setCollisionByProperty({ collides: true });
+    // layer.setCollision(1);
 
     // layer.tilemap.putTileAt(, 10, 10);
     map.putTileAt(1, 10, 10);
@@ -81,11 +118,13 @@ export class RoomScene extends Phaser.Scene {
         this.cameras.main,
         layer
       );
+      console.log('clickedTile', clickedTile)
       const playerTile = map.getTileAtWorldXY(
         this.player.getContainer().x,
         this.player.getContainer().y,
         true
       );
+      console.log('playerTile', playerTile)
 
       const returnvalue = easystar.findPath(
         playerTile.x,
@@ -117,6 +156,7 @@ export class RoomScene extends Phaser.Scene {
 
     this.cameras.main.startFollow(this.player.getContainer(), true, 0.08, 0.08);
     this.cameras.main.setZoom(1);
+    console.log('getGrid(map.getTilesWithin())', getGrid(map.getTilesWithin()))
     easystar.setGrid(getGrid(map.getTilesWithin()))
     easystar.setAcceptableTiles([9]);
     // easystar.enableDiagonals();

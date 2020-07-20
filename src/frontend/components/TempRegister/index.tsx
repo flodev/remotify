@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState, useContext } from 'react'
-import { Button, Modal, Form, Input, Layout, Row, Col} from 'antd';
-import {useHistory} from 'react-router-dom'
+import { Button, Modal, Form, Input, Layout, Row, Col, notification} from 'antd';
+import {useParams, useHistory} from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
@@ -11,7 +11,8 @@ interface TempRegisterProps {
 
 
 export const TempRegister: FunctionComponent<TempRegisterProps> = () => {
-  const [visible, setVisible] = useState(true)
+  const {inviteId} = useParams()
+  console.log('inviteId', inviteId)
   // const { loading, error, data } = useQuery(EXCHANGE_RATES)
   const tailLayout = {
     wrapperCol: { offset: 8, span: 16 },
@@ -25,17 +26,23 @@ export const TempRegister: FunctionComponent<TempRegisterProps> = () => {
   };
 
   const onSubmit = async (values:any) => {
-    const response = await axios.post('http://localhost:8081/temp-signup', {
-      username: values.username,
-      password: "temporary",
-      roomName: values.room,
-      type: 'temporary'
-    })
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token)
-      localStorage.setItem('username', response.data.username)
-      localStorage.setItem('roomName', response.data.roomName)
-      history.push('/')
+    try {
+      const response = await axios.post('http://localhost:8081/temp-signup', {
+        password: "temporary",
+        type: inviteId ? 'invitation' : 'temporary',
+        ...values,
+        ...(inviteId ? {inviteId: decodeURIComponent(inviteId)} : undefined)
+      })
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('username', response.data.username)
+        localStorage.setItem('roomName', response.data.roomName)
+        history.push('/')
+      }
+    } catch (e) {
+      notification.error({
+        message: t('cannot register'),
+      })
     }
   }
 
@@ -52,7 +59,7 @@ export const TempRegister: FunctionComponent<TempRegisterProps> = () => {
             // onFinishFailed={onFinishFailed}
           >
             <h1>{t('Welcome Stranger :)')}</h1>
-            <h3>{t('Unfortunately we don\'t recognise you.')}</h2>
+            <h3>{t('Unfortunately we don\'t recognise you.')}</h3>
             <Form.Item
               label={t('Username')}
               name="username"
@@ -61,18 +68,20 @@ export const TempRegister: FunctionComponent<TempRegisterProps> = () => {
               <Input />
             </Form.Item>
 
-            <Form.Item
-              label={t('Room name')}
-              name="room"
-              extra={t('Give your room a meaningful name.')}
-              rules={[{ required: true, message: 'Please input your desired room name!' }]}
-            >
-              <Input />
-            </Form.Item>
+            {!inviteId && (
+              <Form.Item
+                label={t('Room name')}
+                name="roomName"
+                extra={t('Give your room a meaningful name.')}
+                rules={[{ required: true, message: 'Please input your desired room name!' }]}
+              >
+                <Input />
+              </Form.Item>
+            )}
 
             <Form.Item {...tailLayout}>
               <Button type="primary" htmlType="submit">
-                Create
+                {!!inviteId ? t('Join Room') : t('Create')}
               </Button>
             </Form.Item>
 

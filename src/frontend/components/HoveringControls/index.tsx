@@ -1,8 +1,9 @@
 import React, { FunctionComponent, useState } from 'react'
-import {MenuOutlined} from '@ant-design/icons'
+import {MenuOutlined, ShareAltOutlined} from '@ant-design/icons'
 import classNames from './style.scss'
-import {Drawer} from 'antd'
+import {Drawer, Button, Dropdown} from 'antd'
 import { useSubscription, gql } from '@apollo/client'
+import {InviteMenu} from './InviteMenu'
 
 const subscription = gql`
 subscription MyQuery {
@@ -38,7 +39,19 @@ export const HoveringControls = () => {
           <p>Some contents...</p>
           <p>Some contents...</p>
           <p>Some contents...</p>
-        </Drawer>
+      </Drawer>
+      <Dropdown overlay={<InviteMenu/>} placement="bottomRight" style={{pointerEvents: 'all'}}>
+        <Button
+          type="default"
+          icon={<ShareAltOutlined />}
+          size="middle"
+          color="#fff"
+          className={classNames.share}
+          style={{pointerEvents: 'all'}}
+          >
+          Invite
+        </Button>
+      </Dropdown>
     </div>
   )
 }
