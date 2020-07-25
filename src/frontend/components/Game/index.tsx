@@ -3,29 +3,14 @@ import { initiateGame } from '../../../game/phaser'
 import { HoveringControls } from '../HoveringControls'
 import { useQuery, gql, useApolloClient } from '@apollo/client'
 import { ClientContext } from '../../app/ClientContext'
+import { getClientWithRoomsAndPlayers } from '../../../graphql'
 
-const query = gql`
-query MyQuery {
-  client {
-    id
-    name
-    share_id
-    rooms {
-      id
-      name
-      players {
-        id
-        firstname
-      }
-    }
-  }
-}`
+
 interface GameProps {
 }
 
-
 export const Game: FunctionComponent<GameProps> = () => {
-  const {loading, data} = useQuery(query)
+  const {loading, data} = useQuery(getClientWithRoomsAndPlayers)
   const apolloClient = useApolloClient()
 
   useEffect(() => {

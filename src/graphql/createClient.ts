@@ -1,12 +1,12 @@
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
-import {ApolloClient, split, HttpLink, InMemoryCache} from '@apollo/client';
+import { ApolloClient, split, HttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
 const GRAPHQL_ENDPOINT = 'http://10.111.181.201/v1/graphql'
 
-export const createClient = () =>  {
+export const createClient = () => {
   const wsLink = new WebSocketLink({
     uri: `ws://10.111.181.201/v1/graphql`,
     options: {
@@ -61,8 +61,9 @@ export const createClient = () =>  {
       }
     }
   });
-  return new ApolloClient<any>({
+  const client = new ApolloClient<any>({
     cache: new InMemoryCache(),
     link: authLink.concat(link),
   })
+  return client
 }

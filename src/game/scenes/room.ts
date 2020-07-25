@@ -2,7 +2,8 @@ import Phaser, { GameObjects } from "phaser";
 import { setDebugPoint } from "../utils/setDebugPoint";
 import { Player } from "../gameobjects/player";
 import { getGrid } from "../utils/getGrid";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import { getClientWithRoomsAndPlayers } from "../../graphql";
 var easystarjs = require("easystarjs");
 var easystar = new easystarjs.js();
 
@@ -25,7 +26,8 @@ export class RoomScene extends Phaser.Scene {
 
   async create() {
     const graphQl = this.registry.get('graphQl') as ApolloClient<InMemoryCache>
-    console.log('graphQl', graphQl)
+    const result = await graphQl.query({ query: getClientWithRoomsAndPlayers })
+    const tileMapData = result.data?.client[0]?.rooms[0]?.tile
 
     // @ts-ignore
     // const logo = this.add.image(400, 150, "logo");
@@ -44,42 +46,15 @@ export class RoomScene extends Phaser.Scene {
     const map = this.make.tilemap({
       tileWidth: 30,
       tileHeight: 30,
-      data: [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 5, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 2, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-       ]
-     });
+      data: tileMapData
+    });
 
     const tileset = map.addTilesetImage("room", "roomi", 30, 30, 0, 0, 0);
     tileset.firstgid = 1
     var layer = map.createDynamicLayer(0, tileset, 0, 0);
 
     // map.putTileAt(1, 0, 0);
-    layer.setCollision([1,2,3,4,5,6,7,8])
+    layer.setCollision([1, 2, 3, 4, 5, 6, 7, 8])
     // layer.setCollisionByProperty({ collides: true });
     // layer.setCollision(1);
 
@@ -97,16 +72,16 @@ export class RoomScene extends Phaser.Scene {
 
     // const videoMask = getMask(this);
 
-  //   var curve = new Phaser.Curves.Spline([
-  //     100, 500,
-  //     260, 450,
-  //     300, 250,
-  //     550, 145,
-  //     745, 256
-  // ]);
+    //   var curve = new Phaser.Curves.Spline([
+    //     100, 500,
+    //     260, 450,
+    //     300, 250,
+    //     550, 145,
+    //     745, 256
+    // ]);
 
-  //   var r = this.add.curve(400, 300, curve);
-  //   r.setStrokeStyle(2, 0xff0000);
+    //   var r = this.add.curve(400, 300, curve);
+    //   r.setStrokeStyle(2, 0xff0000);
 
 
 
