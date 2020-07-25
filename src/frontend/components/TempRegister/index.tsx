@@ -34,6 +34,7 @@ export const TempRegister: FunctionComponent<TempRegisterProps> = () => {
         ...(inviteId ? {inviteId: decodeURIComponent(inviteId)} : undefined)
       })
       if (response.data.token) {
+        localStorage.setItem('userId', response.data.id)
         localStorage.setItem('token', response.data.token)
         localStorage.setItem('username', response.data.username)
         localStorage.setItem('roomName', response.data.roomName)

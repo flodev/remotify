@@ -1,14 +1,28 @@
-import Phaser, { GameObjects } from "phaser";
+import Phaser, { GameObjects, Tilemaps } from "phaser";
 import { setDebugPoint } from "../utils/setDebugPoint";
 import { Player } from "../gameobjects/player";
 import { getGrid } from "../utils/getGrid";
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 import { getClientWithRoomsAndPlayers } from "../../graphql";
+import {
+  TILE_ID_FREE_PLACE
+} from '../utils/tileIds'
 var easystarjs = require("easystarjs");
 var easystar = new easystarjs.js();
 
 let cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
+
+const getPosition = (player: any[], otherPlayers: any[], map: Phaser.Tilemaps.Tilemap, camera: Phaser.Cameras.Scene2D.Camera) => {
+  const possibleTiles = map.filterTiles((tile: Phaser.Tilemaps.Tile) => tile.index === TILE_ID_FREE_PLACE)
+  const availableTiles = possibleTiles.filter(tile =>
+    otherPlayers.filter(otherPlayer => otherPlayer.tile.x === tile.x && otherPlayer.tile.y === tile.y).length === 0
+  )
+  const tile = availableTiles[0]
+  return {
+    x: tile.getCenterX(camera), y: tile.getCenterY(camera)
+  }
+}
 
 export class RoomScene extends Phaser.Scene {
   private player: Player
@@ -28,6 +42,10 @@ export class RoomScene extends Phaser.Scene {
     const graphQl = this.registry.get('graphQl') as ApolloClient<InMemoryCache>
     const result = await graphQl.query({ query: getClientWithRoomsAndPlayers })
     const tileMapData = result.data?.client[0]?.rooms[0]?.tile
+    const currentUserId = localStorage.getItem('userId')
+    const players = result.data?.client[0]?.rooms[0]?.players || []
+    const currentPlayer = players.filter((player: any) => player.id === currentUserId)[0]
+    const otherPlayers = players.filter((player: any) => player.id !== currentUserId)
 
     // @ts-ignore
     // const logo = this.add.image(400, 150, "logo");
@@ -65,7 +83,7 @@ export class RoomScene extends Phaser.Scene {
     tile.properties = { collides: true };
     // playerMask = getMask(this);
     // playerImage.setMask(playerMask);
-    await this.player.create()
+    await this.player.create({ position: getPosition(currentPlayer, otherPlayers, map, this.cameras.main) })
 
     this.physics.world.enable(this.player.getContainer());
     this.physics.add.collider(this.player.getContainer(), layer);

@@ -12,6 +12,7 @@ query GetClientWithRoomsAndPlayers {
       tile
       players {
         id
+        tile
         firstname
       }
     }

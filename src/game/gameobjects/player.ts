@@ -1,4 +1,5 @@
 const PLAYER_OFFSET = -40;
+const PLAYER_VIDEO_OFFSET = -80;
 let lastX: number;
 let lastY: number;
 export class Player {
@@ -15,7 +16,7 @@ export class Player {
     this.scene.load.image("player", "assets/avatars/player.png");
   }
 
-  public async create() {
+  public async create(config: { position: { x: number, y: number } }) {
     const playerImage = new Phaser.GameObjects.Image(
       this.scene,
       0,
@@ -23,11 +24,11 @@ export class Player {
       "player"
     );
 
-    this.container = this.scene.add.container(400, 400);
+    this.container = this.scene.add.container(config.position.x, config.position.y);
     this.container.setSize(30, 10);
 
     this.mask = new Phaser.GameObjects.Graphics(this.scene);
-    this.mask.fillCircle(400, 360 + PLAYER_OFFSET, 20);
+    this.mask.fillCircle(config.position.x, config.position.y + PLAYER_VIDEO_OFFSET, 20);
     this.mask.fillStyle(0xffffff);
 
     const phaserVideo = await this.createVideoElement();
@@ -60,7 +61,7 @@ export class Player {
       const phaserVideo = new Phaser.GameObjects.Video(
         this.scene,
         0,
-        -40 + PLAYER_OFFSET
+        PLAYER_VIDEO_OFFSET
       );
 
       phaserVideo.width = 320;
@@ -122,16 +123,14 @@ export class Player {
     const playerContainerBody = this.container.body as Phaser.Physics.Arcade.Body;
     var distance = Phaser.Math.Distance.Between(this.container.x, this.container.y, this.currentMovePoint[0], this.currentMovePoint[1]);
 
-    if (playerContainerBody.speed > 0)
-    {
+    if (playerContainerBody.speed > 0) {
 
-        //  4 is our distance tolerance, i.e. how close the source can get to the target
-        //  before it is considered as being there. The faster it moves, the more tolerance is required.
-        if (distance < 1)
-        {
-            playerContainerBody.reset(this.currentMovePoint[0], this.currentMovePoint[1]);
-            this.currentMovePoint = undefined
-        }
+      //  4 is our distance tolerance, i.e. how close the source can get to the target
+      //  before it is considered as being there. The faster it moves, the more tolerance is required.
+      if (distance < 1) {
+        playerContainerBody.reset(this.currentMovePoint[0], this.currentMovePoint[1]);
+        this.currentMovePoint = undefined
+      }
     }
   }
 
