@@ -3,7 +3,7 @@ import { setDebugPoint } from "../utils/setDebugPoint";
 import { Player } from "../gameobjects/player";
 import { getGrid } from "../utils/getGrid";
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
-import { getClientWithRoomsAndPlayers } from "../../graphql";
+import { getClientWithRoomsAndPlayers, changePlayerPosition } from "../../graphql";
 import {
   TILE_ID_FREE_PLACE
 } from '../utils/tileIds'
@@ -13,7 +13,13 @@ var easystar = new easystarjs.js();
 let cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
 
-const getPosition = (player: any[], otherPlayers: any[], map: Phaser.Tilemaps.Tilemap, camera: Phaser.Cameras.Scene2D.Camera) => {
+const getPosition = (player: any, otherPlayers: any[], map: Phaser.Tilemaps.Tilemap, camera: Phaser.Cameras.Scene2D.Camera) => {
+  if (player.tile !== null) {
+    const tile = map.getTileAt(player.tile.x, player.tile.y)
+    return {
+      x: tile.getCenterX(camera), y: tile.getCenterY(camera)
+    }
+  }
   const possibleTiles = map.filterTiles((tile: Phaser.Tilemaps.Tile) => tile.index === TILE_ID_FREE_PLACE)
   const availableTiles = possibleTiles.filter(tile =>
     otherPlayers.filter(otherPlayer => otherPlayer.tile.x === tile.x && otherPlayer.tile.y === tile.y).length === 0
@@ -83,7 +89,18 @@ export class RoomScene extends Phaser.Scene {
     tile.properties = { collides: true };
     // playerMask = getMask(this);
     // playerImage.setMask(playerMask);
-    await this.player.create({ position: getPosition(currentPlayer, otherPlayers, map, this.cameras.main) })
+    const position = getPosition(currentPlayer, otherPlayers, map, this.cameras.main)
+    const positionTile = map.getTileAtWorldXY(position.x, position.y)
+    if (!currentPlayer.tile || positionTile.x !== currentPlayer.tile.x && positionTile.y !== currentPlayer.tile.y) {
+      graphQl.mutate({
+        mutation: changePlayerPosition,
+        variables: {
+          id: currentUserId,
+          tile: { x: positionTile.x, y: positionTile.y }
+        }
+      })
+    }
+    await this.player.create({ position })
 
     this.physics.world.enable(this.player.getContainer());
     this.physics.add.collider(this.player.getContainer(), layer);
@@ -117,7 +134,14 @@ export class RoomScene extends Phaser.Scene {
         this.player.getContainer().y,
         true
       );
-      console.log('playerTile', playerTile)
+
+      graphQl.mutate({
+        mutation: changePlayerPosition,
+        variables: {
+          id: localStorage.getItem('userId'),
+          tile: { x: clickedTile.x, y: clickedTile.y }
+        }
+      })
 
       const returnvalue = easystar.findPath(
         playerTile.x,
