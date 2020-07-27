@@ -31,12 +31,12 @@ export class Player {
     this.mask.fillCircle(config.position.x, config.position.y + PLAYER_VIDEO_OFFSET, 20);
     this.mask.fillStyle(0xffffff);
 
-    const phaserVideo = await this.createVideoElement();
+    // const phaserVideo = await this.createVideoElement();
     this.container.add(playerImage);
 
-    phaserVideo?.setMask(phaserVideo?.createBitmapMask(this.mask));
-    this.scene.add.existing(phaserVideo!);
-    this.container.add(phaserVideo!);
+    // phaserVideo?.setMask(phaserVideo?.createBitmapMask(this.mask));
+    // this.scene.add.existing(phaserVideo!);
+    // this.container.add(phaserVideo!);
   }
 
   public setMovePoints(movePoints: Array<number[]>) {

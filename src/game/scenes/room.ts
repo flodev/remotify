@@ -52,6 +52,7 @@ export class RoomScene extends Phaser.Scene {
     const players = result.data?.client[0]?.rooms[0]?.players || []
     const currentPlayer = players.filter((player: any) => player.id === currentUserId)[0]
     const otherPlayers = players.filter((player: any) => player.id !== currentUserId)
+    console.log('otherPlayers', otherPlayers)
 
     // @ts-ignore
     // const logo = this.add.image(400, 150, "logo");
