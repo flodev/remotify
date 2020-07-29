@@ -2,7 +2,7 @@
 import Phaser from "phaser";
 import logoImg from "./icon.png";
 import "webrtc-adapter";
-import { RoomScene } from "./scenes/room";
+import { RootScene } from "./scenes/RootScene";
 
 // class VideoStreamPlugin extends Phaser.Plugins.BasePlugin {
 
@@ -41,7 +41,7 @@ export const initiateGame = (graphQl: ApolloClient) => {
         gravity: { y: 0 },
       },
     },
-    scene: RoomScene,
+    scene: RootScene,
   };
 
   const game = new Phaser.Game(config);

@@ -7,8 +7,12 @@ export class Player {
   private container!: Phaser.GameObjects.Container
   private mask?: Phaser.GameObjects.Graphics
   private currentMovePoint?: number[]
-
-  constructor(private scene: Phaser.Scene) {
+  private currentTargetPoint?: number[]
+  private config?: { position: { x: number, y: number } }
+  constructor(
+    private scene: Phaser.Scene,
+    public id: string
+  ) {
 
   }
 
@@ -16,7 +20,14 @@ export class Player {
     this.scene.load.image("player", "assets/avatars/player.png");
   }
 
-  public async create(config: { position: { x: number, y: number } }) {
+  setConfig(config: { position: { x: number, y: number }, data?: any }) {
+    this.config = config
+  }
+
+  public async spawn() {
+    if (!this.config) {
+      throw new Error('config not found')
+    }
     const playerImage = new Phaser.GameObjects.Image(
       this.scene,
       0,
@@ -24,11 +35,11 @@ export class Player {
       "player"
     );
 
-    this.container = this.scene.add.container(config.position.x, config.position.y);
+    this.container = this.scene.add.container(this.config.position.x, this.config.position.y);
     this.container.setSize(30, 10);
 
     this.mask = new Phaser.GameObjects.Graphics(this.scene);
-    this.mask.fillCircle(config.position.x, config.position.y + PLAYER_VIDEO_OFFSET, 20);
+    this.mask.fillCircle(this.config.position.x, this.config.position.y + PLAYER_VIDEO_OFFSET, 20);
     this.mask.fillStyle(0xffffff);
 
     // const phaserVideo = await this.createVideoElement();
@@ -41,6 +52,14 @@ export class Player {
 
   public setMovePoints(movePoints: Array<number[]>) {
     this.movePoints = movePoints
+    this.currentTargetPoint = movePoints[movePoints.length - 1]
+  }
+
+  public getCurrentTargetPoint() {
+    if (this.currentTargetPoint) {
+      return { x: this.currentTargetPoint[0], y: this.currentTargetPoint[1] }
+    }
+    return { x: this.config?.position.x, y: this.config?.position.y }
   }
 
   async createVideoElement() {

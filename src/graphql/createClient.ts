@@ -11,6 +11,7 @@ export const createClient = () => {
     uri: `ws://10.111.181.201/v1/graphql`,
     options: {
       reconnect: true,
+      lazy: true,
       connectionParams: () => {
         const token = localStorage.getItem('token')
         return {

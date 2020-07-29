@@ -3,13 +3,12 @@ import { setDebugPoint } from "../utils/setDebugPoint";
 import { Player } from "../gameobjects/player";
 import { getGrid } from "../utils/getGrid";
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
-import { getClientWithRoomsAndPlayers, changePlayerPosition } from "../../graphql";
+import { subscribeClientWithRoomsAndPlayers, changePlayerPosition, calculateWaypoints } from "../../graphql";
 import {
   TILE_ID_FREE_PLACE
 } from '../utils/tileIds'
 var easystarjs = require("easystarjs");
 var easystar = new easystarjs.js();
-
 let cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
 
@@ -32,10 +31,14 @@ const getPosition = (player: any, otherPlayers: any[], map: Phaser.Tilemaps.Tile
 
 export class RoomScene extends Phaser.Scene {
   private player: Player
+  private otherPlayerGameObjects: Player[] = []
+  private map?: Tilemaps.Tilemap
+  private layer?: Tilemaps.DynamicTilemapLayer
 
-  constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
+  constructor(config: string | Phaser.Types.Scenes.SettingsConfig, private client: any) {
     super(config)
-    this.player = new Player(this)
+    this.player = new Player(this, localStorage.getItem('userId') as string)
+    console.log('initial client', client)
   }
 
   preload() {
@@ -44,15 +47,39 @@ export class RoomScene extends Phaser.Scene {
     this.player.load()
   }
 
+  hasPositionChanged(playerData: any, player: Player) {
+    if (!this.map) {
+      throw new Error('map is undefined')
+    }
+    const updatedTile = this.map.getTileAt(playerData.tile.x, playerData.tile.y)
+    const currentTile = this.map.getTileAtWorldXY(player.getCurrentTargetPoint().x!, player.getCurrentTargetPoint().y!)
+    return updatedTile !== currentTile
+  }
+
   async create() {
     const graphQl = this.registry.get('graphQl') as ApolloClient<InMemoryCache>
-    const result = await graphQl.query({ query: getClientWithRoomsAndPlayers })
-    const tileMapData = result.data?.client[0]?.rooms[0]?.tile
+    const tileMapData = this.client[0]?.rooms[0]?.tile
     const currentUserId = localStorage.getItem('userId')
-    const players = result.data?.client[0]?.rooms[0]?.players || []
+    const players = this.client[0]?.rooms[0]?.players || []
     const currentPlayer = players.filter((player: any) => player.id === currentUserId)[0]
     const otherPlayers = players.filter((player: any) => player.id !== currentUserId)
-    console.log('otherPlayers', otherPlayers)
+
+    graphQl.subscribe({ query: subscribeClientWithRoomsAndPlayers })
+      .subscribe(({ data }) => {
+        console.log('subscribe fired')
+        const newOtherPlayers = (data?.client[0]?.rooms[0]?.players || []).filter((player: any) => player.id !== currentUserId)
+        newOtherPlayers.forEach(otherPlayer => {
+          const player = this.otherPlayerGameObjects.filter(player => player.id === otherPlayer.id)[0]
+          if (!player) {
+            return this.otherPlayerGameObjects!.push(this.createOtherPlayer(otherPlayer))
+          }
+          if (this.hasPositionChanged(otherPlayer, player)) {
+            const currentTile = this.map!.getTileAtWorldXY(player.getCurrentTargetPoint().x!, player.getCurrentTargetPoint().y!)
+            player.setMovePoints(calculateWaypoints(otherPlayer.tile, currentTile, this.cameras.main, this.map!, easystar))
+            return
+          }
+        })
+      })
 
     // @ts-ignore
     // const logo = this.add.image(400, 150, "logo");
@@ -68,69 +95,49 @@ export class RoomScene extends Phaser.Scene {
     // @ts-ignore
     cursors = this.input.keyboard.createCursorKeys();
 
-    const map = this.make.tilemap({
+    this.map = this.make.tilemap({
       tileWidth: 30,
       tileHeight: 30,
       data: tileMapData
     });
 
-    const tileset = map.addTilesetImage("room", "roomi", 30, 30, 0, 0, 0);
+    const tileset = this.map.addTilesetImage("room", "roomi", 30, 30, 0, 0, 0);
     tileset.firstgid = 1
-    var layer = map.createDynamicLayer(0, tileset, 0, 0);
+    this.layer = this.map.createDynamicLayer(0, tileset, 0, 0);
 
-    // map.putTileAt(1, 0, 0);
-    layer.setCollision([1, 2, 3, 4, 5, 6, 7, 8])
-    // layer.setCollisionByProperty({ collides: true });
-    // layer.setCollision(1);
+    // this.map.putTileAt(1, 0, 0);
+    this.layer.setCollision([1, 2, 3, 4, 5, 6, 7, 8])
+    // this.layer.setCollisionByProperty({ collides: true });
+    // this.layer.setCollision(1);
 
-    // layer.tilemap.putTileAt(, 10, 10);
-    map.putTileAt(1, 10, 10);
+    // this.layer.tilemap.putTileAt(, 10, 10);
+    this.map.putTileAt(1, 10, 10);
 
-    const tile = map.getTileAt(10, 10);
+    const tile = this.map.getTileAt(10, 10);
     tile.properties = { collides: true };
     // playerMask = getMask(this);
     // playerImage.setMask(playerMask);
-    const position = getPosition(currentPlayer, otherPlayers, map, this.cameras.main)
-    const positionTile = map.getTileAtWorldXY(position.x, position.y)
-    if (!currentPlayer.tile || positionTile.x !== currentPlayer.tile.x && positionTile.y !== currentPlayer.tile.y) {
-      graphQl.mutate({
-        mutation: changePlayerPosition,
-        variables: {
-          id: currentUserId,
-          tile: { x: positionTile.x, y: positionTile.y }
-        }
-      })
-    }
-    await this.player.create({ position })
+    const position = getPosition(currentPlayer, otherPlayers, this.map, this.cameras.main)
+    const positionTile = this.map.getTileAtWorldXY(position.x, position.y)
+    this.updateCurrentPlayerPosition(currentPlayer, positionTile)
+    this.player.setConfig({ position })
+    await this.player.spawn()
+
+    this.otherPlayerGameObjects = otherPlayers.map(player => this.createOtherPlayer(player))
 
     this.physics.world.enable(this.player.getContainer());
-    this.physics.add.collider(this.player.getContainer(), layer);
-
-    // const videoMask = getMask(this);
-
-    //   var curve = new Phaser.Curves.Spline([
-    //     100, 500,
-    //     260, 450,
-    //     300, 250,
-    //     550, 145,
-    //     745, 256
-    // ]);
-
-    //   var r = this.add.curve(400, 300, curve);
-    //   r.setStrokeStyle(2, 0xff0000);
-
+    this.physics.add.collider(this.player.getContainer(), this.layer);
 
 
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      const clickedTile = map.getTileAtWorldXY(
+      const clickedTile = this.map!.getTileAtWorldXY(
         pointer.worldX,
         pointer.worldY,
         true,
         this.cameras.main,
-        layer
+        this.layer
       );
-      console.log('clickedTile', clickedTile)
-      const playerTile = map.getTileAtWorldXY(
+      const playerTile = this.map!.getTileAtWorldXY(
         this.player.getContainer().x,
         this.player.getContainer().y,
         true
@@ -143,39 +150,13 @@ export class RoomScene extends Phaser.Scene {
           tile: { x: clickedTile.x, y: clickedTile.y }
         }
       })
-
-      const returnvalue = easystar.findPath(
-        playerTile.x,
-        playerTile.y,
-        clickedTile.x,
-        clickedTile.y,
-        (points: Array<{ x: number; y: number }>) => {
-          if (!points) {
-            return
-          }
-          const newPoints = points.map(point => map.getTileAt(point.x, point.y))
-            .filter(tile => !!tile)
-            .map(tile => ([tile.getCenterX(this.cameras.main), tile.getCenterY(this.cameras.main)]))
-
-          this.player.setMovePoints(newPoints)
-
-          // const graphics = this.add.graphics();
-          // spline.draw(graphics, 64);
-
-          // var r = this.add.curve(this.container.x, this.container.y, spline);
-          // r.setOrigin(this.container.x, this.container.y)
-
-          // console.log("path", path);
-        }
-      );
-      easystar.calculate();
-      console.log("returnvalue", returnvalue);
+      const newPoints = calculateWaypoints(clickedTile, playerTile, this.cameras.main, this.map!, easystar)
+      this.player.setMovePoints(newPoints)
     });
 
     this.cameras.main.startFollow(this.player.getContainer(), true, 0.08, 0.08);
     this.cameras.main.setZoom(1);
-    console.log('getGrid(map.getTilesWithin())', getGrid(map.getTilesWithin()))
-    easystar.setGrid(getGrid(map.getTilesWithin()))
+    easystar.setGrid(getGrid(this.map.getTilesWithin()))
     easystar.setAcceptableTiles([9]);
     // easystar.enableDiagonals();
     easystar.enableSync();
@@ -185,8 +166,36 @@ export class RoomScene extends Phaser.Scene {
     // @ts-ignore
   }
 
+  updateCurrentPlayerPosition(currentPlayer: any, positionTile: Tilemaps.Tile) {
+    const graphQl = this.registry.get('graphQl') as ApolloClient<InMemoryCache>
+    if (!currentPlayer.tile || positionTile.x !== currentPlayer.tile.x && positionTile.y !== currentPlayer.tile.y) {
+      graphQl.mutate({
+        mutation: changePlayerPosition,
+        variables: {
+          id: currentPlayer.id,
+          tile: { x: positionTile.x, y: positionTile.y }
+        }
+      })
+    }
+  }
+
+  createOtherPlayer(player: any) {
+    const otherPlayer = new Player(this, player.id)
+    const tile = this.map!.getTileAt(player.tile.x, player.tile.y)
+    const position = {
+      x: tile.getCenterX(this.cameras.main), y: tile.getCenterY(this.cameras.main)
+    }
+    otherPlayer.setConfig({ position, data: player })
+    otherPlayer.spawn()
+    this.map?.getLayer()
+    this.physics.world.enable(otherPlayer.getContainer());
+    this.physics.add.collider(otherPlayer.getContainer(), this.layer!);
+    return otherPlayer
+  }
+
   update() {
     this.player.update(cursors)
+    this.otherPlayerGameObjects.forEach(player => player.update(cursors))
   }
 
 }
