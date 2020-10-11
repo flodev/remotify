@@ -26,6 +26,7 @@
   },
   "scripts": {
     "start": "parcel --no-autoinstall -p 3000 watch index.html --no-hmr public/**/*",
+    "start:remote": "parcel --no-autoinstall --host 192.168.178.31 -p 3000 watch index.html --no-hmr public/**/*",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },

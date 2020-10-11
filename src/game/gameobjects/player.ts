@@ -1,5 +1,7 @@
 const PLAYER_OFFSET = -40;
 const PLAYER_VIDEO_OFFSET = -80;
+const CONTAINER_WIDTH = 30
+const CONTAINER_HEIGHT = 10
 let lastX: number;
 let lastY: number;
 export class Player {
@@ -11,7 +13,8 @@ export class Player {
   private config?: { position: { x: number, y: number } }
   constructor(
     private scene: Phaser.Scene,
-    public id: string
+    public id: string,
+    public userName: string
   ) {
 
   }
@@ -36,7 +39,7 @@ export class Player {
     );
 
     this.container = this.scene.add.container(this.config.position.x, this.config.position.y);
-    this.container.setSize(30, 10);
+    this.container.setSize(CONTAINER_WIDTH, CONTAINER_HEIGHT);
 
     this.mask = new Phaser.GameObjects.Graphics(this.scene);
     this.mask.fillCircle(this.config.position.x, this.config.position.y + PLAYER_VIDEO_OFFSET, 20);
@@ -44,13 +47,16 @@ export class Player {
 
     // const phaserVideo = await this.createVideoElement();
     this.container.add(playerImage);
+    const text = this.scene.add.text(CONTAINER_WIDTH * - 1, 0, this.userName, { color: '#000000' })
+    this.container.add(text)
 
     // phaserVideo?.setMask(phaserVideo?.createBitmapMask(this.mask));
     // this.scene.add.existing(phaserVideo!);
     // this.container.add(phaserVideo!);
   }
 
-  public setMovePoints(movePoints: Array<number[]>) {
+  public setWaypoints(movePoints: Array<number[]>) {
+    console.log('player received waypoints', this.userName, JSON.stringify(movePoints))
     this.movePoints = movePoints
     this.currentTargetPoint = movePoints[movePoints.length - 1]
   }
@@ -146,7 +152,7 @@ export class Player {
 
       //  4 is our distance tolerance, i.e. how close the source can get to the target
       //  before it is considered as being there. The faster it moves, the more tolerance is required.
-      if (distance < 1) {
+      if (distance < 4) {
         playerContainerBody.reset(this.currentMovePoint[0], this.currentMovePoint[1]);
         this.currentMovePoint = undefined
       }

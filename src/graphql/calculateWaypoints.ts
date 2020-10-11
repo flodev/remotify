@@ -1,8 +1,13 @@
 import { Cameras, Tilemaps } from "phaser";
 
-
-export const calculateWaypoints = (targetTile: any, currentTile: any, camera: Cameras.Scene2D.Camera, map: Tilemaps.Tilemap, easystar: any) => {
-  let newPoints: [] = []
+export const calculateWaypoints = (
+  targetTile: any,
+  currentTile: any,
+  camera: Cameras.Scene2D.Camera,
+  map: Tilemaps.Tilemap,
+  easystar: any
+) => {
+  let newPoints: [] = [];
   const returnvalue = easystar.findPath(
     currentTile.x,
     currentTile.y,
@@ -10,13 +15,13 @@ export const calculateWaypoints = (targetTile: any, currentTile: any, camera: Ca
     targetTile.y,
     (points: Array<{ x: number; y: number }>) => {
       if (!points) {
-        return
+        return;
       }
-      newPoints = points.map(point => map.getTileAt(point.x, point.y))
-        .filter(tile => !!tile)
-        .map(tile => ([tile.getCenterX(camera), tile.getCenterY(camera)]))
-
-
+      // @ts-ignore
+      newPoints = points
+        .map((point) => map.getTileAt(point.x, point.y))
+        .filter((tile) => !!tile)
+        .map((tile) => [tile.getCenterX(camera), tile.getCenterY(camera)]);
 
       // const graphics = this.add.graphics();
       // spline.draw(graphics, 64);
@@ -28,5 +33,5 @@ export const calculateWaypoints = (targetTile: any, currentTile: any, camera: Ca
     }
   );
   easystar.calculate();
-  return newPoints
-}
+  return newPoints;
+};

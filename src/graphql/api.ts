@@ -13,6 +13,7 @@ query GetClientWithRoomsAndPlayers {
       players {
         id
         tile
+        username
         firstname
       }
     }
@@ -32,6 +33,7 @@ subscription SubscribeClientWithRoomsAndPlayers {
       players {
         id
         tile
+        username
         firstname
       }
     }

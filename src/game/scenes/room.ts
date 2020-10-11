@@ -12,33 +12,17 @@ var easystar = new easystarjs.js();
 let cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
 
-const getPosition = (player: any, otherPlayers: any[], map: Phaser.Tilemaps.Tilemap, camera: Phaser.Cameras.Scene2D.Camera) => {
-  if (player.tile !== null) {
-    const tile = map.getTileAt(player.tile.x, player.tile.y)
-    return {
-      x: tile.getCenterX(camera), y: tile.getCenterY(camera)
-    }
-  }
-  const possibleTiles = map.filterTiles((tile: Phaser.Tilemaps.Tile) => tile.index === TILE_ID_FREE_PLACE)
-  const availableTiles = possibleTiles.filter(tile =>
-    otherPlayers.filter(otherPlayer => otherPlayer.tile.x === tile.x && otherPlayer.tile.y === tile.y).length === 0
-  )
-  const tile = availableTiles[0]
-  return {
-    x: tile.getCenterX(camera), y: tile.getCenterY(camera)
-  }
-}
-
 export class RoomScene extends Phaser.Scene {
   private player: Player
+  private otherPlayers: any[] = []
+  private players: any[] = []
   private otherPlayerGameObjects: Player[] = []
   private map?: Tilemaps.Tilemap
   private layer?: Tilemaps.DynamicTilemapLayer
 
   constructor(config: string | Phaser.Types.Scenes.SettingsConfig, private client: any) {
     super(config)
-    this.player = new Player(this, localStorage.getItem('userId') as string)
-    console.log('initial client', client)
+    this.player = new Player(this, localStorage.getItem('userId') as string, localStorage.getItem('username') as string)
   }
 
   preload() {
@@ -60,22 +44,26 @@ export class RoomScene extends Phaser.Scene {
     const graphQl = this.registry.get('graphQl') as ApolloClient<InMemoryCache>
     const tileMapData = this.client[0]?.rooms[0]?.tile
     const currentUserId = localStorage.getItem('userId')
-    const players = this.client[0]?.rooms[0]?.players || []
-    const currentPlayer = players.filter((player: any) => player.id === currentUserId)[0]
-    const otherPlayers = players.filter((player: any) => player.id !== currentUserId)
+    this.players = this.client[0]?.rooms[0]?.players || []
+    const currentPlayer = this.players.filter((player: any) => player.id === currentUserId)[0]
+    this.otherPlayers = this.players.filter((player: any) => player.id !== currentUserId)
 
     graphQl.subscribe({ query: subscribeClientWithRoomsAndPlayers })
       .subscribe(({ data }) => {
-        console.log('subscribe fired')
-        const newOtherPlayers = (data?.client[0]?.rooms[0]?.players || []).filter((player: any) => player.id !== currentUserId)
-        newOtherPlayers.forEach(otherPlayer => {
+        this.otherPlayers = (data?.client[0]?.rooms[0]?.players || []).filter((player: any) => player.id !== currentUserId)
+        this.otherPlayers.forEach(otherPlayer => {
+          if (otherPlayer.id === this.player.id) {
+            return
+          }
           const player = this.otherPlayerGameObjects.filter(player => player.id === otherPlayer.id)[0]
           if (!player) {
             return this.otherPlayerGameObjects!.push(this.createOtherPlayer(otherPlayer))
           }
           if (this.hasPositionChanged(otherPlayer, player)) {
+            console.log('pos changed', otherPlayer, player)
             const currentTile = this.map!.getTileAtWorldXY(player.getCurrentTargetPoint().x!, player.getCurrentTargetPoint().y!)
-            player.setMovePoints(calculateWaypoints(otherPlayer.tile, currentTile, this.cameras.main, this.map!, easystar))
+            player.setWaypoints(calculateWaypoints(otherPlayer.tile, currentTile, this.cameras.main, this.map!, easystar))
+            console.log('setting waypoints to player', player)
             return
           }
         })
@@ -117,13 +105,13 @@ export class RoomScene extends Phaser.Scene {
     tile.properties = { collides: true };
     // playerMask = getMask(this);
     // playerImage.setMask(playerMask);
-    const position = getPosition(currentPlayer, otherPlayers, this.map, this.cameras.main)
+    const position = this.getPosition(currentPlayer)
     const positionTile = this.map.getTileAtWorldXY(position.x, position.y)
     this.updateCurrentPlayerPosition(currentPlayer, positionTile)
     this.player.setConfig({ position })
     await this.player.spawn()
 
-    this.otherPlayerGameObjects = otherPlayers.map(player => this.createOtherPlayer(player))
+    this.otherPlayerGameObjects = this.otherPlayers.map(player => this.createOtherPlayer(player))
 
     this.physics.world.enable(this.player.getContainer());
     this.physics.add.collider(this.player.getContainer(), this.layer);
@@ -151,7 +139,7 @@ export class RoomScene extends Phaser.Scene {
         }
       })
       const newPoints = calculateWaypoints(clickedTile, playerTile, this.cameras.main, this.map!, easystar)
-      this.player.setMovePoints(newPoints)
+      this.player.setWaypoints(newPoints)
     });
 
     this.cameras.main.startFollow(this.player.getContainer(), true, 0.08, 0.08);
@@ -180,14 +168,10 @@ export class RoomScene extends Phaser.Scene {
   }
 
   createOtherPlayer(player: any) {
-    const otherPlayer = new Player(this, player.id)
-    const tile = this.map!.getTileAt(player.tile.x, player.tile.y)
-    const position = {
-      x: tile.getCenterX(this.cameras.main), y: tile.getCenterY(this.cameras.main)
-    }
+    const otherPlayer = new Player(this, player.id, player.username)
+    const position = this.getPosition(player)
     otherPlayer.setConfig({ position, data: player })
     otherPlayer.spawn()
-    this.map?.getLayer()
     this.physics.world.enable(otherPlayer.getContainer());
     this.physics.add.collider(otherPlayer.getContainer(), this.layer!);
     return otherPlayer
@@ -196,6 +180,23 @@ export class RoomScene extends Phaser.Scene {
   update() {
     this.player.update(cursors)
     this.otherPlayerGameObjects.forEach(player => player.update(cursors))
+  }
+
+  getPosition(player: any) {
+    if (player.tile !== null) {
+      const tile = this.map!.getTileAt(player.tile.x, player.tile.y)
+      return {
+        x: tile.getCenterX(this.cameras.main), y: tile.getCenterY(this.cameras.main)
+      }
+    }
+    const possibleTiles = this.map!.filterTiles((tile: Phaser.Tilemaps.Tile) => tile.index === TILE_ID_FREE_PLACE)
+    const availableTiles = possibleTiles.filter(tile =>
+      this.players.filter(otherPlayer => otherPlayer.id !== player.id && otherPlayer.tile && (otherPlayer.tile.x === tile.x && otherPlayer.tile.y === tile.y)).length === 0
+    )
+    const tile = availableTiles[0]
+    return {
+      x: tile.getCenterX(this.cameras.main), y: tile.getCenterY(this.cameras.main)
+    }
   }
 
 }
