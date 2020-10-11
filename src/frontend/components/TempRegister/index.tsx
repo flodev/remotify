@@ -17,7 +17,6 @@ interface TempRegisterProps {}
 
 export const TempRegister: FunctionComponent<TempRegisterProps> = () => {
   const { inviteId } = useParams<{ inviteId: string }>();
-  console.log("inviteId", inviteId);
   // const { loading, error, data } = useQuery(EXCHANGE_RATES)
   const tailLayout = {
     wrapperCol: { offset: 8, span: 16 },
@@ -73,7 +72,10 @@ export const TempRegister: FunctionComponent<TempRegisterProps> = () => {
             // onFinishFailed={onFinishFailed}
           >
             <h1>{t("Welcome Stranger :)")}</h1>
-            <h3>{t("Unfortunately we don't recognise you.")}</h3>
+            {!inviteId && <h3>{t("Unfortunately we don't recognise you.")}</h3>}
+            {!!inviteId && (
+              <h3>{t("Just enter your username and join the room.")}</h3>
+            )}
             <Form.Item
               label={t("Username")}
               name="username"
