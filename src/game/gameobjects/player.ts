@@ -4,8 +4,8 @@ const CONTAINER_WIDTH = 30
 const CONTAINER_HEIGHT = 10
 
 export class Player {
-  private lastX: number
-  private lastY: number
+  private lastX?: number
+  private lastY?: number
   private movePoints = Array<number[]>()
   private container!: Phaser.GameObjects.Container
   private mask?: Phaser.GameObjects.Graphics
@@ -134,8 +134,8 @@ export class Player {
     this.movePlayer()
 
     if (this.mask) {
-      this.mask.x += this.container.x - this.lastX
-      this.mask.y += this.container.y - this.lastY
+      this.mask.x += this.container.x - (this.lastX ?? 0)
+      this.mask.y += this.container.y - (this.lastY ?? 0)
     }
 
     this.lastX = this.container.x
