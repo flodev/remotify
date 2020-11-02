@@ -83,14 +83,14 @@ export class Player {
   async createVideoElement() {
     try {
       const constraints = {
-        video: true,
+        video: {width: {exact: 1280}, height: {exact: 720}},
         audio: true,
       }
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints)
       var video = document.createElement("video")
       video.srcObject = mediaStream
-      video.width = 320
-      video.height = 240
+      video.width = 1280
+      video.height = 720
       video.autoplay = true
 
       const phaserVideo = new Phaser.GameObjects.Video(

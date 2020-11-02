@@ -23,7 +23,7 @@ import { RootScene } from "./scenes/RootScene";
 
 
 export const initiateGame = (graphQl: ApolloClient) => {
-  const config = {
+  const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
     width: "100%",
     height: "100%",
@@ -31,6 +31,7 @@ export const initiateGame = (graphQl: ApolloClient) => {
       createContainer: true,
     },
     antialias: true,
+    antialiasGL: true,
     // plugins: {
     //   global: [{ key: "VideoStreamPlugin", plugin: VideoStreamPlugin, start: true }],
     // },
