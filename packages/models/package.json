@@ -1,6 +1,6 @@
 {
   "name": "@remotify/models",
-  "version": "0.8.0",
+  "version": "0.1.0",
   "description": "data models",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -13,5 +13,7 @@
   "scripts": {
     "start": "tsc"
   },
-  "resolutions": { "**/ua-parser-js": "0.7.28" }
+  "resolutions": {
+    "**/ua-parser-js": "0.7.28"
+  }
 }

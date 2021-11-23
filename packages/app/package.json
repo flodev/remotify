@@ -1,6 +1,6 @@
 {
   "name": "@remotify/app",
-  "version": "0.8.0",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.6.2",

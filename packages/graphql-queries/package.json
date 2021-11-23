@@ -1,6 +1,6 @@
 {
   "name": "@remotify/graphql",
-  "version": "0.8.0",
+  "version": "0.1.0",
   "description": "contains the queries necessary for running remotify",
   "main": "index.ts",
   "typings": "index.ts",
