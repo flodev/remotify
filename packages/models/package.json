@@ -1,0 +1,17 @@
+{
+  "name": "@remotify/models",
+  "version": "0.0.1",
+  "description": "data models",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "author": "Florian Klenk",
+  "license": "Apache 2.0",
+  "private": true,
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "start": "tsc"
+  },
+  "resolutions": { "**/ua-parser-js": "0.7.28" }
+}

@@ -1,0 +1,47 @@
+- communicate with your coworkers using video and microphone
+    - show video on the head
+    - (optional) lower / higher sound of player depending on distance
+- design your own virtual office rooms
+  - draw walls
+  - draw floors
+- add interior like desks, couches and toilets
+  - add desks
+    - worker name below
+    - worker animation when he's sitting on the desk
+  - add sofas
+    - worker animation when he's sitting on the sofa
+  - add toilets
+    - woker animation how he's shitting
+    - peeing
+
+interior interaction:
+worker clicks on it: options are shown.
+
+desk:
+  - sit there and work hard
+  - sit there and sleep
+  - sit there and punch the display
+  - sit and hear music
+
+toilet:
+  - take a dump
+  - take a pee
+
+sofas:
+  - take a nap
+  - sit and bore out
+
+
+
+remotify stands for enjoyable work atmosphere
+		... fun
+		... creativity
+		... self determination
+		... open source
+
+
+online offline
+
+players stay visible even if they are not activly on the side
+
+players connect with each other only if the browser window is open

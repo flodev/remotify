@@ -1,0 +1,19 @@
+.hoveringControls {
+  pointer-events: none;
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.icon {
+  pointer-events: all;
+  font-size: 50px;
+  color: #fff;
+}
+
+.share {
+  margin-right: 10px;
+}
