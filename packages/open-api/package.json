@@ -1,6 +1,6 @@
 {
   "name": "@remotify/open-api",
-  "version": "0.0.1",
+  "version": "0.8.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "repository": "https://github.com/flodev/remotify",
