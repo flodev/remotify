@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: auth
+  name: auth
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - image: 002172820271.dkr.ecr.eu-west-1.amazonaws.com/auth:0.8.0:
+        name: auth
+        ports:
+        - containerPort: 4000
+        - containerPort: 4001
+        env:
+        - name: APP_PORT
+          value: $APP_PORT
+        - name: WEBRTC_PORT
+          value: $WEBRTC_PORT
+        - name: DATABASE_URL
+          value: $DATABASE_URL
+        - name: JWT_SECRET
+          value: $JWT_SECRET
+        - name: HASURA_ADMIN_SECRET
+          value: $HASURA_ADMIN_SECRET
+        - name: HASURA_ENDPOINT
+          value: $HASURA_ENDPOINT
+        - name: AUTH_PRIVATE_KEY
+          value: $AUTH_PRIVATE_KEY

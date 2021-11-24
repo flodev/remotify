@@ -1,0 +1,715 @@
+{
+  "resource_version": 218,
+  "metadata": {
+    "version": 3,
+    "sources": [
+      {
+        "name": "default",
+        "kind": "postgres",
+        "tables": [
+          {
+            "table": {
+              "schema": "public",
+              "name": "animation"
+            },
+            "object_relationships": [
+              {
+                "name": "sprite",
+                "using": {
+                  "foreign_key_constraint_on": "sprite_id"
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "frames",
+                    "id",
+                    "key",
+                    "settings",
+                    "sprite_id",
+                    "type"
+                  ],
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "schema": "public",
+              "name": "client"
+            },
+            "array_relationships": [
+              {
+                "name": "rooms",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "client_id",
+                    "table": {
+                      "schema": "public",
+                      "name": "room"
+                    }
+                  }
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "id",
+                    "name",
+                    "share_id"
+                  ],
+                  "filter": {
+                    "rooms": {
+                      "players": {
+                        "id": {
+                          "_eq": "X-Hasura-User-Id"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "schema": "public",
+              "name": "gameobject"
+            },
+            "object_relationships": [
+              {
+                "name": "gameobjectype",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "gameobject_type"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "type_id": "id"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "player",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "player"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "player_id": "id"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "room",
+                "using": {
+                  "foreign_key_constraint_on": "room_id"
+                }
+              }
+            ],
+            "insert_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "check": {
+                    "room": {
+                      "players": {
+                        "id": {
+                          "_eq": "X-Hasura-User-Id"
+                        }
+                      }
+                    }
+                  },
+                  "columns": [
+                    "animation",
+                    "id",
+                    "player_id",
+                    "room_id",
+                    "settings",
+                    "tile",
+                    "type_id",
+                    "updated_at"
+                  ],
+                  "backend_only": false
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "animation",
+                    "id",
+                    "player_id",
+                    "room_id",
+                    "settings",
+                    "tile",
+                    "type_id"
+                  ],
+                  "filter": {
+                    "room": {
+                      "players": {
+                        "id": {
+                          "_eq": "X-Hasura-User-Id"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "update_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "animation",
+                    "id",
+                    "player_id",
+                    "room_id",
+                    "settings",
+                    "tile",
+                    "type_id",
+                    "updated_at"
+                  ],
+                  "filter": {
+                    "room": {
+                      "players": {
+                        "id": {
+                          "_eq": "X-Hasura-User-Id"
+                        }
+                      }
+                    }
+                  },
+                  "check": null
+                }
+              }
+            ],
+            "delete_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "filter": {
+                    "room": {
+                      "players": {
+                        "id": {
+                          "_eq": "X-Hasura-User-Id"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "schema": "public",
+              "name": "gameobject_type"
+            },
+            "object_relationships": [
+              {
+                "name": "sprite",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "sprite"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "sprite_id": "id"
+                    }
+                  }
+                }
+              }
+            ],
+            "array_relationships": [
+              {
+                "name": "gameobjects",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "gameobject"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "id": "type_id"
+                    }
+                  }
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "id",
+                    "name",
+                    "sprite_id",
+                    "settings"
+                  ],
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "schema": "public",
+              "name": "player"
+            },
+            "object_relationships": [
+              {
+                "name": "room",
+                "using": {
+                  "foreign_key_constraint_on": "room_id"
+                }
+              },
+              {
+                "name": "sprite",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "sprite"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "sprite_id": "id"
+                    }
+                  }
+                }
+              }
+            ],
+            "array_relationships": [
+              {
+                "name": "user_roles",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "user_id",
+                    "table": {
+                      "schema": "public",
+                      "name": "user_role"
+                    }
+                  }
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "active",
+                    "animation",
+                    "email",
+                    "firstname",
+                    "id",
+                    "is_audio_video_enabled",
+                    "is_online",
+                    "lastname",
+                    "room_id",
+                    "sprite_id",
+                    "tile",
+                    "username",
+                    "webrtc"
+                  ],
+                  "filter": {
+                    "room": {
+                      "players": {}
+                    }
+                  }
+                }
+              }
+            ],
+            "update_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "animation",
+                    "is_audio_video_enabled",
+                    "is_online",
+                    "room_id",
+                    "tile",
+                    "username",
+                    "webrtc"
+                  ],
+                  "filter": {
+                    "id": {
+                      "_eq": "X-Hasura-User-Id"
+                    }
+                  },
+                  "check": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "schema": "public",
+              "name": "role"
+            },
+            "array_relationships": [
+              {
+                "name": "user_roles",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "role_id",
+                    "table": {
+                      "schema": "public",
+                      "name": "user_role"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "schema": "public",
+              "name": "room"
+            },
+            "object_relationships": [
+              {
+                "name": "client",
+                "using": {
+                  "foreign_key_constraint_on": "client_id"
+                }
+              }
+            ],
+            "array_relationships": [
+              {
+                "name": "gameobjects",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "room_id",
+                    "table": {
+                      "schema": "public",
+                      "name": "gameobject"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "players",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "room_id",
+                    "table": {
+                      "schema": "public",
+                      "name": "player"
+                    }
+                  }
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "name",
+                    "tile",
+                    "updated_at",
+                    "client_id",
+                    "id"
+                  ],
+                  "filter": {
+                    "players": {
+                      "id": {
+                        "_eq": "X-Hasura-User-Id"
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "update_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "name",
+                    "tile",
+                    "updated_at",
+                    "client_id",
+                    "id"
+                  ],
+                  "filter": {
+                    "players": {
+                      "id": {
+                        "_eq": "X-Hasura-User-Id"
+                      }
+                    }
+                  },
+                  "check": null
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "schema": "public",
+              "name": "sprite"
+            },
+            "array_relationships": [
+              {
+                "name": "animations",
+                "using": {
+                  "foreign_key_constraint_on": {
+                    "column": "sprite_id",
+                    "table": {
+                      "schema": "public",
+                      "name": "animation"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "gameobjectypes",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "gameobject_type"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "id": "sprite_id"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "players",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "player"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "id": "sprite_id"
+                    }
+                  }
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "id",
+                    "name",
+                    "settings",
+                    "url"
+                  ],
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "schema": "public",
+              "name": "user_role"
+            },
+            "object_relationships": [
+              {
+                "name": "player",
+                "using": {
+                  "foreign_key_constraint_on": "user_id"
+                }
+              },
+              {
+                "name": "role",
+                "using": {
+                  "foreign_key_constraint_on": "role_id"
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "schema": "public",
+              "name": "webrtc_connection"
+            },
+            "object_relationships": [
+              {
+                "name": "playerReceiver",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "player"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "player_id_receiver": "id"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "playerSender",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "player"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "player_id_sender": "id"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "room",
+                "using": {
+                  "manual_configuration": {
+                    "remote_table": {
+                      "schema": "public",
+                      "name": "room"
+                    },
+                    "insertion_order": null,
+                    "column_mapping": {
+                      "room_id": "id"
+                    }
+                  }
+                }
+              }
+            ],
+            "insert_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "check": {
+                    "room": {
+                      "players": {
+                        "id": {
+                          "_eq": "X-Hasura-User-Id"
+                        }
+                      }
+                    }
+                  },
+                  "columns": [
+                    "id",
+                    "room_id",
+                    "player_id_sender",
+                    "player_id_receiver",
+                    "offer",
+                    "answer"
+                  ],
+                  "backend_only": false
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "answer",
+                    "offer",
+                    "id",
+                    "player_id_receiver",
+                    "player_id_sender",
+                    "room_id"
+                  ],
+                  "filter": {
+                    "room": {
+                      "players": {
+                        "id": {
+                          "_eq": "X-Hasura-User-Id"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "update_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "columns": [
+                    "answer",
+                    "id",
+                    "offer",
+                    "player_id_receiver",
+                    "player_id_sender",
+                    "room_id"
+                  ],
+                  "filter": {
+                    "room": {
+                      "players": {
+                        "id": {
+                          "_eq": "X-Hasura-User-Id"
+                        }
+                      }
+                    }
+                  },
+                  "check": null
+                }
+              }
+            ],
+            "delete_permissions": [
+              {
+                "role": "temp_user",
+                "permission": {
+                  "filter": {
+                    "room": {
+                      "players": {
+                        "id": {
+                          "_eq": "X-Hasura-User-Id"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "configuration": {
+          "connection_info": {
+            "use_prepared_statements": true,
+            "database_url": {
+              "from_env": "HASURA_GRAPHQL_DATABASE_URL"
+            },
+            "isolation_level": "read-committed",
+            "pool_settings": {
+              "connection_lifetime": 600,
+              "retries": 1,
+              "idle_timeout": 180,
+              "max_connections": 50
+            }
+          }
+        }
+      }
+    ]
+  }
+}

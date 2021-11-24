@@ -1,0 +1,34 @@
+doctype html
+html(lang='en')
+
+    include includes/header.pug
+
+    body#page-top
+
+        // Navigation
+        nav.navbar.navbar-expand-lg.navbar-dark.navbar-custom.fixed-top
+            .container.px-5
+                a.navbar-brand(href='#page-top') Remotify
+                button.navbar-toggler(type='button', data-bs-toggle='collapse', data-bs-target='#navbarResponsive', aria-controls='navbarResponsive', aria-expanded='false', aria-label='Toggle navigation')
+                    span.navbar-toggler-icon
+                #navbarResponsive.collapse.navbar-collapse
+                    ul.navbar-nav.ms-auto
+                        li.nav-item
+                            a.nav-link(href='http://meet.remotify.place') Start
+                        li.nav-item
+                            a.nav-link(href='https://github.com/flodev/remotify') Contribute
+
+        // Header
+        header.masthead.text-center.text-white
+            .masthead-content
+                .container.px-5
+                    h1.masthead-heading.mb-0 Remotify
+                    h2.masthead-subheading.mb-0 gather with fun
+                    a.btn.btn-primary.btn-xl.rounded-pill.mt-5.cta(href='http://meet.remotify.place') Start
+            .bg-circle-1.bg-circle
+            .bg-circle-2.bg-circle
+            .bg-circle-3.bg-circle
+            .bg-circle-4.bg-circle
+
+
+        include includes/footer.pug

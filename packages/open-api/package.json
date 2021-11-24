@@ -1,0 +1,17 @@
+{
+  "name": "@remotify/open-api",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "repository": "https://github.com/flodev/remotify",
+  "author": "Florian Klenk",
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/client": "^3.4.16",
+    "@remotify/graphql": "^0.0.1",
+    "@remotify/models": "^0.0.1",
+    "axios": "^0.24.0",
+    "jwt-decode": "^3.1.2"
+  }
+}

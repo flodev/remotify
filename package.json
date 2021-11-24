@@ -1,0 +1,12 @@
+{
+  "name": "remotify.place",
+  "license": "Apache-2.0",
+  "version": "0.8.0",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap --npm-client yarn"
+  }
+}

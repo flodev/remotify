@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: authentication
+  name: authentication
+  namespace: default
+spec:
+  selector:
+    app: authentication
+  ports:
+  - protocol: TCP
+    name: tcp-auth-4000
+    port: 4000
+    targetPort: 4000
+  - protocol: TCP
+    name: tcp-websocket-4001
+    port: 4001
+    targetPort: 4001
+
+  type: LoadBalancer
