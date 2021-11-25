@@ -16,7 +16,7 @@ spec:
         app: auth
     spec:
       containers:
-      - image: 002172820271.dkr.ecr.eu-west-1.amazonaws.com/auth:0.8.0:
+      - image: 002172820271.dkr.ecr.eu-west-1.amazonaws.com/auth:0.1.2:
         name: auth
         ports:
         - containerPort: 4000
@@ -27,12 +27,12 @@ spec:
         - name: WEBRTC_PORT
           value: $WEBRTC_PORT
         - name: DATABASE_URL
-          value: $DATABASE_URL
+          value: "$DATABASE_URL"
         - name: JWT_SECRET
-          value: $JWT_SECRET
+          value: "$JWT_SECRET"
         - name: HASURA_ADMIN_SECRET
-          value: $HASURA_ADMIN_SECRET
+          value: "$HASURA_ADMIN_SECRET"
         - name: HASURA_ENDPOINT
-          value: $HASURA_ENDPOINT
+          value: "$HASURA_ENDPOINT"
         - name: AUTH_PRIVATE_KEY
-          value: $AUTH_PRIVATE_KEY
+          value: "$AUTH_PRIVATE_KEY"

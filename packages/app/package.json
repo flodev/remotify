@@ -49,6 +49,7 @@
   },
   "scripts": {
     "start": "concurrently --kill-others \"npm:compile:watch\" \"npm:dev:server\"",
+    "build:production": "NODE_ENV=production parcel build index.html --public-url \"https://meet.remotify.place\"",
     "start:remote": "concurrently --kill-others \"npm:compile:watch\" \"npm:remote:server\"",
     "dev:server": "NODE_ENV=development parcel --no-autoinstall -p 3000 watch index.html --no-hmr public/**/*",
     "remote:server": "NODE_ENV=development parcel --no-autoinstall --host 192.168.178.20 -p 3000 watch index.html --no-hmr public/**/*",
@@ -56,7 +57,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "test": "jest src",
-    "extrude-tiles": "cp ./public/assets/tilemaps/tilemap.png ./public/assets/tilemaps/tilemap_unextruded.png; tile-extruder --tileWidth 30 --tileHeight 30 --input ./public/assets/tilemaps/tilemap.png --output ./public/assets/tilemaps/tilemap_extruded.png; mv ./public/assets/tilemaps/tilemap_extruded.png ./public/assets/tilemaps/tilemap.png"
+    "extrude-tiles": "cp ./public/assets/tilemaps/tilemap.png ./public/assets/tilemaps/tilemap_unextruded.png; tile-extruder --tileWidth 30 --tileHeight 30 --input ./public/assets/tilemaps/tilemap.png --output ./public/assets/tilemaps/tilemap_extruded.png; mv ./public/assets/tilemaps/tilemap_extruded.png ./public/assets/tilemaps/tilemap.png",
+    "deploy:production": "npm run build:production && aws s3 sync --acl private --sse --delete ./dist s3://meet.remotify.place && aws cloudfront create-invalidation --distribution-id E343507GLSNJMG --paths '/*'"
   },
   "browserslist": {
     "production": [
@@ -95,6 +97,7 @@
     "lerna": "^4.0.0",
     "node-sass": "^6.0.1",
     "parcel-bundler": "^1.12.5",
+    "parcel-plugin-bundle-visualiser": "^1.2.0",
     "parcel-plugin-static-files-copy": "^2.6.0",
     "react-docgen-typescript-loader": "^3.7.2",
     "sass": "^1.35.1",

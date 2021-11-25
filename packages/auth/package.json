@@ -20,7 +20,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node src/main",
+    "start:prod": "npm run migrate:dist:latest && node src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -33,6 +33,7 @@
     "migrate:down": "KNEX_MIGRATION_FILE_EXTENSION=ts PORT=8081 DATABASE_URL=$(grep DATABASE_URL .env | cut -d '=' -f2) knex migrate:down",
     "migrate:up": "KNEX_MIGRATION_FILE_EXTENSION=ts PORT=8081 DATABASE_URL=$(grep DATABASE_URL .env | cut -d '=' -f2) knex migrate:up",
     "migrate:make": "KNEX_MIGRATION_FILE_EXTENSION=ts npx knex migrate:make",
+    "migrate:dist:latest": "knex migrate:latest --knexfile ./knexfile.js",
     "tunnel": "ssh -L 192.168.178.20:8001:127.0.0.1:8001 -N 127.0.0.1"
   },
   "dependencies": {
