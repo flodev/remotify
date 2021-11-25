@@ -1,0 +1,30 @@
+{
+  "name": "@remotify/models",
+  "version": "0.1.1",
+  "description": "data models",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "author": "Florian Klenk <florian@remotify.place>",
+  "license": "Apache-2.0",
+  "private": false,
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "start": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flodev/remotify.git",
+    "directory": "packages/models"
+  },
+  "keywords": [
+    "remote",
+    "remote work",
+    "game"
+  ],
+  "resolutions": {
+    "**/ua-parser-js": "0.7.28"
+  },
+  "gitHead": "74458a8a290d614941d7a85e219cf9a872cb4d34"
+}

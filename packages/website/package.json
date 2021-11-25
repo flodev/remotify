@@ -1,0 +1,40 @@
+{
+    "title": "remotify website",
+    "name": "@remotify/website",
+    "version": "0.1.1",
+    "scripts": {
+        "build": "npm run clean && npm run build:pug && npm run build:scss && npm run build:scripts && npm run build:assets",
+        "build:assets": "node scripts/build-assets.js",
+        "build:pug": "node scripts/build-pug.js",
+        "build:scripts": "node scripts/build-scripts.js",
+        "build:scss": "node scripts/build-scss.js",
+        "clean": "node scripts/clean.js",
+        "start": "npm run build && node scripts/start.js",
+        "start:debug": "npm run build && node scripts/start-debug.js",
+        "deploy": "npm run build && aws s3 sync --acl private --sse --delete ./dist s3://www.remotify.place"
+    },
+    "description": "Website of remotify.place",
+    "keywords": [],
+    "homepage": "https://github.com/flodev/remotify",
+    "license": "Apache-2.0",
+    "author": "Florian Klenk <florian@remotify.place>",
+    "dependencies": {
+        "bootstrap": "5.1.3"
+    },
+    "devDependencies": {
+        "autoprefixer": "10.3.7",
+        "browser-sync": "2.27.5",
+        "chokidar": "3.5.2",
+        "concurrently": "6.3.0",
+        "postcss": "8.3.9",
+        "prettier": "2.4.1",
+        "pug": "3.0.2",
+        "sass": "1.43.2",
+        "shelljs": "0.8.4",
+        "upath": "2.0.1"
+    },
+    "gitHead": "74458a8a290d614941d7a85e219cf9a872cb4d34",
+    "resolutions": {
+        "**/ua-parser-js": "0.7.28"
+    }
+}
