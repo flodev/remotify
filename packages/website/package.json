@@ -33,7 +33,7 @@
         "shelljs": "0.8.4",
         "upath": "2.0.1"
     },
-    "gitHead": "74458a8a290d614941d7a85e219cf9a872cb4d34",
+    "gitHead": "0a7e7829d56c8d0a9e9641c37d524d69be092453",
     "resolutions": {
         "**/ua-parser-js": "0.7.28"
     }

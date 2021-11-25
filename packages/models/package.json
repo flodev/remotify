@@ -29,5 +29,6 @@
   "bugs": {
     "url": "https://github.com/flodev/remotify/issues"
   },
-  "homepage": "https://github.com/flodev/remotify#readme"
+  "homepage": "https://github.com/flodev/remotify#readme",
+  "gitHead": "0a7e7829d56c8d0a9e9641c37d524d69be092453"
 }
