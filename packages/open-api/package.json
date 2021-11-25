@@ -13,8 +13,8 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.4.16",
-    "@remotify/graphql": "^0.0.1",
-    "@remotify/models": "^0.0.1",
+    "@remotify/graphql": "^0.1.0",
+    "@remotify/models": "^0.1.0",
     "axios": "^0.24.0",
     "jwt-decode": "^3.1.2"
   },
