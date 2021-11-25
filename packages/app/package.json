@@ -1,6 +1,6 @@
 {
   "name": "@remotify/app",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "license": "Apache-2.0",
   "author": {
@@ -19,9 +19,9 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
     "@nestjs/core": "^8.1.1",
-    "@remotify/graphql": "^0.1.0",
-    "@remotify/models": "^0.1.0",
-    "@remotify/open-api": "^0.1.0",
+    "@remotify/graphql": "^0.1.2",
+    "@remotify/models": "^0.1.2",
+    "@remotify/open-api": "^0.1.2",
     "antd": "^4.16.6",
     "apollo-boost": "^0.4.9",
     "apollo-link-ws": "^1.0.20",
