@@ -13,6 +13,7 @@ CREATE TABLE public.player
     password character varying(100) COLLATE pg_catalog."default",
     tile json,
     animation character varying COLLATE pg_catalog."default",
+    is_online boolean NOT NULL DEFAULT false,
     CONSTRAINT player_pkey PRIMARY KEY (id),
     CONSTRAINT player_room_id_fkey FOREIGN KEY (room_id)
         REFERENCES public.room (id) MATCH SIMPLE
@@ -26,9 +27,9 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.player
     OWNER to postgres;
-  `)
-}
+  `);
+};
 
 exports.down = function (knex, Promise) {
-  return knex.schema.dropTableIfExists('player')
-}
+  return knex.schema.dropTableIfExists('player');
+};
