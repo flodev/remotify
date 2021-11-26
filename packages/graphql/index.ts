@@ -187,7 +187,7 @@ export const upsertGameObject = gql`
     insert_gameobject_one(
       object: $object
       on_conflict: {
-        constraint: gameobject_pk
+        constraint: gameobject_pkey
         update_columns: [room_id, tile, settings, type_id]
       }
     ) {
