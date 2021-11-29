@@ -1,4 +1,4 @@
-const defaultRoomTile = require('..//defaultRoomTile');
+import * as defaultRoomTile from '../defaultRoomTile.json';
 
 /**
  *
