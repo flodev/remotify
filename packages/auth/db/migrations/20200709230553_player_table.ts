@@ -25,8 +25,6 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.player
-    OWNER to postgres;
   `);
 };
 

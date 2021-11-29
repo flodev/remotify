@@ -1,5 +1,4 @@
-
-exports.up = function(knex, Promise) {
+exports.up = function (knex, Promise) {
   return knex.schema.raw(`
 
 CREATE TABLE public.client
@@ -13,13 +12,9 @@ WITH (
     OIDS = FALSE
 )
 TABLESPACE pg_default;
-
-ALTER TABLE public.client
-    OWNER to postgres;
-    `)
+    `);
 };
 
-exports.down = function(knex, Promise) {
-    return knex.schema
-    .dropTableIfExists('client')
+exports.down = function (knex, Promise) {
+  return knex.schema.dropTableIfExists('client');
 };

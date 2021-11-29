@@ -16,7 +16,7 @@ spec:
         app: auth
     spec:
       containers:
-      - image: 002172820271.dkr.ecr.eu-west-1.amazonaws.com/auth:0.1.3
+      - image: 002172820271.dkr.ecr.eu-west-1.amazonaws.com/auth:0.1.4
         name: auth
         ports:
         - containerPort: 4000

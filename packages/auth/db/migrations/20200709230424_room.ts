@@ -1,5 +1,4 @@
-
-exports.up = function(knex, Promise) {
+exports.up = function (knex, Promise) {
   return knex.schema.raw(`
 
   CREATE TABLE public.room
@@ -19,13 +18,9 @@ exports.up = function(knex, Promise) {
       OIDS = FALSE
   )
   TABLESPACE pg_default;
-
-  ALTER TABLE public.room
-      OWNER to postgres;
-    `)
+    `);
 };
 
-exports.down = function(knex, Promise) {
-  return knex.schema
-  .dropTableIfExists('room')
+exports.down = function (knex, Promise) {
+  return knex.schema.dropTableIfExists('room');
 };
