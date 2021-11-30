@@ -36,7 +36,7 @@ module "db" {
   identifier = var.db_identifier
 
   engine            = "postgres"
-  engine_version    = "11.10"
+  engine_version    = "11.12"
   instance_class    = var.db_instance_class
   allocated_storage = 10
   storage_encrypted = false
