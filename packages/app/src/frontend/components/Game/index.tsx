@@ -59,7 +59,7 @@ const EditMode = styled.div<{ isEditMode: boolean }>`
   right: 0;
   top: 0;
   bottom: 0;
-  pointer-events: all;
+  pointer-events: none;
   border: ${(props) => (props.isEditMode ? '2px solid palevioletred' : '0')};
 `
 

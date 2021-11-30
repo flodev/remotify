@@ -16,11 +16,13 @@ spec:
         app: auth
     spec:
       containers:
-      - image: 002172820271.dkr.ecr.eu-west-1.amazonaws.com/auth:0.1.4
+      - image: 002172820271.dkr.ecr.eu-west-1.amazonaws.com/auth:0.1.5
         name: auth
         ports:
         - containerPort: 4000
+          protocol: TCP
         - containerPort: 4001
+          protocol: TCP
         env:
         - name: APP_PORT
           value: "$APP_PORT"
