@@ -1,4 +1,4 @@
-import * as defaultRoomTile from '../defaultRoomTile.json';
+import defaultRoomTile from '../defaultRoomTile.json';
 
 /**
  *
