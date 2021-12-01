@@ -4,7 +4,7 @@ import '../../i18n'
 import React, { useEffect, useState } from 'react'
 import { Game, Init, PrivateRoute, Setup } from '../components'
 import { GameStateContext, SocketContext, socket } from '../context'
-import { gql, useSubscription, ApolloProvider } from '@apollo/client'
+import { gql, useSubscription, ApolloProvider } from '@remotify/graphql'
 // import {RootStore} from '../stores'
 
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
