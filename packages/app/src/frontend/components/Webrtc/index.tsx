@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
+import { useSubscription } from '@remotify/graphql'
 import React, { useContext, useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import { subscribeToOtherOnlinePlayers } from '@remotify/graphql'

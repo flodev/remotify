@@ -1,8 +1,7 @@
 import React, { FunctionComponent, useContext, useState } from 'react'
 import { MenuOutlined, ShareAltOutlined } from '@ant-design/icons'
-import classNames from './style.scss'
 import { Drawer, Button, Dropdown, Switch } from 'antd'
-import { useSubscription, gql } from '@apollo/client'
+import { gql } from '@remotify/graphql'
 import { GameStateContext } from '../../context'
 import { UserMenu } from '../UserMenu'
 import { EditToolbar } from '../EditToolbar'
@@ -28,6 +27,17 @@ const subscription = gql`
   }
 `
 
+const Container = styled.div`
+  pointer-events: none;
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`
+
 const MenuOutlinedButton = styled(MenuOutlined)`
   font-size: 30px;
   pointer-events: all;
@@ -50,7 +60,7 @@ export const MenuControls = () => {
   const { t } = useTranslation()
 
   return (
-    <div className={classNames.hoveringControls}>
+    <Container>
       <MenuOutlinedButton
         style={{ color: '#fff', height: '50px' }}
         onClick={() => setVisible(true)}
@@ -79,6 +89,6 @@ export const MenuControls = () => {
       />
       <PlaceObjectsToolbar activeEditTool={activeEditTool} />
       <Invite />
-    </div>
+    </Container>
   )
 }

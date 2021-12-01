@@ -5,7 +5,7 @@ import React, {
   ElementRef,
   useRef,
 } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient } from '@remotify/graphql'
 import { ClientContext, GameStateContext } from '../../context'
 import { Video } from '../Video'
 import { Col, Divider, Dropdown, Row, Spin, Switch, Menu, Button } from 'antd'

@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { initiateGame } from '../../../game/phaser'
 import { MenuControls } from '../MenuControls'
-import { useQuery, gql, useApolloClient, useSubscription } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@remotify/graphql'
 import { ClientContext, SocketContext } from '../../context'
 import { GameStateContext } from '../../context'
 import styled from 'styled-components'

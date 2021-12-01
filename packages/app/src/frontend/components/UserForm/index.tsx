@@ -1,5 +1,5 @@
 import { Col, Input, Row } from 'antd'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient } from '@remotify/graphql'
 import React, { useContext, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { EditOutlined } from '@ant-design/icons'

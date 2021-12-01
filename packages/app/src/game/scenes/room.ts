@@ -1,7 +1,7 @@
 import Phaser, { Tilemaps, Input } from 'phaser'
 import { Player, PlayerFactory } from '../player'
 import { getGrid } from '../utils/getGrid'
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { ApolloClient, InMemoryCache } from '@remotify/graphql'
 import pick from 'lodash.pick'
 import { InteractionMenu, InteractionMenuEntry } from '../interactionMenu'
 import {
@@ -291,8 +291,7 @@ export class RoomScene extends Phaser.Scene {
         variables: { room_id: this.room.id },
       })
       .subscribe(
-        ({ data, errors }) => {
-          console.log('received error', errors)
+        ({ data }) => {
           console.log('player updates', data)
           this.playerUpdater?.update(data.player)
           if (!this.player && currentUserId) {

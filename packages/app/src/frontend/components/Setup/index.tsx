@@ -4,7 +4,7 @@ import {
   InMemoryCache,
   useApolloClient,
   useSubscription,
-} from '@apollo/client'
+} from '@remotify/graphql'
 import React, { useEffect, useState } from 'react'
 import { Game, Init, FullPageLoader } from '..'
 import { createClient, JwtCache } from '@remotify/graphql'
