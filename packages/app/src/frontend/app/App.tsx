@@ -1,5 +1,4 @@
 import 'antd/dist/antd.css'
-import './App.css'
 import '../../i18n'
 import React, { useEffect, useState } from 'react'
 import { Game, Init, PrivateRoute, Setup } from '../components'

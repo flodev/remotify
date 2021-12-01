@@ -1,0 +1,6 @@
+{
+  "AUTH_API_URL": "https://api.remotify.place",
+  "GRAPH_QL_URL": "https://graphql.remotify.place/v1/graphql",
+  "GRAPH_QL_WS": "wss://graphql.remotify.place/v1/graphql",
+  "WEBRTC_SOCKET": "wss://api.remotify.place:4001"
+}
