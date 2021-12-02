@@ -107,4 +107,12 @@ resource "aws_cloudfront_distribution" "s3_remotify_app_distribution" {
     response_page_path = "/"
     response_code = 200
   }
+
+  #   {
+  #     error_code = 403
+  #     error_caching_min_ttl = 300
+  #     response_page_path = "/"
+  #     response_code = 200
+  #   }
+  # ]
 }
