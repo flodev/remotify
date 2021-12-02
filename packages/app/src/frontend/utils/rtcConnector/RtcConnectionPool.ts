@@ -289,7 +289,7 @@ export class RtcConnectionPool {
     candidate: RTCIceCandidate,
     peerConnection: RTCPeerConnection
   ) => {
-    console.log('adding ice candidate', event)
+    console.log('adding ice candidate', candidate)
     try {
       await peerConnection.addIceCandidate(candidate)
     } catch (e) {

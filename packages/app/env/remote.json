@@ -1,6 +1,0 @@
-{
-  "AUTH_API_URL": "http://192.168.178.20:4000",
-  "GRAPH_QL_URL": "http://192.168.178.20:8001/v1/graphql",
-  "GRAPH_QL_WS": "ws://192.168.178.20:8001/v1/graphql",
-  "WEBRTC_SOCKET": "ws://192.168.178.20:4001"
-}

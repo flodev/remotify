@@ -17,9 +17,18 @@ export class PlayerFactory
     CreateObjectFromModel<PlayerModel, GameObjectUpdatable<PlayerModel>> {
   constructor(private config: Config) {}
   public create(model: PlayerModel) {
+    if (!model.tile) {
+      throw new Error('tile not there')
+    }
     const { scene, zIndexer, calculateWaypoints, makeCollide } = this.config
     console.log('creating new player')
-    const player = new Player(scene, model, zIndexer, calculateWaypoints)
+    const player = new Player(
+      scene,
+      model,
+      zIndexer,
+      calculateWaypoints,
+      model.tile
+    )
     makeCollide(player)
     scene.add.existing(player)
     return player

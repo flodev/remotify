@@ -59,7 +59,6 @@ const EditMode = styled.div<{ isEditMode: boolean }>`
   right: 0;
   top: 0;
   bottom: 0;
-  pointer-events: none;
   border: ${(props) => (props.isEditMode ? '2px solid palevioletred' : '0')};
 `
 
@@ -81,22 +80,29 @@ export const Game: FunctionComponent<GameProps> = () => {
   const apolloClient = useApolloClient()
   const { isEditMode } = useContext(GameStateContext)
 
-  const { data: playerByPk } = useSubscription<{ player_by_pk: Player }>(
-    subscribeToPlayerUpdates,
-    {
-      client: apolloClient,
-      variables: { id: localStorage.getItem('userId') },
-    }
-  )
-  const player = playerByPk?.player_by_pk
-  console.log('player player_by_pk', player)
+  let player: Player | undefined
+  if (client?.rooms[0]?.players) {
+    player = client.rooms[0].players.find(
+      (player) => player.id === localStorage.getItem('userId')
+    )
+  }
+
+  // const { data: playerByPk } = useSubscription<{ player_by_pk: Player }>(
+  //   subscribeToPlayerUpdates,
+  //   {
+  //     client: apolloClient,
+  //     variables: { id: localStorage.getItem('userId') },
+  //   }
+  // )
+  // const player = playerByPk?.player_by_pk
+  // console.log('player player_by_pk', player)
 
   useEffect(() => {
     if (client && !isGameInitiated) {
       setGame(initiateGame(apolloClient))
       setIsGameInitiated(true)
     }
-  }, [client, isGameInitiated])
+  }, [apolloClient, setGame, client, isGameInitiated])
 
   useEffect(() => {
     if (!gameObjectTypes) {

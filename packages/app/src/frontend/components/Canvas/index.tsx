@@ -15,6 +15,8 @@ export const Canvas = ({}: CanvasProps) => {
 
   var devicePixelRatio = window.devicePixelRatio || 1
 
+  console.log('render canvas')
+
   return (
     <canvas
       id={GAME_CANVAS_ID}

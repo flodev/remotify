@@ -33,7 +33,7 @@ export const TempRegister: FunctionComponent<TempRegisterProps> = () => {
     try {
       // const response = await axios.post('http://192.168.178.72:8081/temp-signup', {
       const response = await axios.post(
-        `${process.env.AUTH_API_URL}/user/temp-signup`,
+        `${process.env.REACT_APP_AUTH_API_URL}/user/temp-signup`,
         {
           password: 'temporary',
           type: inviteId ? 'invitation' : 'temporary',

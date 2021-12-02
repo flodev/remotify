@@ -22,7 +22,7 @@ let intervalId: any
 // }
 
 // export const getRefreshToken = (axios: AxiosInstance) => {
-//   return axios.post(`${process.env.AUTH_API_URL}/auth/refresh_token`, {
+//   return axios.post(`${process.env.REACT_APP_AUTH_API_URL}/auth/refresh_token`, {
 //     refreshToken: localStorage.getItem('refresh_token'),
 //   })
 // }

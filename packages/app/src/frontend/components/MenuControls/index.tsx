@@ -28,8 +28,8 @@ const subscription = gql`
 `
 
 const Container = styled.div`
-  pointer-events: none;
   position: absolute;
+  pointer-events: none;
   display: flex;
   justify-content: space-between;
   top: 0;
@@ -69,7 +69,11 @@ export const MenuControls = () => {
         title="Menu"
         closable={true}
         footer={
-          <a href="https://github.com/flodev/remotify" target="_blank">
+          <a
+            href="https://github.com/flodev/remotify"
+            target="_blank"
+            rel="noreferrer"
+          >
             Github
           </a>
         }
