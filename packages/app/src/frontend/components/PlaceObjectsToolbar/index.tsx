@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { GameStateContext } from '../../context'
+import { ApiContext } from '../../context'
 import { DesktopOutlined } from '@ant-design/icons'
 import { REGISTRY_CHANGE_PLACE_OBJECTS } from '../../../constants'
 import { EditToolType, EditToolTypes } from '../../../game/editTools'
@@ -24,8 +24,7 @@ export const PlaceObjectsToolbar = ({
 }: {
   activeEditTool: EditToolType
 }) => {
-  const { game } = useContext(GameStateContext)
-  const { gameObjectTypes } = useStoreContext()
+  const { game, gameObjectTypes, gameStore } = useStoreContext()
   const [objectToPlace, setObjectToPlace] = useState<PlaceObjectsType>(
     undefined
   )

@@ -10,7 +10,7 @@ import { Game, Init, FullPageLoader } from '..'
 import { createClient, JwtCache } from '@remotify/graphql'
 import { Api } from '@remotify/open-api'
 import { EditToolType } from '../../../game/editTools'
-import { GameStateContext, socket, SocketContext } from '../../context'
+import { ApiContext, socket, SocketContext } from '../../context'
 import { Router } from 'react-router'
 
 interface SetupProps {
@@ -18,8 +18,6 @@ interface SetupProps {
 }
 
 export const Setup = ({ jwtCache }: SetupProps) => {
-  const [game, setGame] = useState<Phaser.Game>()
-  const [isEditMode, setIsEditMode] = useState(false)
   const [api, setApi] = useState<Api | undefined>()
   const [isVideoStreamingReady, setIsVideoStreamingReady] = useState(false)
   // const [client, setClient] = useState<ApolloClient<any> | undefined>(undefined)
@@ -50,23 +48,15 @@ export const Setup = ({ jwtCache }: SetupProps) => {
 
   return (
     <SocketContext.Provider value={socket}>
-      <GameStateContext.Provider
+      <ApiContext.Provider
         value={{
-          game,
-          setGame,
-          isEditMode,
-          setIsEditMode,
-          userMediaStream,
-          setUserMediaStream,
-          isVideoStreamingReady,
-          setIsVideoStreamingReady,
           api,
         }}
       >
         <ApolloProvider client={client}>
           <Game />
         </ApolloProvider>
-      </GameStateContext.Provider>
+      </ApiContext.Provider>
     </SocketContext.Provider>
   )
 }

@@ -3,7 +3,7 @@ import { useApolloClient } from '@remotify/graphql'
 import React, { useContext, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { EditOutlined } from '@ant-design/icons'
-import { GameStateContext } from '../../context'
+import { ApiContext } from '../../context'
 
 interface UserFormProps {}
 
@@ -20,7 +20,7 @@ const EditOutlinedButton = styled(EditOutlined)`
 export const UserForm = ({}: UserFormProps) => {
   let ref = useRef<Input | null>(null)
   const [isFocused, setIsFocused] = useState(false)
-  const { api } = useContext(GameStateContext)
+  const { api } = useContext(ApiContext)
   const apolloClient = useApolloClient()
   const username = localStorage.getItem('username') as string
 

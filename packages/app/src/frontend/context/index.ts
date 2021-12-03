@@ -1,2 +1,2 @@
-export * from './GameStateContext'
+export * from './ApiContext'
 export * from './SocketContext'

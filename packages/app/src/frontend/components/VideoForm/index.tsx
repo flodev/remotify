@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from 'react'
 import { useApolloClient } from '@remotify/graphql'
-import { GameStateContext } from '../../context'
+import { ApiContext } from '../../context'
 import { Video } from '../Video'
 import { Col, Divider, Dropdown, Row, Spin, Switch, Menu, Button } from 'antd'
 import { VideoCameraAddOutlined } from '@ant-design/icons'
@@ -21,12 +21,14 @@ export const VideoForm = observer(({}: VideoFormProps) => {
     playerStore: { player },
   } = useStoreContext()
   const {
-    userMediaStream,
-    setUserMediaStream,
-    setIsVideoStreamingReady,
-  } = useContext(GameStateContext)
+    userMediaStore: {
+      userMediaStream,
+      setUserMediaStream,
+      setIsVideoStreamingReady,
+    },
+  } = useStoreContext()
 
-  const { api } = useContext(GameStateContext)
+  const { api } = useContext(ApiContext)
 
   const [videoInputs, setVideoInputs] = useState<MediaDeviceInfo[]>([])
   const [selectedVideoInput, selectVideoInput] = useState<

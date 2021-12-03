@@ -10,7 +10,7 @@ import {
   RegisterSignal,
 } from '@remotify/models'
 import { EVENT_RECEIVED_USER_MEDIA_STREAM } from '../../app/GameEvents'
-import { GameStateContext, SocketContext } from '../../context'
+import { ApiContext, SocketContext } from '../../context'
 import {
   getUserMediaConstraints,
   RtcConnectionPool,
@@ -33,12 +33,14 @@ export const Webrtc = observer(({}: WebrtcProps) => {
   } = useStoreContext()
   const socket = useContext(SocketContext)
   const {
-    userMediaStream,
     game,
-    setUserMediaStream,
-    isVideoStreamingReady,
-    setIsVideoStreamingReady,
-  } = useContext(GameStateContext)
+    userMediaStore: {
+      userMediaStream,
+      setUserMediaStream,
+      isVideoStreamingReady,
+      setIsVideoStreamingReady,
+    },
+  } = useStoreContext()
   const roomId = client?.rooms[0].id!
 
   const onNewCandidate = useCallback(

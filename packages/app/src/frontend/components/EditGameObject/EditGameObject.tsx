@@ -2,9 +2,10 @@ import React, { useContext, useState } from 'react'
 import { FormInstance, message } from 'antd'
 import { PlaceObjectsTypes } from '../../../game/gameobjects'
 import { EditGameObjectModal } from './EditGameObjectModal'
-import { GameStateContext } from '../../context'
+import { ApiContext } from '../../context'
 import { DeskSettings, GameObject, OccupiedTile } from '../../../models'
 import { EVENT_FREE_OCCUPIED_TILES } from '../../app/GameEvents'
+import { useStoreContext } from '../../../state'
 
 interface EditGameObjectDeskProps {
   gameObject: GameObject<DeskSettings>
@@ -20,7 +21,8 @@ export const EditGameObject = ({
   form,
 }: EditGameObjectDeskProps) => {
   const [isVisible, setIsVisible] = useState(true)
-  const { game, api } = useContext(GameStateContext)
+  const { game } = useStoreContext()
+  const { api } = useContext(ApiContext)
 
   const saveData = async (settings: DeskSettings) => {
     try {

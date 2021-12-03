@@ -7,8 +7,7 @@ import React, {
 import { initiateGame } from '../../../game/phaser'
 import { MenuControls } from '../MenuControls'
 import { useApolloClient } from '@remotify/graphql'
-import { GameStateContext } from '../../context'
-import styled from 'styled-components'
+import { ApiContext } from '../../context'
 import { EVENT_OPEN_GAME_OBJECT_SETTINGS } from '../../app/GameEvents'
 import { PlaceObjectsTypes } from '../../../game/gameobjects'
 import {
@@ -21,11 +20,8 @@ import {
   ToiletSettings,
 } from '@remotify/models'
 import { EditGameObjectDesk, EditGameObjectToilet } from '../EditGameObject'
-import {
-  REGISTRY_IS_SETTINGS_MODAL_OPEN,
-  REGISTRY_PLAYER_MEDIA_STREAM,
-} from '../../../constants'
-import { Canvas, FullPageLoader, Webrtc } from '..'
+import { REGISTRY_IS_SETTINGS_MODAL_OPEN } from '../../../constants'
+import { Canvas, EditMode, FullPageLoader, Webrtc } from '..'
 import { StoreContextProvider } from '../../../state'
 
 // Set the name of the hidden property and the change event for visibility
@@ -50,32 +46,18 @@ if (typeof document.hidden !== 'undefined') {
 
 interface GameProps {}
 
-const EditMode = styled.div<{ isEditMode: boolean }>`
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  border: ${(props) => (props.isEditMode ? '2px solid palevioletred' : '0')};
-`
-
 export const Game: FunctionComponent<GameProps> = () => {
+  const [game, setGame] = useState<Phaser.Game | undefined>(undefined)
   const [client, setClient] = useState<Client | undefined>()
   const [isGameInitiated, setIsGameInitiated] = useState<boolean>(false)
+  const [isCanvasReady, setIsCanvasReady] = useState(false)
   const [gameObjectTypes, setGameObjectTypes] = useState<
     GameObjectType[] | undefined
   >()
   const [gameObjectModel, setGameObjectModel] = useState<GameObject<Settings>>()
   const [isMediaStreamPopulated, setIsMediaStreamPopulated] = useState(false)
-  const {
-    setGame,
-    userMediaStream,
-    game,
-    isVideoStreamingReady,
-    api,
-  } = useContext(GameStateContext)
   const apolloClient = useApolloClient()
-  const { isEditMode } = useContext(GameStateContext)
+  const { api } = useContext(ApiContext)
 
   let player: Player | undefined
   if (client?.rooms[0]?.players) {
@@ -99,11 +81,11 @@ export const Game: FunctionComponent<GameProps> = () => {
   // console.log('player player_by_pk', player)
 
   useEffect(() => {
-    if (client && !isGameInitiated) {
+    if (client && !isGameInitiated && isCanvasReady) {
       setGame(initiateGame(apolloClient))
       setIsGameInitiated(true)
     }
-  }, [apolloClient, setGame, client, isGameInitiated])
+  }, [apolloClient, setGame, client, isGameInitiated, isCanvasReady])
 
   useEffect(() => {
     if (!gameObjectTypes) {
@@ -119,20 +101,6 @@ export const Game: FunctionComponent<GameProps> = () => {
       })()
     }
   }, [gameObjectTypes])
-
-  useEffect(() => {
-    if (
-      game &&
-      player &&
-      userMediaStream &&
-      isVideoStreamingReady &&
-      !isMediaStreamPopulated
-    ) {
-      console.log('emit media stream')
-      game.registry.set(REGISTRY_PLAYER_MEDIA_STREAM, userMediaStream)
-      setIsMediaStreamPopulated(true)
-    }
-  }, [game, player, userMediaStream, isVideoStreamingReady])
 
   useEffect(() => {
     if (game) {
@@ -220,13 +188,13 @@ export const Game: FunctionComponent<GameProps> = () => {
       userId={localStorage.getItem('userId')!}
       client={client!}
       gameObjectTypes={gameObjectTypes!}
+      game={game}
     >
-      <EditMode isEditMode={isEditMode}>
-        <MenuControls />
-        {renderSettingsModal()}
-        <Canvas />
-        {isDataLoaded && <Webrtc />}
-      </EditMode>
+      <EditMode />
+      {!!game && <MenuControls />}
+      {!!game && renderSettingsModal()}
+      <Canvas onReady={() => setIsCanvasReady(true)} />
+      {isDataLoaded && !!game && <Webrtc />}
     </StoreContextProvider>
   )
 }

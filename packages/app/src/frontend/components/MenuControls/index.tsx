@@ -2,7 +2,7 @@ import React, { FunctionComponent, useContext, useState } from 'react'
 import { MenuOutlined, ShareAltOutlined } from '@ant-design/icons'
 import { Drawer, Button, Dropdown, Switch } from 'antd'
 import { gql } from '@remotify/graphql'
-import { GameStateContext } from '../../context'
+import { ApiContext } from '../../context'
 import { UserMenu } from '../UserMenu'
 import { EditToolbar } from '../EditToolbar'
 import styled from 'styled-components'
@@ -12,6 +12,8 @@ import { Invite } from '..'
 import { useTranslation } from 'react-i18next'
 import { EditToolType } from '../../../game/editTools'
 import { REGISTRY_IS_EDIT_MODE } from '../../../constants'
+import { useStoreContext } from '../../../state'
+import { observer } from 'mobx-react-lite'
 
 const subscription = gql`
   subscription MyQuery {
@@ -43,10 +45,12 @@ const MenuOutlinedButton = styled(MenuOutlined)`
   pointer-events: all;
 `
 
-export const MenuControls = () => {
+export const MenuControls = observer(() => {
   const [visible, setVisible] = useState(false)
-  const { isEditMode, setIsEditMode } = useContext(GameStateContext)
-  const { game } = useContext(GameStateContext)
+  const {
+    game,
+    gameStore: { isEditMode, setIsEditMode },
+  } = useStoreContext()
   const [activeEditTool, setActiveEditTool] = useState<
     EditToolType | undefined
   >(undefined)
@@ -95,4 +99,4 @@ export const MenuControls = () => {
       <Invite />
     </Container>
   )
-}
+})

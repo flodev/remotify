@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { LegacyRef, MutableRefObject, useEffect } from 'react'
 import { GAME_CANVAS_ID } from '../../../constants'
 
-interface CanvasProps {}
+interface CanvasProps {
+  onReady?(): void
+}
 
-export const Canvas = ({}: CanvasProps) => {
+export const Canvas = ({ onReady }: CanvasProps) => {
   const desiredWidth = Math.max(
     document.documentElement.clientWidth || 0,
     window.innerWidth || 0
@@ -15,7 +17,10 @@ export const Canvas = ({}: CanvasProps) => {
 
   var devicePixelRatio = window.devicePixelRatio || 1
 
-  console.log('render canvas')
+  useEffect(() => {
+    onReady && onReady()
+    console.log('on ready')
+  }, [onReady])
 
   return (
     <canvas

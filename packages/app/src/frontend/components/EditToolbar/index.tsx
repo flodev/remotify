@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useContext, useState } from 'react'
-import { GameStateContext } from '../../context'
+import { ApiContext } from '../../context'
 import styled from 'styled-components'
 import {
   AppstoreAddOutlined,
@@ -10,6 +10,8 @@ import { REGISTRY_CHANGE_EDIT_TOOL } from '../../../constants'
 import { EditToolType, EditToolTypes } from '../../../game/editTools'
 import { useTranslation } from 'react-i18next'
 import { createToolbarButton, ToolbarRight } from '../Toolbar'
+import { observer } from 'mobx-react-lite'
+import { useStoreContext } from '../../../state'
 
 const Label = styled.p`
   margin-bottom: 2px;
@@ -25,41 +27,43 @@ interface EditToolbarProps {
   setActiveEditTool(editTool: EditToolType): void
 }
 
-export const EditToolbar = ({
-  activeEditTool,
-  setActiveEditTool,
-}: EditToolbarProps) => {
-  const { isEditMode, game } = useContext(GameStateContext)
-  const { t } = useTranslation()
-  const setActiveEditToolType = (editToolType: EditToolType) => {
-    setActiveEditTool(editToolType)
-    game?.registry.set(REGISTRY_CHANGE_EDIT_TOOL, editToolType)
+export const EditToolbar = observer(
+  ({ activeEditTool, setActiveEditTool }: EditToolbarProps) => {
+    const {
+      game,
+      gameStore: { isEditMode },
+    } = useStoreContext()
+    const { t } = useTranslation()
+    const setActiveEditToolType = (editToolType: EditToolType) => {
+      setActiveEditTool(editToolType)
+      game?.registry.set(REGISTRY_CHANGE_EDIT_TOOL, editToolType)
+    }
+    if (!isEditMode) {
+      return <></>
+    }
+    return (
+      <ToolbarRight>
+        <DragOutlinedButton
+          isActive={activeEditTool === EditToolTypes.Drag}
+          onClick={() => setActiveEditToolType(EditToolTypes.Drag)}
+        />
+        <Label>{t('Drag')}</Label>
+        <EditOutlinedButton
+          isActive={activeEditTool === EditToolTypes.DrawWall}
+          onClick={() => setActiveEditToolType(EditToolTypes.DrawWall)}
+        />
+        <Label>{t('Draw Wall')}</Label>
+        <EditOutlinedButton
+          isActive={activeEditTool === EditToolTypes.DrawFloor}
+          onClick={() => setActiveEditToolType(EditToolTypes.DrawFloor)}
+        />
+        <Label>{t('Draw Floor')}</Label>
+        <AppstoreAddOutlinedButton
+          isActive={activeEditTool === EditToolTypes.PlaceObjects}
+          onClick={() => setActiveEditToolType(EditToolTypes.PlaceObjects)}
+        />
+        <Label>{t('Place Objects')}</Label>
+      </ToolbarRight>
+    )
   }
-  if (!isEditMode) {
-    return <></>
-  }
-  return (
-    <ToolbarRight>
-      <DragOutlinedButton
-        isActive={activeEditTool === EditToolTypes.Drag}
-        onClick={() => setActiveEditToolType(EditToolTypes.Drag)}
-      />
-      <Label>{t('Drag')}</Label>
-      <EditOutlinedButton
-        isActive={activeEditTool === EditToolTypes.DrawWall}
-        onClick={() => setActiveEditToolType(EditToolTypes.DrawWall)}
-      />
-      <Label>{t('Draw Wall')}</Label>
-      <EditOutlinedButton
-        isActive={activeEditTool === EditToolTypes.DrawFloor}
-        onClick={() => setActiveEditToolType(EditToolTypes.DrawFloor)}
-      />
-      <Label>{t('Draw Floor')}</Label>
-      <AppstoreAddOutlinedButton
-        isActive={activeEditTool === EditToolTypes.PlaceObjects}
-        onClick={() => setActiveEditToolType(EditToolTypes.PlaceObjects)}
-      />
-      <Label>{t('Place Objects')}</Label>
-    </ToolbarRight>
-  )
-}
+)

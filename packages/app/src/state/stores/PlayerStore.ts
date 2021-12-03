@@ -14,12 +14,12 @@ export class PlayerStore {
     makeObservable(this, {
       players: observable,
       player: observable,
-      listenForPlayerUpdates: action,
+      _listenForPlayerUpdates: action,
     })
-    this.listenForPlayerUpdates()
+    this._listenForPlayerUpdates()
   }
 
-  public listenForPlayerUpdates() {
+  public _listenForPlayerUpdates() {
     this.graphQl
       .subscribe<{ player: Player[] }>({
         query: subscribeToPlayersOfRoom,
