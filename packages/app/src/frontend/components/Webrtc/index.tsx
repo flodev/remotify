@@ -1,5 +1,5 @@
-import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
-import React, { useContext, useState, useEffect, useCallback } from 'react'
+import { useSubscription } from '@remotify/graphql'
+import React, { useContext, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import { subscribeToOtherOnlinePlayers } from '@remotify/graphql'
 import {
@@ -10,12 +10,14 @@ import {
   RegisterSignal,
 } from '@remotify/models'
 import { EVENT_RECEIVED_USER_MEDIA_STREAM } from '../../app/GameEvents'
-import { ClientContext, GameStateContext, SocketContext } from '../../context'
+import { GameStateContext, SocketContext } from '../../context'
 import {
   getUserMediaConstraints,
   RtcConnectionPool,
   RtcFactory,
 } from '../../utils'
+import { useStoreContext } from '../../../state'
+import { observer } from 'mobx-react-lite'
 
 interface WebrtcProps {}
 const rtcConnector = new RtcConnectionPool({ rtcFactory: new RtcFactory() })
@@ -24,8 +26,11 @@ const Hidden = styled.div`
   display: none;
 `
 
-export const Webrtc = ({}: WebrtcProps) => {
-  const { client, player } = useContext(ClientContext)
+export const Webrtc = observer(({}: WebrtcProps) => {
+  const {
+    playerStore: { player },
+    client,
+  } = useStoreContext()
   const socket = useContext(SocketContext)
   const {
     userMediaStream,
@@ -188,4 +193,4 @@ export const Webrtc = ({}: WebrtcProps) => {
   }, [player?.is_audio_video_enabled, userMediaStream])
 
   return <Hidden></Hidden>
-}
+})

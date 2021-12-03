@@ -4,7 +4,7 @@ import {
   InMemoryCache,
   useApolloClient,
   useSubscription,
-} from '@apollo/client'
+} from '@remotify/graphql'
 import React, { useEffect, useState } from 'react'
 import { Game, Init, FullPageLoader } from '..'
 import { createClient, JwtCache } from '@remotify/graphql'
@@ -28,15 +28,15 @@ export const Setup = ({ jwtCache }: SetupProps) => {
   >(undefined)
 
   const client = createClient(
-    process.env.GRAPH_QL_URL!,
-    process.env.GRAPH_QL_WS!,
+    process.env.REACT_APP_GRAPH_QL_URL!,
+    process.env.REACT_APP_GRAPH_QL_WS!,
     jwtCache
   )
   const [canOpenGame, setCanOpenGame] = useState(false)
 
   useEffect(() => {
     if (!api && jwtCache.has()) {
-      setApi(new Api(process.env.AUTH_API_URL!, client, jwtCache))
+      setApi(new Api(process.env.REACT_APP_AUTH_API_URL!, client, jwtCache))
     }
   }, [jwtCache.has(), setApi, api])
 

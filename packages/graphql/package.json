@@ -2,25 +2,34 @@
   "name": "@remotify/graphql",
   "version": "0.1.3",
   "description": "contains the queries necessary for running remotify",
-  "main": "index.ts",
-  "typings": "index.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/flodev/remotify",
     "directory": "packages/graphql"
   },
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build"
+  },
   "author": "Florian Klenk <florian@remotify.place>",
   "license": "Apache-2.0",
   "private": false,
   "dependencies": {
-    "@apollo/client": "^3.4.16",
+    "@apollo/client": "^3.5.5",
     "@remotify/models": "^0.1.3",
-    "apollo-boost": "^0.4.9",
     "apollo-link-ws": "^1.0.20",
     "apollo-utilities": "^1.3.4",
-    "graphql-tag": "^2.12.5",
+    "graphql": "^15.0.0",
     "jwt-decode": "^3.1.2",
     "subscriptions-transport-ws": "^0.11.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  },
+  "peerDependencies": {
+    "react": "17.x"
   },
   "gitHead": "0a7e7829d56c8d0a9e9641c37d524d69be092453"
 }

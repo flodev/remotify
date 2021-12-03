@@ -1,7 +1,7 @@
 import Phaser, { Tilemaps, Input } from 'phaser'
 import { Player, PlayerFactory } from '../player'
 import { getGrid } from '../utils/getGrid'
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { ApolloClient, InMemoryCache } from '@remotify/graphql'
 import pick from 'lodash.pick'
 import { InteractionMenu, InteractionMenuEntry } from '../interactionMenu'
 import {
@@ -179,33 +179,27 @@ export class RoomScene extends Phaser.Scene {
     const currentPlayer = this.players.filter(
       (player: PlayerModel) => player.id === currentUserId
     )[0]
-
     cursors = this.input.keyboard.createCursorKeys()
     const tileMapData = this.room.tile
-
     if (!Array.isArray(tileMapData)) {
       throw new Error('invalid tilemap data')
     }
-
     this.createTilemap(tileMapData)
-
     // this.layer.setCollisionByProperty({ collides: true });
     // this.layer.setCollision(1);
-
     // this.layer.tilemap.putTileAt(, 10, 10);
     // this.map.putTileAt(1, 10, 10)
-
     // const tile = this.map.getTileAt(10, 10)
     // tile.properties = { collides: true }
     // playerMask = getMask(this);
     // playerImage.setMask(playerMask);
-    let position: { x: number; y: number }
-    if (currentPlayer.tile) {
-      position = currentPlayer.tile
-    } else {
-      position = this.determinePositionForPlayer(currentPlayer)
-      this.updatePlayerPosition(currentPlayer.id, position)
-    }
+    // let position: { x: number; y: number }
+    // if (currentPlayer.tile) {
+    //   position = currentPlayer.tile
+    // } else {
+    //   position = this.determinePositionForPlayer(currentPlayer)
+    //   this.updatePlayerPosition(currentPlayer.id, position)
+    // }
     // this.otherPlayerGameObjects = this.otherPlayers.map((player) =>
     //   this.createOtherPlayer(player)
     // )
@@ -285,16 +279,33 @@ export class RoomScene extends Phaser.Scene {
       return console.error('cannot find graph ql client')
     }
     const currentUserId = localStorage.getItem('userId')
+    if (!currentUserId) {
+      throw new Error('current user id not found')
+    }
     this.graphQl
-      .subscribe({
+      .subscribe<{ player: PlayerModel[] }>({
         query: subscribeToPlayersOfRoom,
         variables: { room_id: this.room.id },
       })
       .subscribe(
-        ({ data, errors }) => {
-          console.log('received error', errors)
+        ({ data }) => {
           console.log('player updates', data)
-          this.playerUpdater?.update(data.player)
+          if (!data) {
+            return
+          }
+          const currentPlayerModel = data.player.find(
+            (player) => player.id === currentUserId
+          )
+          this.playerUpdater?.update(
+            data.player.filter((player) => !!player.tile)
+          )
+
+          if (currentPlayerModel && !currentPlayerModel.tile) {
+            const position = this.determinePositionForPlayer(currentPlayerModel)
+            this.updatePlayerPosition(currentPlayerModel.id, position)
+            return
+          }
+
           if (!this.player && currentUserId) {
             this.player = this.playerUpdater?.findGameObject<Player>(
               currentUserId
@@ -310,7 +321,6 @@ export class RoomScene extends Phaser.Scene {
             if (mediaStream) {
               this.player.initiateVideo(mediaStream)
             }
-            this.makeCollide(this.player)
             this.cameraStartFollowPlayer()
           }
         },

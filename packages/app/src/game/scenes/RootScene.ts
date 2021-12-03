@@ -1,5 +1,5 @@
 import { Scene } from 'phaser'
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { ApolloClient, InMemoryCache } from '@remotify/graphql'
 import {
   getClientWithRoomsAndPlayers,
   getGameObjectTypes,

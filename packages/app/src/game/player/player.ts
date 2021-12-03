@@ -30,9 +30,10 @@ export class Player
     scene: Phaser.Scene,
     private playerModel: PlayerModel,
     private zIndexer: ZIndexer,
-    private calculateWaypoints: calculateWaypoints
+    private calculateWaypoints: calculateWaypoints,
+    private tile: Point
   ) {
-    super(scene, playerModel.tile.x, playerModel.tile.y)
+    super(scene, tile.x, tile.y)
     this.setSize(CONTAINER_WIDTH, CONTAINER_HEIGHT)
     this.addToUpdateList()
     this.createSprite()
@@ -80,7 +81,7 @@ export class Player
     }
 
     if (this.shouldMove(gameObjectModel.tile)) {
-      let currentPoint: Point = this.playerModel.tile
+      let currentPoint: Point = this.playerModel.tile!
       if (this.isMoving()) {
         if (this.currentMovePoint) {
           currentPoint = {
@@ -90,7 +91,7 @@ export class Player
         }
         this.stopMovement()
       }
-      this.move(this.calculateWaypoints(gameObjectModel.tile, currentPoint))
+      this.move(this.calculateWaypoints(gameObjectModel.tile!, currentPoint))
     }
 
     this.playerModel = gameObjectModel
@@ -108,8 +109,14 @@ export class Player
     console.log('undefined')
   }
 
-  private shouldMove(tile: Point) {
+  private shouldMove(tile?: Point) {
+    if (!tile) {
+      return false
+    }
     const { tile: currentTile } = this.playerModel
+    if (!currentTile) {
+      return false
+    }
     return tile.x !== currentTile.x || tile.y !== currentTile.y
   }
 

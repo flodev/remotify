@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloError, ApolloQueryResult } from '@apollo/client'
+import { ApolloClient, ApolloError } from '@remotify/graphql'
 import {
   Client,
   GameObject,

@@ -1,4 +1,4 @@
-import { gql } from 'graphql-tag'
+import { gql } from '@apollo/client'
 
 const SPRITE = `
 sprite {
@@ -241,3 +241,4 @@ export const activateInteraction = gql`
 `
 export * from './client'
 export * from './jwtCache'
+export * from '@apollo/client'

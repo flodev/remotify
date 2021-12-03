@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
 import { DeskForm, EditGameObject } from '.'
 import { DeskSettings, GameObject } from '../../../models'
-import { ClientContext } from '../../context'
 import { Form } from 'antd'
+import { useStoreContext } from '../../../state'
 
 interface EditGameObjectDeskProps {
   desk: GameObject<DeskSettings>
@@ -14,7 +14,7 @@ export const EditGameObjectDesk = ({
   desk,
 }: EditGameObjectDeskProps) => {
   const [form] = Form.useForm<DeskSettings>()
-  const { client } = useContext(ClientContext)
+  const { client } = useStoreContext()
 
   // @todo: multi room, restructure stuff
   if (!client?.rooms[0]?.players) {

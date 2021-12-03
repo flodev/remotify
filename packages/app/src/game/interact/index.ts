@@ -1,14 +1,8 @@
-import {
-  DeskAnimations,
-  Settings,
-  ToiletAnimations,
-  ToiletInteractions,
-} from '../../models'
+import { DeskAnimations, Settings, ToiletAnimations } from '../../models'
 import { PhaserGameObject, Player } from '../gameobjects'
 import { InteractionMenu, InteractionMenuEntry } from '../interactionMenu'
 export * from './InteractionObserver'
 
-ToiletInteractions
 export interface InteractionReceiver {
   stopInteraction(): Settings
   isInteractionReceivable(player: Player): boolean

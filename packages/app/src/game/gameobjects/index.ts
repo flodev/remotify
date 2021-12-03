@@ -1,12 +1,3 @@
-export * from '../player'
-export * from './gameObjectIds'
-export * from './gameObjectDataKeys'
-export * from './assetNames'
-export * from './GameObjectUpdatable'
-export * from './GameObjectsUpdater'
-export * from './Factory'
-export * from './Desk'
-export * from './Toilet'
 import {
   GameObject,
   GameObjectType,
@@ -18,6 +9,15 @@ import { ToolbarTool } from '../editTools'
 import { GameObjectFactory } from './Factory'
 import * as gameObjectIds from './gameObjectIds'
 import { GameObjectUpdatable } from './GameObjectUpdatable'
+export * from '../player'
+export * from './gameObjectIds'
+export * from './gameObjectDataKeys'
+export * from './assetNames'
+export * from './GameObjectUpdatable'
+export * from './GameObjectsUpdater'
+export * from './Factory'
+export * from './Desk'
+export * from './Toilet'
 
 export enum PlaceObjectsTypes {
   Desk = 'desk',

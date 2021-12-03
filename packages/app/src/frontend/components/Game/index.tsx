@@ -6,20 +6,17 @@ import React, {
 } from 'react'
 import { initiateGame } from '../../../game/phaser'
 import { MenuControls } from '../MenuControls'
-import { useQuery, gql, useApolloClient, useSubscription } from '@apollo/client'
-import { ClientContext, SocketContext } from '../../context'
+import { useApolloClient } from '@remotify/graphql'
 import { GameStateContext } from '../../context'
 import styled from 'styled-components'
-import {
-  EVENT_OPEN_GAME_OBJECT_SETTINGS,
-  EVENT_RECEIVED_USER_MEDIA_STREAM,
-} from '../../app/GameEvents'
-import { PhaserGameObject, PlaceObjectsTypes } from '../../../game/gameobjects'
+import { EVENT_OPEN_GAME_OBJECT_SETTINGS } from '../../app/GameEvents'
+import { PlaceObjectsTypes } from '../../../game/gameobjects'
 import {
   Client,
   GameObject,
   GameObjectType,
   Player,
+  Room,
   Settings,
   ToiletSettings,
 } from '@remotify/models'
@@ -29,7 +26,7 @@ import {
   REGISTRY_PLAYER_MEDIA_STREAM,
 } from '../../../constants'
 import { Canvas, FullPageLoader, Webrtc } from '..'
-import { subscribeToPlayerUpdates } from '@remotify/graphql'
+import { StoreContextProvider } from '../../../state'
 
 // Set the name of the hidden property and the change event for visibility
 let visibilityChange:
@@ -59,7 +56,6 @@ const EditMode = styled.div<{ isEditMode: boolean }>`
   right: 0;
   top: 0;
   bottom: 0;
-  pointer-events: none;
   border: ${(props) => (props.isEditMode ? '2px solid palevioletred' : '0')};
 `
 
@@ -81,22 +77,33 @@ export const Game: FunctionComponent<GameProps> = () => {
   const apolloClient = useApolloClient()
   const { isEditMode } = useContext(GameStateContext)
 
-  const { data: playerByPk } = useSubscription<{ player_by_pk: Player }>(
-    subscribeToPlayerUpdates,
-    {
-      client: apolloClient,
-      variables: { id: localStorage.getItem('userId') },
-    }
-  )
-  const player = playerByPk?.player_by_pk
-  console.log('player player_by_pk', player)
+  let player: Player | undefined
+  if (client?.rooms[0]?.players) {
+    player = client.rooms[0].players.find(
+      (player) => player.id === localStorage.getItem('userId')
+    )
+  }
+  let room: Room | undefined
+  if (client?.rooms[0]) {
+    room = client.rooms[0]
+  }
+
+  // const { data: playerByPk } = useSubscription<{ player_by_pk: Player }>(
+  //   subscribeToPlayerUpdates,
+  //   {
+  //     client: apolloClient,
+  //     variables: { id: localStorage.getItem('userId') },
+  //   }
+  // )
+  // const player = playerByPk?.player_by_pk
+  // console.log('player player_by_pk', player)
 
   useEffect(() => {
     if (client && !isGameInitiated) {
       setGame(initiateGame(apolloClient))
       setIsGameInitiated(true)
     }
-  }, [client, isGameInitiated])
+  }, [apolloClient, setGame, client, isGameInitiated])
 
   useEffect(() => {
     if (!gameObjectTypes) {
@@ -207,12 +214,12 @@ export const Game: FunctionComponent<GameProps> = () => {
   }
 
   return (
-    <ClientContext.Provider
-      value={{
-        client,
-        gameObjectTypes: gameObjectTypes || [],
-        player,
-      }}
+    <StoreContextProvider
+      graphQl={apolloClient}
+      roomId={room!.id}
+      userId={localStorage.getItem('userId')!}
+      client={client!}
+      gameObjectTypes={gameObjectTypes!}
     >
       <EditMode isEditMode={isEditMode}>
         <MenuControls />
@@ -220,6 +227,6 @@ export const Game: FunctionComponent<GameProps> = () => {
         <Canvas />
         {isDataLoaded && <Webrtc />}
       </EditMode>
-    </ClientContext.Provider>
+    </StoreContextProvider>
   )
 }

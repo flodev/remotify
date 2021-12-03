@@ -1,8 +1,8 @@
-import React, { FunctionComponent, useRef, useContext, useEffect } from 'react'
+import React, { FunctionComponent, useRef, useEffect } from 'react'
 import { Menu, Input, notification } from 'antd'
 // @ts-ignore
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-import { ClientContext } from '../../context'
+import { useStoreContext } from '../../../state'
 
 interface InviteMenuProps {}
 
@@ -16,7 +16,7 @@ const openNotification = () => {
 
 export const InviteMenu: FunctionComponent<InviteMenuProps> = () => {
   const inputRef = useRef<Input | null>(null)
-  const { client } = useContext(ClientContext)
+  const { client } = useStoreContext()
   const inviteUrl = `http://${window.location.host}/invite/${encodeURIComponent(
     (client && client.share_id) || ''
   )}`

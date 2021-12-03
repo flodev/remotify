@@ -18,7 +18,7 @@ export const Init = ({ setCanOpenGame, jwtCache }: InitProps) => {
   const register = async () => {
     try {
       const { roomName, username, id } = await tempSignup(
-        process.env.AUTH_API_URL!,
+        process.env.REACT_APP_AUTH_API_URL!,
         inviteId ? TempSignupType.invitation : TempSignupType.temporary,
         jwtCache,
         inviteId && decodeURIComponent(inviteId)
@@ -43,7 +43,7 @@ export const Init = ({ setCanOpenGame, jwtCache }: InitProps) => {
         setCanOpenGame && setCanOpenGame(true)
       } else {
         ;(async function () {
-          await regainToken(process.env.AUTH_API_URL!, jwtCache)
+          await regainToken(process.env.REACT_APP_AUTH_API_URL!, jwtCache)
           setCanOpenGame && setCanOpenGame(true)
         })()
       }

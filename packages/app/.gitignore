@@ -10,8 +10,11 @@
 .DS_Store
 /.cache
 .env
+# this overrides all but test
 .env.local
+.env.remote
 .env.development.local
 .env.test.local
 .env.production.local
 
+/build

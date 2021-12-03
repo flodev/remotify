@@ -5,17 +5,21 @@ import React, {
   ElementRef,
   useRef,
 } from 'react'
-import { useApolloClient } from '@apollo/client'
-import { ClientContext, GameStateContext } from '../../context'
+import { useApolloClient } from '@remotify/graphql'
+import { GameStateContext } from '../../context'
 import { Video } from '../Video'
 import { Col, Divider, Dropdown, Row, Spin, Switch, Menu, Button } from 'antd'
 import { VideoCameraAddOutlined } from '@ant-design/icons'
 import { getUserMediaConstraints } from '../../utils'
+import { useStoreContext } from '../../../state'
+import { observer } from 'mobx-react-lite'
 
 interface VideoFormProps {}
 
-export const VideoForm = ({}: VideoFormProps) => {
-  const { player } = useContext(ClientContext)
+export const VideoForm = observer(({}: VideoFormProps) => {
+  const {
+    playerStore: { player },
+  } = useStoreContext()
   const {
     userMediaStream,
     setUserMediaStream,
@@ -24,7 +28,6 @@ export const VideoForm = ({}: VideoFormProps) => {
 
   const { api } = useContext(GameStateContext)
 
-  const apolloClient = useApolloClient()
   const [videoInputs, setVideoInputs] = useState<MediaDeviceInfo[]>([])
   const [selectedVideoInput, selectVideoInput] = useState<
     MediaDeviceInfo | undefined
@@ -181,4 +184,4 @@ export const VideoForm = ({}: VideoFormProps) => {
       )}
     </>
   )
-}
+})
