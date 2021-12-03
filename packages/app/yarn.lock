@@ -12810,6 +12810,16 @@
   "resolved" "https://registry.npmjs.org/mkdirp/-/mkdirp-1.0.4.tgz"
   "version" "1.0.4"
 
+"mobx-react-lite@^3.2.2":
+  "integrity" "sha512-FxJJMqmHcnQYOVVs2DdjNHioGlFsXF5/9VHztS9NAfIT3DYrxNZzVi119Zr/OmlWKkWNkAsssSNzPkqautfL4A=="
+  "resolved" "https://registry.npmjs.org/mobx-react-lite/-/mobx-react-lite-3.2.2.tgz"
+  "version" "3.2.2"
+
+"mobx@^6.1.0", "mobx@^6.3.8":
+  "integrity" "sha512-RfG2y766P1o9u9xrQht/HBXEoUPIr4B3Gjri3reLW/TuHm3I/3TfBBS0OaeMbw19RIF0AymqjDNlJgakN4ZK7g=="
+  "resolved" "https://registry.npmjs.org/mobx/-/mobx-6.3.8.tgz"
+  "version" "6.3.8"
+
 "modify-values@^1.0.0":
   "integrity" "sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw=="
   "resolved" "https://registry.npmjs.org/modify-values/-/modify-values-1.0.1.tgz"

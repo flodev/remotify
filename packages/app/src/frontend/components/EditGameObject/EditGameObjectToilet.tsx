@@ -1,7 +1,6 @@
 import React from 'react'
-import { DeskForm, EditGameObject } from '.'
+import { EditGameObject } from '.'
 import { GameObject, ToiletSettings } from '../../../models'
-import { ClientContext } from '../../context'
 import { Form } from 'antd'
 
 interface EditGameObjectToiletProps {

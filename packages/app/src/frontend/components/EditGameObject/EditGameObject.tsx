@@ -1,9 +1,8 @@
 import React, { useContext, useState } from 'react'
-import { Form, FormInstance, message } from 'antd'
+import { FormInstance, message } from 'antd'
 import { PlaceObjectsTypes } from '../../../game/gameobjects'
 import { EditGameObjectModal } from './EditGameObjectModal'
-import { DeskForm } from './DeskForm'
-import { ClientContext, GameStateContext } from '../../context'
+import { GameStateContext } from '../../context'
 import { DeskSettings, GameObject, OccupiedTile } from '../../../models'
 import { EVENT_FREE_OCCUPIED_TILES } from '../../app/GameEvents'
 

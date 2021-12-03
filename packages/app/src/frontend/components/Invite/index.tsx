@@ -1,13 +1,13 @@
 import React, { useContext } from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { Button, notification } from 'antd'
-import { ClientContext } from '../../context'
-import { MenuOutlined, ShareAltOutlined } from '@ant-design/icons'
+import { ShareAltOutlined } from '@ant-design/icons'
+import { useStoreContext } from '../../../state'
 
 interface InviteProps {}
 
 export const Invite = ({}: InviteProps) => {
-  const { client } = useContext(ClientContext)
+  const { client } = useStoreContext()
   const inviteUrl = `http://${window.location.host}/invite/${encodeURIComponent(
     (client && client.share_id) || ''
   )}`

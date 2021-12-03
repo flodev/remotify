@@ -1,35 +1,11 @@
-import React, {
-  ElementRef,
-  FunctionComponent,
-  MutableRefObject,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-import {
-  UserOutlined,
-  EditOutlined,
-  DownOutlined,
-  VideoCameraAddOutlined,
-} from '@ant-design/icons'
+import React, { useState } from 'react'
+import { UserOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
-import {
-  Button,
-  Col,
-  Divider,
-  Drawer,
-  Dropdown,
-  Input,
-  Menu,
-  Row,
-  Spin,
-  Switch,
-} from 'antd'
+import { Drawer, Spin } from 'antd'
 
 import { UserForm, VideoForm } from '..'
-import { ClientContext, GameStateContext } from '../../context'
+import { useStoreContext } from '../../../state'
+import { observer } from 'mobx-react-lite'
 
 const UserOutlinedButtonButton = styled(UserOutlined)`
   right: 0;
@@ -47,9 +23,11 @@ const CenterH1 = styled.h1`
   text-align: center;
 `
 
-export const UserMenu = () => {
+export const UserMenu = observer(() => {
   const [isVisible, setVisible] = useState(false)
-  const { player } = useContext(ClientContext)
+  const {
+    playerStore: { player },
+  } = useStoreContext()
 
   if (!player) {
     return <SpinButton size={'large'} />
@@ -72,4 +50,4 @@ export const UserMenu = () => {
       </Drawer>
     </>
   )
-}
+})
