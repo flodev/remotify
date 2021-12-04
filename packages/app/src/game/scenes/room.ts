@@ -25,8 +25,8 @@ import {
   EVENT_OPEN_GAME_OBJECT_SETTINGS,
   EVENT_FREE_OCCUPIED_TILES,
   EVENT_OPEN_INTERACTION_MENU,
-  EVENT_RECEIVED_USER_MEDIA_STREAM,
   EVENT_GAME_OBJECT_CLICK,
+  EVENT_RECEIVED_USER_MEDIA_STREAM,
 } from '../../frontend/app/GameEvents'
 import { EditToolFactory, EditToolType, PlaceGameObject } from '../editTools'
 import { ToolbarTool } from '../editTools'

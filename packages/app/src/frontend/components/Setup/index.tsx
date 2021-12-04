@@ -19,12 +19,7 @@ interface SetupProps {
 
 export const Setup = ({ jwtCache }: SetupProps) => {
   const [api, setApi] = useState<Api | undefined>()
-  const [isVideoStreamingReady, setIsVideoStreamingReady] = useState(false)
   // const [client, setClient] = useState<ApolloClient<any> | undefined>(undefined)
-  const [userMediaStream, setUserMediaStream] = useState<
-    MediaStream | undefined
-  >(undefined)
-
   const client = createClient(
     process.env.REACT_APP_GRAPH_QL_URL!,
     process.env.REACT_APP_GRAPH_QL_WS!,

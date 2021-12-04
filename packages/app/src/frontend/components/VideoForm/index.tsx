@@ -13,14 +13,14 @@ import { VideoCameraAddOutlined } from '@ant-design/icons'
 import { getUserMediaConstraints } from '../../utils'
 import { useStoreContext } from '../../../state'
 import { observer } from 'mobx-react-lite'
+import { REGISTRY_PLAYER_MEDIA_STREAM } from '../../../constants'
 
 interface VideoFormProps {}
 
 export const VideoForm = observer(({}: VideoFormProps) => {
   const {
+    game,
     playerStore: { player },
-  } = useStoreContext()
-  const {
     userMediaStore: {
       userMediaStream,
       setUserMediaStream,
@@ -141,6 +141,10 @@ export const VideoForm = observer(({}: VideoFormProps) => {
                 await videoRef.current?.playVideo()
                 console.log('video play done')
                 setIsVideoStreamingReady(true)
+                game?.registry.set(
+                  REGISTRY_PLAYER_MEDIA_STREAM,
+                  userMediaStream
+                )
                 console.log('set video streaming ready', videoRef.current)
               } catch (e) {
                 console.error('cannot play the video', e)

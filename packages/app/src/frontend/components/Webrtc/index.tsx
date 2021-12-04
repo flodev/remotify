@@ -9,8 +9,7 @@ import {
   WebrtcSignalEvents,
   RegisterSignal,
 } from '@remotify/models'
-import { EVENT_RECEIVED_USER_MEDIA_STREAM } from '../../app/GameEvents'
-import { ApiContext, SocketContext } from '../../context'
+import { SocketContext } from '../../context'
 import {
   getUserMediaConstraints,
   RtcConnectionPool,
@@ -18,6 +17,8 @@ import {
 } from '../../utils'
 import { useStoreContext } from '../../../state'
 import { observer } from 'mobx-react-lite'
+import { REGISTRY_PLAYER_MEDIA_STREAM } from '../../../constants'
+import { EVENT_RECEIVED_USER_MEDIA_STREAM } from '../../app/GameEvents'
 
 interface WebrtcProps {}
 const rtcConnector = new RtcConnectionPool({ rtcFactory: new RtcFactory() })
@@ -27,17 +28,14 @@ const Hidden = styled.div`
 `
 
 export const Webrtc = observer(({}: WebrtcProps) => {
+  const socket = useContext(SocketContext)
   const {
     playerStore: { player },
     client,
-  } = useStoreContext()
-  const socket = useContext(SocketContext)
-  const {
     game,
     userMediaStore: {
       userMediaStream,
       setUserMediaStream,
-      isVideoStreamingReady,
       setIsVideoStreamingReady,
     },
   } = useStoreContext()
@@ -147,8 +145,7 @@ export const Webrtc = observer(({}: WebrtcProps) => {
     if (
       player &&
       otherOnlinePlayerIdsWithoutConnection.length &&
-      userMediaStream &&
-      isVideoStreamingReady
+      userMediaStream
     ) {
       ;(async function () {
         Promise.all(
@@ -163,7 +160,7 @@ export const Webrtc = observer(({}: WebrtcProps) => {
         )
       })()
     }
-  }, [otherOnlinePlayers, player, userMediaStream, isVideoStreamingReady])
+  }, [otherOnlinePlayers, player, userMediaStream])
 
   // receive the answers
   useEffect(() => {
@@ -178,21 +175,21 @@ export const Webrtc = observer(({}: WebrtcProps) => {
   }, [onNewOffer])
 
   useEffect(() => {
-    if (player?.is_audio_video_enabled === true && !userMediaStream) {
+    if (player?.is_audio_video_enabled === true && !userMediaStream && !!game) {
       ;(async function () {
         try {
           const mediaStream = await navigator.mediaDevices.getUserMedia(
             getUserMediaConstraints()
           )
-          console.log('set user media stream', mediaStream)
           setUserMediaStream(mediaStream)
           setIsVideoStreamingReady(true)
+          game?.registry.set(REGISTRY_PLAYER_MEDIA_STREAM, mediaStream)
         } catch (e) {
           console.error('cannot request user media', e)
         }
       })()
     }
-  }, [player?.is_audio_video_enabled, userMediaStream])
+  }, [player?.is_audio_video_enabled, userMediaStream, game])
 
   return <Hidden></Hidden>
 })

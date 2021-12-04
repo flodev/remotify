@@ -22,6 +22,8 @@ export const Canvas = ({ onReady }: CanvasProps) => {
     console.log('on ready')
   }, [onReady])
 
+  console.log('render canvas')
+
   return (
     <canvas
       id={GAME_CANVAS_ID}
