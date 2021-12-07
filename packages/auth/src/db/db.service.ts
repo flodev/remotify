@@ -32,8 +32,8 @@ export class DbService {
         .table('client')
         .where({ id: clientId });
       const [roomId] = await trx
-        .returning('id')
         .insert({ name: DEFAULT_ROOM_NAME, client_id: clientId })
+        .returning<string[]>('id')
         .into('room');
       const [player] = await trx
         .insert({
@@ -45,7 +45,7 @@ export class DbService {
           room_id: roomId,
         })
         .into('player')
-        .returning<any>('*');
+        .returning<Player[]>('*');
       const { id: tempUserRoleId } = await trx
         .select('id')
         .from('role')
@@ -54,7 +54,7 @@ export class DbService {
       await trx
         .insert({ user_id: player.id, role_id: tempUserRoleId })
         .into('user_role');
-      return player as Player;
+      return { player, roomId };
     });
   }
 
@@ -104,7 +104,7 @@ export class DbService {
           client_share_id: values.inviteId,
         })
         .into('player')
-        .returning<any>('*');
+        .returning<Player[]>('*');
       const { id: tempUserRoleId } = await trx
         .select('id')
         .from('role')
@@ -113,7 +113,7 @@ export class DbService {
       await trx
         .insert({ user_id: player.id, role_id: tempUserRoleId })
         .into('user_role');
-      return player as Player;
+      return { player, roomId };
     });
   }
 

@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { DbService } from '../db/db.service';
 import { DEFAULT_ROOM_NAME, REFRESH_TOKEN_EXPIRES_IN } from '../constants';
 import { TokenService } from './token/token.service';
-import { RefreshToken } from '@remotify/models';
+import { RefreshToken, TempSignupResponse } from '@remotify/models';
 import dayjs from 'dayjs';
 import { TokenRepositoryService } from '../db/token-repository/token-repository.service';
 
@@ -28,39 +28,43 @@ export class AuthService {
     this.dayjs = dayjs;
   }
 
-  public async registerTemp() {
-    const user = await this.dbService.registertemp();
+  public async registerTemp(): Promise<TempSignupResponse> {
+    const { player, roomId } = await this.dbService.registertemp();
     const token = await this.tokenService.generateAccessToken(
-      user.id,
-      user.username,
+      player.id,
+      player.username,
     );
-    const refresh_token = await this.getRefreshToken(user.id);
+    const refresh_token = await this.getRefreshToken(player.id);
     return {
-      id: user.id,
+      id: player.id,
       roomName: DEFAULT_ROOM_NAME,
-      username: user.username,
+      username: player.username,
       roles: this.getRoles(),
       token,
       refresh_token,
+      roomId,
     };
   }
 
-  public async registerViaInvite(inviteId: string) {
-    const user = await this.dbService.registerViaInvite({
+  public async registerViaInvite(
+    inviteId: string,
+  ): Promise<TempSignupResponse> {
+    const { player, roomId } = await this.dbService.registerViaInvite({
       inviteId,
     });
     const token = await this.tokenService.generateAccessToken(
-      user.id,
-      user.username,
+      player.id,
+      player.username,
     );
-    const refresh_token = await this.getRefreshToken(user.id);
+    const refresh_token = await this.getRefreshToken(player.id);
     return {
-      id: user.id,
+      id: player.id,
       roomName: DEFAULT_ROOM_NAME,
-      username: user.username,
+      username: player.username,
       roles: this.getRoles(),
       token,
       refresh_token,
+      roomId,
     };
   }
 
