@@ -166,7 +166,7 @@ export class RtcConnectionPool {
   ) {
     console.log('add user media tracks to connection', userMediaStream)
     userMediaStream
-      ?.getTracks()
+      .getTracks()
       .forEach((track) => peerConnection.addTrack(track, userMediaStream))
   }
 
@@ -230,13 +230,13 @@ export class RtcConnectionPool {
 
     console.log('init connection for player', playerId)
     const peerConnection = rtcFactory.createPeerConnection(rtcConfig)
-    peerConnection.onicecandidate = (event) => {
+    peerConnection.addEventListener('icecandidate', (event) => {
       if (this.iceCandidateListener) {
         this.iceCandidateListener(event, playerId)
       }
-    }
+    })
 
-    peerConnection.oniceconnectionstatechange = () => {
+    peerConnection.addEventListener('iceconnectionstatechange', () => {
       const connection = this.connectionPool.find(
         ({ playerId: existingId }) => playerId === existingId
       )
@@ -252,7 +252,7 @@ export class RtcConnectionPool {
           this.removeConnection(playerId)
         }
       }
-    }
+    })
 
     this.addOnTrackEvent(peerConnection, playerId)
 
@@ -273,7 +273,7 @@ export class RtcConnectionPool {
     playerId: string
   ) => {
     console.log('adding on track event for', playerId)
-    peerConnection.ontrack = (event: RTCTrackEvent) => {
+    peerConnection.addEventListener('track', (event: RTCTrackEvent) => {
       console.log('received track', playerId)
       if (this.remoteStreamListener) {
         this.remoteStreamListener(event, playerId)
@@ -282,7 +282,7 @@ export class RtcConnectionPool {
           'received ontrack event but remote stream listener is not there'
         )
       }
-    }
+    })
   }
 
   private addIceCandidateToPeerConnection = async (

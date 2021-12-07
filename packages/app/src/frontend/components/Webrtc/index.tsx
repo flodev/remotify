@@ -1,5 +1,5 @@
 import { useSubscription } from '@remotify/graphql'
-import React, { useContext, useEffect, useCallback } from 'react'
+import React, { useContext, useEffect, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { subscribeToOtherOnlinePlayers } from '@remotify/graphql'
 import {
@@ -29,17 +29,16 @@ const Hidden = styled.div`
 
 export const Webrtc = observer(({}: WebrtcProps) => {
   const socket = useContext(SocketContext)
+  const [isRegisteredOnSocket, setIsRegisteredOnSocket] = useState(false)
   const {
     playerStore: { player, otherOnlinePlayers },
     gameStore: { game },
-    clientStore: { client },
     userMediaStore: {
       userMediaStream,
       setUserMediaStream,
       setIsVideoStreamingReady,
     },
   } = useStoreContext()
-  const roomId = client?.rooms[0].id!
 
   const onNewCandidate = useCallback(
     async ({
@@ -47,6 +46,7 @@ export const Webrtc = observer(({}: WebrtcProps) => {
       senderId,
     }: WebrtcConnection<WebrtcMessageTypes.candidate>) => {
       try {
+        console.log('received ice candidate from sender', senderId)
         await rtcConnector.addCandidate(message, senderId)
       } catch (e) {
         console.error('cannot add ice candidate for player', senderId)
@@ -56,8 +56,27 @@ export const Webrtc = observer(({}: WebrtcProps) => {
     []
   )
 
+  const onIceCandidate = useCallback(
+    (event: RTCPeerConnectionIceEvent, playerId: string) => {
+      console.log('on ice candidate', event.candidate)
+      console.log('on ice candidate player???', player)
+      if (event.candidate && player) {
+        const rtcConnectionMessage: WebrtcConnection<WebrtcMessageTypes.candidate> = {
+          message: event.candidate,
+          receiverId: playerId,
+          senderId: player.id,
+          type: WebrtcMessageTypes.candidate,
+        }
+        console.log('emitting candidate', rtcConnectionMessage)
+        socket.emit(WebrtcSignalEvents.candidate, rtcConnectionMessage)
+      }
+    },
+    [player]
+  )
+
   const onNewOffer = useCallback(
     (offer: WebrtcConnection<WebrtcMessageTypes.offer>) => {
+      console.log('received offer', offer)
       rtcConnector
         .receiveOffer(offer, userMediaStream)
         .then((answer) => socket.emit(WebrtcSignalEvents.answer, answer))
@@ -72,7 +91,7 @@ export const Webrtc = observer(({}: WebrtcProps) => {
       ...rest
     }: WebrtcConnection<WebrtcMessageTypes.answer>) => {
       try {
-        console.log('newAnswer userMediaStream', userMediaStream)
+        console.log('received answer', senderId)
         await rtcConnector.receiveAnswer(message, senderId, userMediaStream)
       } catch (e) {
         console.error('cannot receive answer', { message, senderId, ...rest })
@@ -82,13 +101,14 @@ export const Webrtc = observer(({}: WebrtcProps) => {
   )
 
   useEffect(() => {
-    if (player) {
+    if (player && !isRegisteredOnSocket) {
       const register: RegisterSignal = {
         id: player.id,
       }
       socket.emit(WebrtcSignalEvents.register, register)
+      setIsRegisteredOnSocket(true)
     }
-  }, [player])
+  }, [player, isRegisteredOnSocket, setIsRegisteredOnSocket])
 
   useEffect(() => {
     if (game) {
@@ -110,18 +130,8 @@ export const Webrtc = observer(({}: WebrtcProps) => {
   }, [onNewCandidate])
 
   useEffect(() => {
-    rtcConnector.onIceCandidate((event, playerId) => {
-      if (event.candidate && player) {
-        const rtcConnectionMessage: WebrtcConnection<WebrtcMessageTypes.candidate> = {
-          message: event.candidate,
-          receiverId: playerId,
-          senderId: player.id,
-          type: WebrtcMessageTypes.candidate,
-        }
-        socket.emit(WebrtcSignalEvents.candidate, rtcConnectionMessage)
-      }
-    })
-  }, [])
+    rtcConnector.onIceCandidate(onIceCandidate)
+  }, [onIceCandidate])
 
   const delay = () => new Promise((resolve) => setTimeout(resolve, 5000))
 
@@ -132,6 +142,9 @@ export const Webrtc = observer(({}: WebrtcProps) => {
     const otherOnlinePlayerIdsWithoutConnection = otherOnlinePlayers
       .map(({ id }) => id)
       .filter((id) => !rtcConnector.hasConnection(id))
+
+    console.log('--- create offer --- user media stream?', userMediaStream)
+    console.log('--- create offer --- otherOnlinePlayers', otherOnlinePlayers)
 
     if (
       player &&
@@ -146,6 +159,7 @@ export const Webrtc = observer(({}: WebrtcProps) => {
               otherPlayerId,
               userMediaStream
             )
+            console.log('emitting offer to player', otherPlayerId)
             socket.emit(WebrtcSignalEvents.offer, offer)
           })
         )

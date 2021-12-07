@@ -23,14 +23,6 @@ export class PlayerStore {
     private roomId: string,
     private api: Api
   ) {
-    reaction(
-      () => this.player?.is_online,
-      async (isOnline) => {
-        if (this.player && isOnline === false) {
-          await this.updatePlayerOnline(true)
-        }
-      }
-    )
     this._listenForPlayerUpdates()
     makeObservable(this, {
       players: observable,
