@@ -4,4 +4,6 @@ export type TempSignupResponse = {
   id: string
   username: string
   roomName: string
+  roles: string[]
+  roomId: string
 }
