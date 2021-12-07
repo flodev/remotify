@@ -7,26 +7,29 @@ import {
 import { RoomScene } from './room'
 import { GameObjectType } from '../../models'
 import { Client } from '@remotify/models'
+import { REGISTRY_STORE_CONTEXT } from '../../constants'
+import { StoreContext } from '../../state'
 
 export class RootScene extends Scene {
   constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
     super(config)
   }
   public async create() {
-    const graphQl = this.registry.get('graphQl') as ApolloClient<InMemoryCache>
-    const { data: clients } = await graphQl.query<{ client: Client[] }>({
-      query: getClientWithRoomsAndPlayers,
-    })
-    const { data: gameObjectTypes } = await graphQl.query<{
-      gameobject_type: GameObjectType[]
-    }>({
-      query: getGameObjectTypes,
-    })
+    const storeContext = this.registry.get(
+      REGISTRY_STORE_CONTEXT
+    ) as StoreContext
+    const {
+      clientStore: { client },
+      gameObjectStore: { gameObjectTypes },
+    } = storeContext
+    if (!client || !gameObjectTypes) {
+      throw new Error('insufficient data')
+    }
     const roomScene = new RoomScene(
       { key: 'room' },
       {
-        clients: clients.client,
-        gameObjectTypes: gameObjectTypes.gameobject_type,
+        clients: [client],
+        gameObjectTypes,
       }
     )
     this.scene.add('room', roomScene, true)

@@ -1,15 +1,10 @@
 import 'antd/dist/antd.css'
 import '../../i18n'
-import React, { useEffect, useState } from 'react'
-import { Game, Init, PrivateRoute, Setup } from '../components'
-import { ApiContext, SocketContext, socket } from '../context'
-import { gql, useSubscription, ApolloProvider } from '@remotify/graphql'
+import React, { useState } from 'react'
+import { Init, Setup } from '../components'
 // import {RootStore} from '../stores'
 
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
-import { TempRegister } from '../components/TempRegister'
-import { Player } from '@remotify/models'
-import { EditToolType } from '../../game/editTools'
 import { JwtCache } from '@remotify/graphql'
 
 const jwtCache = new JwtCache()

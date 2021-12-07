@@ -19,8 +19,8 @@ interface VideoFormProps {}
 
 export const VideoForm = observer(({}: VideoFormProps) => {
   const {
-    game,
     playerStore: { player },
+    gameStore: { game },
     userMediaStore: {
       userMediaStream,
       setUserMediaStream,

@@ -48,6 +48,7 @@ export const TempRegister: FunctionComponent<TempRegisterProps> = () => {
         localStorage.setItem('token', response.data.token)
         localStorage.setItem('username', response.data.username)
         localStorage.setItem('roomName', response.data.roomName)
+        localStorage.setItem('roomId', response.data.roomId)
         history.push('/')
       }
     } catch (e) {

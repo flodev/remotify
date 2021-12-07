@@ -34,9 +34,11 @@ import {
   GAME_TILE_HEIGHT,
   REGISTRY_CHANGE_EDIT_TOOL,
   REGISTRY_CHANGE_PLACE_OBJECTS,
+  REGISTRY_GRAPHQL_CLIENT,
   REGISTRY_IS_EDIT_MODE,
   REGISTRY_IS_SETTINGS_MODAL_OPEN,
   REGISTRY_PLAYER_MEDIA_STREAM,
+  REGISTRY_STORE_CONTEXT,
 } from '../../constants'
 import {
   Client,
@@ -64,6 +66,8 @@ import {
 } from '../utils'
 import { getInteractionForPlayer, InteractionReceiver } from '../interact'
 import i18n from '../../i18n'
+import { StoreContext } from '../../state'
+import { autorun, observe, reaction } from 'mobx'
 
 var easystarjs = require('easystarjs')
 let cursors: Phaser.Types.Input.Keyboard.CursorKeys
@@ -94,12 +98,14 @@ export class RoomScene extends Phaser.Scene {
   private playerFactory?: PlayerFactory
   private playerUpdater?: GameObjectsUpdater<PlayerModel>
   private zIndexer: ZIndexer
+  private storeContext?: StoreContext
 
   constructor(
     config: string | Phaser.Types.Scenes.SettingsConfig,
     private roomConfig: RoomConfig
   ) {
     super(config)
+
     console.log(
       '-------------------- initiate room scene ---------------------'
     )
@@ -173,8 +179,16 @@ export class RoomScene extends Phaser.Scene {
   }
 
   async create() {
+    this.storeContext = this.registry.get(
+      REGISTRY_STORE_CONTEXT
+    ) as StoreContext
+    if (!this.storeContext) {
+      throw new Error('cannot find store context')
+    }
     this.easystar = new easystarjs.js()
-    this.graphQl = this.registry.get('graphQl') as ApolloClient<InMemoryCache>
+    this.graphQl = this.registry.get(
+      REGISTRY_GRAPHQL_CLIENT
+    ) as ApolloClient<InMemoryCache>
     const currentUserId = localStorage.getItem('userId')
     const currentPlayer = this.players.filter(
       (player: PlayerModel) => player.id === currentUserId
@@ -275,105 +289,201 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private subscribeToChanges() {
-    if (!this.graphQl) {
-      return console.error('cannot find graph ql client')
+    const {
+      playerStore: { player, players },
+      gameObjectStore: { gameObjects },
+    } = this.storeContext!
+
+    autorun(this.updatePlayersInPlayerUpdater)
+
+    // reaction(() => player, this.setupPlayer, { fireImmediately: true })
+    autorun(this.setupPlayer)
+
+    autorun(this.updateGameObjects)
+
+    autorun(this.updateRoom)
+
+    // if (!this.graphQl) {
+    //   return console.error('cannot find graph ql client')
+    // }
+    // const currentUserId = localStorage.getItem('userId')
+    // if (!currentUserId) {
+    //   throw new Error('current user id not found')
+    // }
+    // this.graphQl
+    //   .subscribe<{ player: PlayerModel[] }>({
+    //     query: subscribeToPlayersOfRoom,
+    //     variables: { room_id: this.room.id },
+    //   })
+    //   .subscribe(
+    //     ({ data }) => {
+    //       console.log('player updates', data)
+    //       if (!data) {
+    //         return
+    //       }
+    //       const currentPlayerModel = data.player.find(
+    //         (player) => player.id === currentUserId
+    //       )
+    //       this.playerUpdater?.update(
+    //         data.player.filter((player) => !!player.tile)
+    //       )
+
+    //       if (currentPlayerModel && !currentPlayerModel.tile) {
+    //         const position = this.determinePositionForPlayer(currentPlayerModel)
+    //         this.updatePlayerPosition(currentPlayerModel.id, position)
+    //         return
+    //       }
+
+    //       if (!this.player && currentUserId) {
+    //         this.player = this.playerUpdater?.findGameObject<Player>(
+    //           currentUserId
+    //         )
+    //         console.log('found player', this.player)
+
+    //         if (!this.player) {
+    //           return console.error('current player not found :*(')
+    //         }
+    //         const mediaStream: MediaStream = this.game.registry.get(
+    //           REGISTRY_PLAYER_MEDIA_STREAM
+    //         )
+    //         if (mediaStream) {
+    //           this.player.initiateVideo(mediaStream)
+    //         }
+    //         this.cameraStartFollowPlayer()
+    //       }
+    //     },
+    //     (error) => {
+    //       console.log('on error', error)
+    //     }
+    //   )
+
+    // this.graphQl
+    //   .subscribe({
+    //     query: subscribeToGameObjectsOfRoom,
+    //     variables: { room_id: this.room.id },
+    //   })
+    //   .subscribe(({ data }) => {
+    //     console.log('game objects changed', data)
+    //     this.gameObjectUpdater.update(data.gameobject)
+    //     const gameObjectInInteraction = this.gameObjectUpdater
+    //       .getGameObjects()
+    //       .find(
+    //         (gameObject) => gameObject.getModel().player_id === currentUserId
+    //       )
+
+    //     if (gameObjectInInteraction) {
+    //       this.listenForInteractionRelease(
+    //         gameObjectInInteraction as PhaserGameObject & InteractionReceiver
+    //       )
+    //     }
+    //   })
+
+    // this.graphQl
+    //   .subscribe<{ room: Room[] }>({
+    //     query: subscribeToRoom,
+    //     variables: { room_id: this.room.id },
+    //   })
+    //   .subscribe(({ data }) => {
+    //     console.log('room gets updated', data)
+    //     if (this.map && data) {
+    //       let y = 0
+    //       data.room[0].tile.forEach((tileIndexes) => {
+    //         let x = 0
+    //         tileIndexes.forEach((index) => {
+    //           this.map?.putTileAt(index, x, y)
+    //           x++
+    //         })
+    //         y++
+    //       })
+    //       this.recreateEasystarGrid()
+    //       // console.log('destorying existing map')
+    //       // this.map.destroy()
+    //       // console.log('recreating map')
+    //       // this.createTilemap(data?.room[0].tile)
+    //     }
+    //   })
+  }
+
+  private setupPlayer = () => {
+    const {
+      playerStore: { player },
+    } = this.storeContext!
+
+    console.log('setupPlayer', player)
+    if (!player) {
+      console.log('received undefined player', player)
+      return
     }
-    const currentUserId = localStorage.getItem('userId')
-    if (!currentUserId) {
-      throw new Error('current user id not found')
+    // player found but has not tile -> determine position first and skip rest of code
+    if (player && !player.tile) {
+      const position = this.determinePositionForPlayer(player)
+      this.updatePlayerPosition(player.id, position)
+      return
     }
-    this.graphQl
-      .subscribe<{ player: PlayerModel[] }>({
-        query: subscribeToPlayersOfRoom,
-        variables: { room_id: this.room.id },
-      })
-      .subscribe(
-        ({ data }) => {
-          console.log('player updates', data)
-          if (!data) {
-            return
-          }
-          const currentPlayerModel = data.player.find(
-            (player) => player.id === currentUserId
-          )
-          this.playerUpdater?.update(
-            data.player.filter((player) => !!player.tile)
-          )
 
-          if (currentPlayerModel && !currentPlayerModel.tile) {
-            const position = this.determinePositionForPlayer(currentPlayerModel)
-            this.updatePlayerPosition(currentPlayerModel.id, position)
-            return
-          }
+    if (!this.player) {
+      this.player = this.playerUpdater?.findGameObject<Player>(player.id)
+      console.log('found player', this.player)
 
-          if (!this.player && currentUserId) {
-            this.player = this.playerUpdater?.findGameObject<Player>(
-              currentUserId
-            )
-            console.log('found player', this.player)
-
-            if (!this.player) {
-              return console.error('current player not found :*(')
-            }
-            const mediaStream: MediaStream = this.game.registry.get(
-              REGISTRY_PLAYER_MEDIA_STREAM
-            )
-            if (mediaStream) {
-              this.player.initiateVideo(mediaStream)
-            }
-            this.cameraStartFollowPlayer()
-          }
-        },
-        (error) => {
-          console.log('on error', error)
-        }
+      if (!this.player) {
+        return console.error('current player not found :*(')
+      }
+      const mediaStream: MediaStream = this.game.registry.get(
+        REGISTRY_PLAYER_MEDIA_STREAM
       )
+      if (mediaStream) {
+        this.player.initiateVideo(mediaStream)
+      }
+      this.cameraStartFollowPlayer()
+    }
+  }
 
-    this.graphQl
-      .subscribe({
-        query: subscribeToGameObjectsOfRoom,
-        variables: { room_id: this.room.id },
-      })
-      .subscribe(({ data }) => {
-        console.log('game objects changed', data)
-        this.gameObjectUpdater.update(data.gameobject)
-        const gameObjectInInteraction = this.gameObjectUpdater
-          .getGameObjects()
-          .find(
-            (gameObject) => gameObject.getModel().player_id === currentUserId
-          )
+  private updatePlayersInPlayerUpdater = () => {
+    const {
+      playerStore: { players },
+    } = this.storeContext!
+    console.log('received update for players', players)
+    this.playerUpdater?.update(players.filter((player) => !!player.tile))
+  }
 
-        if (gameObjectInInteraction) {
-          this.listenForInteractionRelease(
-            gameObjectInInteraction as PhaserGameObject & InteractionReceiver
-          )
-        }
-      })
+  private updateGameObjects = () => {
+    const {
+      gameObjectStore: { gameObjects },
+    } = this.storeContext!
+    const currentUserId = localStorage.getItem('userId')
+    this.gameObjectUpdater.update(gameObjects)
+    const gameObjectInInteraction = this.gameObjectUpdater
+      .getGameObjects()
+      .find((gameObject) => gameObject.getModel().player_id === currentUserId)
 
-    this.graphQl
-      .subscribe<{ room: Room[] }>({
-        query: subscribeToRoom,
-        variables: { room_id: this.room.id },
+    if (gameObjectInInteraction) {
+      this.listenForInteractionRelease(
+        gameObjectInInteraction as PhaserGameObject & InteractionReceiver
+      )
+    }
+  }
+
+  private updateRoom = () => {
+    const {
+      roomStore: { room },
+    } = this.storeContext!
+
+    if (this.map && room) {
+      let y = 0
+      room.tile.forEach((tileIndexes) => {
+        let x = 0
+        tileIndexes.forEach((index) => {
+          this.map?.putTileAt(index, x, y)
+          x++
+        })
+        y++
       })
-      .subscribe(({ data }) => {
-        console.log('room gets updated', data)
-        if (this.map && data) {
-          let y = 0
-          data.room[0].tile.forEach((tileIndexes) => {
-            let x = 0
-            tileIndexes.forEach((index) => {
-              this.map?.putTileAt(index, x, y)
-              x++
-            })
-            y++
-          })
-          this.recreateEasystarGrid()
-          // console.log('destorying existing map')
-          // this.map.destroy()
-          // console.log('recreating map')
-          // this.createTilemap(data?.room[0].tile)
-        }
-      })
+      this.recreateEasystarGrid()
+      // console.log('destorying existing map')
+      // this.map.destroy()
+      // console.log('recreating map')
+      // this.createTilemap(data?.room[0].tile)
+    }
   }
 
   private makeCollide = (player: Player) => {

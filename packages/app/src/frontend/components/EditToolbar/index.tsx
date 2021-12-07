@@ -30,8 +30,7 @@ interface EditToolbarProps {
 export const EditToolbar = observer(
   ({ activeEditTool, setActiveEditTool }: EditToolbarProps) => {
     const {
-      game,
-      gameStore: { isEditMode },
+      gameStore: { isEditMode, game },
     } = useStoreContext()
     const { t } = useTranslation()
     const setActiveEditToolType = (editToolType: EditToolType) => {

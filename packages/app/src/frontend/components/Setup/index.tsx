@@ -6,7 +6,7 @@ import {
   useSubscription,
 } from '@remotify/graphql'
 import React, { useEffect, useState } from 'react'
-import { Game, Init, FullPageLoader } from '..'
+import { GameLoader, Init, FullPageLoader } from '..'
 import { createClient, JwtCache } from '@remotify/graphql'
 import { Api } from '@remotify/open-api'
 import { EditToolType } from '../../../game/editTools'
@@ -49,7 +49,7 @@ export const Setup = ({ jwtCache }: SetupProps) => {
         }}
       >
         <ApolloProvider client={client}>
-          <Game />
+          <GameLoader />
         </ApolloProvider>
       </ApiContext.Provider>
     </SocketContext.Provider>

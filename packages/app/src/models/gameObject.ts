@@ -1,11 +1,5 @@
-import { DeskAnimations, GameObjectType, Sprite } from '.'
-import {
-  Desk,
-  PlaceObjectsType,
-  PlaceObjectsTypes,
-  Player,
-  Toilet,
-} from '../game/gameobjects'
+import { GameObjectType } from '.'
+import { PlaceObjectsType, PlaceObjectsTypes } from '../game/gameobjects'
 
 export type OccupiedTile = { x: number; y: number }
 

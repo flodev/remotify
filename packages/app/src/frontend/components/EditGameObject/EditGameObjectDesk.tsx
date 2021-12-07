@@ -14,20 +14,18 @@ export const EditGameObjectDesk = ({
   desk,
 }: EditGameObjectDeskProps) => {
   const [form] = Form.useForm<DeskSettings>()
-  const { client } = useStoreContext()
+  const {
+    playerStore: { players },
+  } = useStoreContext()
 
   // @todo: multi room, restructure stuff
-  if (!client?.rooms[0]?.players) {
+  if (!players) {
     console.error('cannot render edit game object desk, players not found')
     return <></>
   }
   return (
     <EditGameObject form={form} onClose={onClose} gameObject={desk}>
-      <DeskForm
-        players={client.rooms[0].players}
-        form={form}
-        deskSettings={desk.settings}
-      />
+      <DeskForm players={players} form={form} deskSettings={desk.settings} />
     </EditGameObject>
   )
 }

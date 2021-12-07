@@ -1,4 +1,3 @@
-import { AnimationTypes } from '.'
 import { Animation } from './animation'
 
 export interface SpriteSettings {

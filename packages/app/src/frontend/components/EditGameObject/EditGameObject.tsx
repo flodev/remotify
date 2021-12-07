@@ -21,7 +21,9 @@ export const EditGameObject = ({
   form,
 }: EditGameObjectDeskProps) => {
   const [isVisible, setIsVisible] = useState(true)
-  const { game } = useStoreContext()
+  const {
+    gameStore: { game },
+  } = useStoreContext()
   const { api } = useContext(ApiContext)
 
   const saveData = async (settings: DeskSettings) => {

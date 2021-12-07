@@ -3,11 +3,14 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { Button, notification } from 'antd'
 import { ShareAltOutlined } from '@ant-design/icons'
 import { useStoreContext } from '../../../state'
+import { observer } from 'mobx-react-lite'
 
 interface InviteProps {}
 
-export const Invite = ({}: InviteProps) => {
-  const { client } = useStoreContext()
+export const Invite = observer(({}: InviteProps) => {
+  const {
+    clientStore: { client },
+  } = useStoreContext()
   const inviteUrl = `http://${window.location.host}/invite/${encodeURIComponent(
     (client && client.share_id) || ''
   )}`
@@ -42,4 +45,4 @@ export const Invite = ({}: InviteProps) => {
       </Button>
     </CopyToClipboard>
   )
-}
+})

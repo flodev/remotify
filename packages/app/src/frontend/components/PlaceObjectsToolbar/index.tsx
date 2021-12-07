@@ -15,55 +15,61 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faToilet } from '@fortawesome/free-solid-svg-icons'
 import { useStoreContext } from '../../../state'
+import { Game } from 'phaser'
+import { observer } from 'mobx-react-lite'
 
 const DesktopOutlinedButton = createToolbarButton(DesktopOutlined)
 const ToiletButton = createToolbarButton(FontAwesomeIcon)
 
-export const PlaceObjectsToolbar = ({
-  activeEditTool,
-}: {
-  activeEditTool: EditToolType
-}) => {
-  const { game, gameObjectTypes, gameStore } = useStoreContext()
-  const [objectToPlace, setObjectToPlace] = useState<PlaceObjectsType>(
-    undefined
-  )
-
-  const setObjectToPlaceAndFireEvent = (placeObjectType: PlaceObjectsType) => {
-    const gameObjectType = gameObjectTypes.find(
-      (type) => placeObjectType === type.name
+export const PlaceObjectsToolbar = observer(
+  ({ activeEditTool, game }: { activeEditTool: EditToolType; game?: Game }) => {
+    const {
+      gameObjectStore: { gameObjectTypes },
+    } = useStoreContext()
+    const [objectToPlace, setObjectToPlace] = useState<PlaceObjectsType>(
+      undefined
     )
-    setObjectToPlace(placeObjectType)
-    game?.registry.set(REGISTRY_CHANGE_PLACE_OBJECTS, gameObjectType)
-  }
-  const { t } = useTranslation()
 
-  useEffect(() => {
-    if (activeEditTool !== EditToolTypes.PlaceObjects) {
-      setObjectToPlaceAndFireEvent(undefined)
+    const setObjectToPlaceAndFireEvent = (
+      placeObjectType: PlaceObjectsType
+    ) => {
+      const gameObjectType = gameObjectTypes.find(
+        (type) => placeObjectType === type.name
+      )
+      setObjectToPlace(placeObjectType)
+      game?.registry.set(REGISTRY_CHANGE_PLACE_OBJECTS, gameObjectType)
     }
-  }, [activeEditTool])
+    const { t } = useTranslation()
 
-  if (activeEditTool !== EditToolTypes.PlaceObjects) {
-    return <></>
+    useEffect(() => {
+      if (activeEditTool !== EditToolTypes.PlaceObjects) {
+        setObjectToPlaceAndFireEvent(undefined)
+      }
+    }, [activeEditTool])
+
+    if (activeEditTool !== EditToolTypes.PlaceObjects) {
+      return <></>
+    }
+    return (
+      <ToolbarBottom>
+        <ToolbarItem>
+          <DesktopOutlinedButton
+            isActive={objectToPlace === PlaceObjectsTypes.Desk}
+            onClick={() => setObjectToPlaceAndFireEvent(PlaceObjectsTypes.Desk)}
+          />
+          <Label>{t('Desk')}</Label>
+        </ToolbarItem>
+        <ToolbarItem>
+          <ToiletButton
+            icon={faToilet}
+            isActive={objectToPlace === PlaceObjectsTypes.Toilet}
+            onClick={() =>
+              setObjectToPlaceAndFireEvent(PlaceObjectsTypes.Toilet)
+            }
+          />
+          <Label>{t('Toilet')}</Label>
+        </ToolbarItem>
+      </ToolbarBottom>
+    )
   }
-  return (
-    <ToolbarBottom>
-      <ToolbarItem>
-        <DesktopOutlinedButton
-          isActive={objectToPlace === PlaceObjectsTypes.Desk}
-          onClick={() => setObjectToPlaceAndFireEvent(PlaceObjectsTypes.Desk)}
-        />
-        <Label>{t('Desk')}</Label>
-      </ToolbarItem>
-      <ToolbarItem>
-        <ToiletButton
-          icon={faToilet}
-          isActive={objectToPlace === PlaceObjectsTypes.Toilet}
-          onClick={() => setObjectToPlaceAndFireEvent(PlaceObjectsTypes.Toilet)}
-        />
-        <Label>{t('Toilet')}</Label>
-      </ToolbarItem>
-    </ToolbarBottom>
-  )
-}
+)

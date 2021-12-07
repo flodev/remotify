@@ -30,9 +30,9 @@ const Hidden = styled.div`
 export const Webrtc = observer(({}: WebrtcProps) => {
   const socket = useContext(SocketContext)
   const {
-    playerStore: { player },
-    client,
-    game,
+    playerStore: { player, otherOnlinePlayers },
+    gameStore: { game },
+    clientStore: { client },
     userMediaStore: {
       userMediaStream,
       setUserMediaStream,
@@ -81,21 +81,14 @@ export const Webrtc = observer(({}: WebrtcProps) => {
     [userMediaStream]
   )
 
-  const { data: otherOnlinePlayers } = useSubscription<{ player: Player[] }>(
-    subscribeToOtherOnlinePlayers,
-    {
-      variables: { roomId, playerId: player!.id },
-    }
-  )
-
-  console.log('otherOnlinePlayers', otherOnlinePlayers)
-
   useEffect(() => {
-    const register: RegisterSignal = {
-      id: player!.id,
+    if (player) {
+      const register: RegisterSignal = {
+        id: player.id,
+      }
+      socket.emit(WebrtcSignalEvents.register, register)
     }
-    socket.emit(WebrtcSignalEvents.register, register)
-  }, [])
+  }, [player])
 
   useEffect(() => {
     if (game) {
@@ -118,11 +111,11 @@ export const Webrtc = observer(({}: WebrtcProps) => {
 
   useEffect(() => {
     rtcConnector.onIceCandidate((event, playerId) => {
-      if (event.candidate) {
+      if (event.candidate && player) {
         const rtcConnectionMessage: WebrtcConnection<WebrtcMessageTypes.candidate> = {
           message: event.candidate,
           receiverId: playerId,
-          senderId: player!.id,
+          senderId: player.id,
           type: WebrtcMessageTypes.candidate,
         }
         socket.emit(WebrtcSignalEvents.candidate, rtcConnectionMessage)
@@ -136,9 +129,7 @@ export const Webrtc = observer(({}: WebrtcProps) => {
   // but only for those who havent had send an offer to current player
   // already
   useEffect(() => {
-    const otherOnlinePlayerIdsWithoutConnection = (
-      otherOnlinePlayers?.player || []
-    )
+    const otherOnlinePlayerIdsWithoutConnection = otherOnlinePlayers
       .map(({ id }) => id)
       .filter((id) => !rtcConnector.hasConnection(id))
 

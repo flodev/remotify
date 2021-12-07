@@ -3,6 +3,7 @@ import { Menu, Input, notification } from 'antd'
 // @ts-ignore
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useStoreContext } from '../../../state'
+import { observer } from 'mobx-react-lite'
 
 interface InviteMenuProps {}
 
@@ -14,9 +15,11 @@ const openNotification = () => {
   })
 }
 
-export const InviteMenu: FunctionComponent<InviteMenuProps> = () => {
+export const InviteMenu: FunctionComponent<InviteMenuProps> = observer(() => {
   const inputRef = useRef<Input | null>(null)
-  const { client } = useStoreContext()
+  const {
+    clientStore: { client },
+  } = useStoreContext()
   const inviteUrl = `http://${window.location.host}/invite/${encodeURIComponent(
     (client && client.share_id) || ''
   )}`
@@ -45,4 +48,4 @@ export const InviteMenu: FunctionComponent<InviteMenuProps> = () => {
       </Menu.Item>
     </Menu>
   )
-}
+})

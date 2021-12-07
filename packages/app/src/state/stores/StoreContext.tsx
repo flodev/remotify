@@ -1,19 +1,18 @@
 import { ApolloClient } from '@remotify/graphql'
-import { Client, GameObjectType } from '@remotify/models'
-import { Game } from 'phaser'
 import React, { createContext, useContext, useMemo } from 'react'
 
 import { PlayerStore } from './PlayerStore'
+import { GameObjectStore } from './GameObjectStore'
 import { GameStore } from './GameStore'
 import { UserMediaStore } from './UserMediaStore'
+import { ClientStore, RoomStore } from '.'
+import { Api } from '@remotify/open-api'
 
 interface StoreContextProps {
   roomId: string
   userId: string
   graphQl: ApolloClient<any>
-  client: Client
-  gameObjectTypes: GameObjectType[]
-  game?: Game
+  api: Api
 }
 
 interface AppContextProps extends StoreContextProps {
@@ -24,29 +23,33 @@ export class StoreContext {
   readonly playerStore: PlayerStore
   readonly gameStore: GameStore
   readonly userMediaStore: UserMediaStore
-  readonly gameObjectTypes: GameObjectType[]
-  readonly client: Client
-  readonly game?: Game
+  readonly roomStore: RoomStore
+  readonly gameObjectStore: GameObjectStore
+  readonly clientStore: ClientStore
 
   constructor(props: StoreContextProps) {
-    this.client = props.client
-    this.game = props.game
     this.playerStore = new PlayerStore(
       props.graphQl,
       props.userId,
       props.roomId,
-      this.client.rooms[0].players.find((player) => player.id === props.userId)!
+      props.api
     )
     this.gameStore = new GameStore()
     this.userMediaStore = new UserMediaStore()
-    this.gameObjectTypes = props.gameObjectTypes
+    this.gameObjectStore = new GameObjectStore(
+      props.graphQl,
+      props.api,
+      props.roomId
+    )
+    this.roomStore = new RoomStore(props.graphQl, props.roomId)
+    this.clientStore = new ClientStore(props.api)
   }
 }
 
 const Context = createContext<StoreContext | undefined>(undefined)
 
 export const StoreContextProvider = (props: AppContextProps) => {
-  const value = useMemo(() => new StoreContext(props), [props.game])
+  const value = useMemo(() => new StoreContext(props), [])
   return <Context.Provider value={value}>{props.children}</Context.Provider>
 }
 
@@ -55,5 +58,5 @@ export const useStoreContext = (): StoreContext => {
   if (!context) {
     throw Error('Application context is not ready')
   }
-  return { ...context }
+  return context
 }

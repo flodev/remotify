@@ -17,7 +17,7 @@ export const Init = ({ setCanOpenGame, jwtCache }: InitProps) => {
   const { t } = useTranslation()
   const register = async () => {
     try {
-      const { roomName, username, id } = await tempSignup(
+      const { roomName, username, id, roomId } = await tempSignup(
         process.env.REACT_APP_AUTH_API_URL!,
         inviteId ? TempSignupType.invitation : TempSignupType.temporary,
         jwtCache,
@@ -26,6 +26,7 @@ export const Init = ({ setCanOpenGame, jwtCache }: InitProps) => {
       localStorage.setItem('userId', id)
       localStorage.setItem('username', username)
       localStorage.setItem('roomName', roomName)
+      localStorage.setItem('roomId', roomId)
       setCanOpenGame && setCanOpenGame(true)
       if (inviteId) {
         history.push('/')

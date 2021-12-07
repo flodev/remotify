@@ -48,8 +48,7 @@ const MenuOutlinedButton = styled(MenuOutlined)`
 export const MenuControls = observer(() => {
   const [visible, setVisible] = useState(false)
   const {
-    game,
-    gameStore: { isEditMode, setIsEditMode },
+    gameStore: { isEditMode, setIsEditMode, game },
   } = useStoreContext()
   const [activeEditTool, setActiveEditTool] = useState<
     EditToolType | undefined
@@ -95,7 +94,7 @@ export const MenuControls = observer(() => {
         activeEditTool={activeEditTool}
         setActiveEditTool={setActiveEditTool}
       />
-      <PlaceObjectsToolbar activeEditTool={activeEditTool} />
+      <PlaceObjectsToolbar activeEditTool={activeEditTool} game={game} />
       <Invite />
     </Container>
   )

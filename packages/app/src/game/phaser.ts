@@ -5,7 +5,9 @@ import 'webrtc-adapter'
 import { RootScene } from './scenes/RootScene'
 import * as GameEvents from '../frontend/app/GameEvents'
 import * as RegistryKeys from '../constants/registry'
+import { REGISTRY_GRAPHQL_CLIENT, REGISTRY_STORE_CONTEXT } from '../constants'
 import { GAME_CANVAS_ID } from '../constants'
+import { GameObjectStore, StoreContext } from '../state'
 
 // class VideoStreamPlugin extends Phaser.Plugins.BasePlugin {
 
@@ -30,7 +32,10 @@ const initializeRegistryKeys = (registry: Phaser.Data.DataManager) => {
   )
 }
 
-export const initiateGame = (graphQl: ApolloClient) => {
+export const initiateGame = (
+  graphQl: ApolloClient,
+  storeContext: StoreContext
+) => {
   const canvas = document.getElementById(GAME_CANVAS_ID)
   const desiredWidth = Math.max(
     document.documentElement.clientWidth || 0,
@@ -67,7 +72,8 @@ export const initiateGame = (graphQl: ApolloClient) => {
   }
 
   const game = new Phaser.Game(config)
-  game.registry.set('graphQl', graphQl)
   initializeRegistryKeys(game.registry)
+  game.registry.set(REGISTRY_GRAPHQL_CLIENT, graphQl)
+  game.registry.set(REGISTRY_STORE_CONTEXT, storeContext)
   return game
 }
