@@ -120,22 +120,6 @@ export class Player
     return tile.x !== currentTile.x || tile.y !== currentTile.y
   }
 
-  /**
-   * @todo: user media event should be in room
-   */
-  // subscribeToUserMediaEvent() {
-  //   this.scene.events.on(
-  //     EVENT_SET_USER_MEDIA,
-  //     (_game: Phaser.Game, userMedia?: MediaStream) => {
-  //       if (userMedia === undefined) {
-  //         this.phaserVideo?.destroy()
-  //       } else {
-  //         this.initiateVideo(userMedia)
-  //       }
-  //     }
-  //   )
-  // }
-
   stopInteraction(): void {
     this.isAnimationInProgress = false
     this.sprite?.play(PlayerAnimations.idle)
@@ -178,10 +162,13 @@ export class Player
   }
 
   public async initiateVideo(userMediaStream: MediaStream) {
-    this.phaserVideo = await this.createPhaserVideo(userMediaStream)
-    this.phaserVideo.setMask(this.phaserVideo.createBitmapMask(this.headMask))
-    console.log('adding phaser video', this.phaserVideo)
+    const { phaserVideo, video } = await this.createPhaserVideo(userMediaStream)
+    this.phaserVideo = phaserVideo
+    if (this.headMask) {
+      this.phaserVideo.setMask(this.phaserVideo.createBitmapMask(this.headMask))
+    }
     this.add(this.phaserVideo)
+    await video.play()
   }
 
   public move(movePoints: Array<number[]>) {
@@ -208,27 +195,24 @@ export class Player
 
   private async createPhaserVideo(mediaStream: MediaStream) {
     console.log('createPhaserVideo')
-    const constraints = {
-      video: true,
-      audio: true,
-    }
     var video = document.createElement('video')
     video.srcObject = mediaStream
-    video.width = 320
-    video.height = 240
     video.playsInline = true
-    video.autoplay = true
     video.muted = true
 
     const phaserVideo = this.scene.add.video(0, PLAYER_VIDEO_OFFSET)
 
     phaserVideo.video = video
-    phaserVideo.width = 320
-    phaserVideo.height = 240
-    phaserVideo.setScale(0.1, 0.1)
+    phaserVideo.play(true)
+    phaserVideo.addListener(
+      Phaser.GameObjects.Events.VIDEO_CREATED,
+      (video: Phaser.GameObjects.Video) => {
+        video.setDisplaySize(160, 90)
+        // phaserVideo.setScale(0.1, 0.1)
+      }
+    )
 
-    video.play()
-    return phaserVideo
+    return { phaserVideo, video }
   }
 
   public preUpdate(...args: any[]) {

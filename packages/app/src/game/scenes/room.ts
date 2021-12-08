@@ -246,7 +246,7 @@ export class RoomScene extends Phaser.Scene {
     )
     this.game.registry.events.on(
       `changedata-${REGISTRY_PLAYER_MEDIA_STREAM}`,
-      (_game: Phaser.Game, stream: MediaStream) => {
+      async (_game: Phaser.Game, stream: MediaStream) => {
         if (!stream || !this.player) {
           console.log(
             'received media stream but either player or stream are not ready'
@@ -255,7 +255,7 @@ export class RoomScene extends Phaser.Scene {
         }
         console.log('stream', stream)
         console.log('received media stream for current player')
-        this.player.initiateVideo(stream)
+        await this.player.initiateVideo(stream)
       }
     )
 
@@ -404,7 +404,7 @@ export class RoomScene extends Phaser.Scene {
     //   })
   }
 
-  private setupPlayer = () => {
+  private setupPlayer = async () => {
     const {
       playerStore: { player },
     } = this.storeContext!
@@ -431,10 +431,10 @@ export class RoomScene extends Phaser.Scene {
       const mediaStream: MediaStream = this.game.registry.get(
         REGISTRY_PLAYER_MEDIA_STREAM
       )
-      if (mediaStream) {
-        this.player.initiateVideo(mediaStream)
-      }
       this.cameraStartFollowPlayer()
+      if (mediaStream) {
+        await this.player.initiateVideo(mediaStream)
+      }
     }
   }
 
