@@ -29,11 +29,17 @@ export class GameObjectsUpdater<M extends ModelWithId> {
       }
     })
 
+    const existingGameObjectModels = this.gameObjects
+      .map((gameObject) => gameObject.getModel())
+      .filter((gameObject) => !!gameObject.id)
+
+    const newGameObjectModels = gameObjectModels.filter(
+      (gameObject) => !!gameObject.id
+    )
+
     const modelsToDelete = exclude(
-      this.gameObjects
-        .map((gameObject) => gameObject.getModel())
-        .filter((gameObject) => !!gameObject.id),
-      gameObjectModels.filter((gameObject) => !!gameObject.id)
+      existingGameObjectModels,
+      newGameObjectModels
     )
 
     this.deleteGameObjects(modelsToDelete)

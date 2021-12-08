@@ -139,12 +139,19 @@ export const Webrtc = observer(({}: WebrtcProps) => {
   // but only for those who havent had send an offer to current player
   // already
   useEffect(() => {
-    const otherOnlinePlayerIdsWithoutConnection = otherOnlinePlayers
-      .map(({ id }) => id)
-      .filter((id) => !rtcConnector.hasConnection(id))
+    const otherOnlinePlayerIds = otherOnlinePlayers.map(({ id }) => id)
+    const otherOnlinePlayerIdsWithoutConnection = otherOnlinePlayerIds.filter(
+      (id) => !rtcConnector.hasConnection(id)
+    )
 
     console.log('--- create offer --- user media stream?', userMediaStream)
     console.log('--- create offer --- otherOnlinePlayers', otherOnlinePlayers)
+
+    const redundantIds = rtcConnector.getRedundantConnectionIds(
+      otherOnlinePlayerIds
+    )
+
+    redundantIds.forEach((id) => rtcConnector.removeConnection(id))
 
     if (
       player &&

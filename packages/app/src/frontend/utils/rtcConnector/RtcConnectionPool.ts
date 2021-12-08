@@ -174,16 +174,20 @@ export class RtcConnectionPool {
     return this.getConnection(playerIdToSearch) !== undefined
   }
 
-  private getConnection(playerIdToSearch: string) {
-    return this.connectionPool.find(
-      ({ playerId }) => playerId === playerIdToSearch
-    )
+  public getRedundantConnectionIds(playerIds: string[]) {
+    const existingIds = this.connectionPool.map(({ playerId }) => playerId)
+    return existingIds.filter((id) => !playerIds.includes(id))
   }
 
-  private removeConnection(playerIdToRemove: string) {
+  public removeConnection(playerIdToRemove: string) {
     const index = this.connectionPool.findIndex(
       ({ playerId }) => playerId === playerIdToRemove
     )
+    if (index === -1) {
+      console.log('trying to remove not existent connection', playerIdToRemove)
+      return
+    }
+    console.log('removing and closing connection')
     const { peerConnection } = this.connectionPool[index]
     peerConnection.close()
     this.connectionPool.splice(index, 1)
@@ -191,9 +195,10 @@ export class RtcConnectionPool {
       this.onConnectionRemoveListener(playerIdToRemove)
   }
 
-  private getMissingPlayerIds(playerIds: string[]) {
-    const existingIds = this.connectionPool.map(({ playerId }) => playerId)
-    return playerIds.filter((id) => !existingIds.includes(id))
+  private getConnection(playerIdToSearch: string) {
+    return this.connectionPool.find(
+      ({ playerId }) => playerId === playerIdToSearch
+    )
   }
 
   private async createRemoteDescription(
