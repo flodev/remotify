@@ -140,12 +140,9 @@ export const Webrtc = observer(({}: WebrtcProps) => {
   // already
   useEffect(() => {
     const otherOnlinePlayerIds = otherOnlinePlayers.map(({ id }) => id)
-    const otherOnlinePlayerIdsWithoutConnection = otherOnlinePlayerIds.filter(
-      (id) => !rtcConnector.hasConnection(id)
-    )
 
-    console.log('--- create offer --- user media stream?', userMediaStream)
-    console.log('--- create offer --- otherOnlinePlayers', otherOnlinePlayers)
+    console.log('--- create offer? --- user media stream?', userMediaStream)
+    console.log('--- create offer? --- otherOnlinePlayers', otherOnlinePlayers)
 
     const redundantIds = rtcConnector.getRedundantConnectionIds(
       otherOnlinePlayerIds
@@ -153,14 +150,11 @@ export const Webrtc = observer(({}: WebrtcProps) => {
 
     redundantIds.forEach((id) => rtcConnector.removeConnection(id))
 
-    if (
-      player &&
-      otherOnlinePlayerIdsWithoutConnection.length &&
-      userMediaStream
-    ) {
+    if (player && otherOnlinePlayerIds.length > 0 && userMediaStream) {
+      console.log('--- create offer! ---')
       ;(async function () {
-        Promise.all(
-          otherOnlinePlayerIdsWithoutConnection.map(async (otherPlayerId) => {
+        await Promise.all(
+          otherOnlinePlayerIds.map(async (otherPlayerId) => {
             const offer = await rtcConnector.createOffer(
               player?.id,
               otherPlayerId,
@@ -172,7 +166,7 @@ export const Webrtc = observer(({}: WebrtcProps) => {
         )
       })()
     }
-  }, [otherOnlinePlayers, player, userMediaStream])
+  }, [otherOnlinePlayers.length, !!player, !!userMediaStream])
 
   // receive the answers
   useEffect(() => {

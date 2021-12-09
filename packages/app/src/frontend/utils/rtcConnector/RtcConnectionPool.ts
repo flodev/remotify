@@ -72,7 +72,6 @@ export class RtcConnectionPool {
 
   /**
    * the answer from send offer will be received
-   * received from subscription which listens to player_id_sender === currentPlayerId
    */
   public async receiveAnswer(
     message: RTCSessionDescriptionInit,
@@ -92,16 +91,16 @@ export class RtcConnectionPool {
 
   /**
    * new players send new offers
-   * uses result from subscription that listens to player_id_receiver === currentPlayerId
    */
   public async receiveOffer(
     rtcConnection: WebrtcConnection<WebrtcMessageTypes.offer>,
     userMediaStream?: MediaStream
   ): Promise<WebrtcConnection<WebrtcMessageTypes.answer>> {
     const { message, senderId, receiverId } = rtcConnection
-    // case when the user receives an offer from another use whom he already send an offer.
-    // clean up the existing connection and create an answer
-    const { peerConnection } = await this.getOrCreateConnection(
+    if (this.hasConnection(senderId)) {
+      this.removeConnection(senderId)
+    }
+    const { peerConnection } = await this.initConnection(
       senderId,
       userMediaStream
     )
@@ -259,35 +258,36 @@ export class RtcConnectionPool {
       }
     })
 
-    this.addOnTrackEvent(peerConnection, playerId)
+    const poolItem: Connection = {
+      peerConnection,
+      playerId,
+    }
+
+    this.addOnTrackEvent(poolItem, playerId)
 
     if (userMediaStream) {
       this.addUserMediaTracks(peerConnection, userMediaStream)
     }
 
-    const poolItem = {
-      peerConnection,
-      playerId,
-    }
     this.connectionPool.push(poolItem)
     return poolItem
   }
 
-  private addOnTrackEvent = (
-    peerConnection: RTCPeerConnection,
-    playerId: string
-  ) => {
+  private addOnTrackEvent = (poolItem: Connection, playerId: string) => {
     console.log('adding on track event for', playerId)
-    peerConnection.addEventListener('track', (event: RTCTrackEvent) => {
-      console.log('received track', playerId)
-      if (this.remoteStreamListener) {
-        this.remoteStreamListener(event, playerId)
-      } else {
-        console.error(
-          'received ontrack event but remote stream listener is not there'
-        )
+    poolItem.peerConnection.addEventListener(
+      'track',
+      (event: RTCTrackEvent) => {
+        console.log('received track', playerId)
+        if (this.remoteStreamListener) {
+          this.remoteStreamListener(event, playerId)
+        } else {
+          console.error(
+            'received ontrack event but remote stream listener is not there'
+          )
+        }
       }
-    })
+    )
   }
 
   private addIceCandidateToPeerConnection = async (
