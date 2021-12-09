@@ -759,6 +759,11 @@ export class RoomScene extends Phaser.Scene {
       this.layer
     )
 
+    if (!this.isTileValid(clickedTile)) {
+      console.log('invalid tile', clickedTile)
+      return
+    }
+
     this.movePlayerToTile(clickedTile)
   }
 
@@ -796,7 +801,8 @@ export class RoomScene extends Phaser.Scene {
       tile === undefined ||
       tile === null ||
       tile.x === undefined ||
-      tile.y === undefined
+      tile.y === undefined ||
+      tile.index !== TILE_ID_FREE_PLACE
     ) {
       return false
     }
