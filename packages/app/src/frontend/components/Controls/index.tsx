@@ -26,7 +26,7 @@ export const Controls = observer(({}: ControlsProps) => {
     <>
       <EditMode />
       <MenuControls />
-      <SettingsModal />
+      <SettingsModal game={game} />
       <Webrtc />
     </>
   )

@@ -97,7 +97,7 @@ export class PlayerStore {
         variables: {
           roomId: this.roomId,
         },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
       })
       console.log('fetch player result', players)
       return players?.data?.player || []

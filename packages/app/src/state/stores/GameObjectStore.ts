@@ -20,7 +20,7 @@ export class GameObjectStore {
     this._listenForGameObjectChange()
     this.fetchGameObjectTypes()
     makeObservable(this, {
-      gameObjects: observable,
+      gameObjects: observable.ref,
       gameObjectTypes: observable.ref,
       setGameObjects: action,
       setGameObjectTypes: action,
@@ -53,6 +53,7 @@ export class GameObjectStore {
               variables: {
                 roomId: this.roomId,
               },
+              fetchPolicy: 'no-cache',
             })
             if (gameObjects?.data?.gameobject) {
               this.setGameObjects(gameObjects.data.gameobject)
