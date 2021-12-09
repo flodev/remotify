@@ -69,6 +69,7 @@ export const GameLoader: FunctionComponent<GameProps> = () => {
       localStorage.removeItem('roomId')
       localStorage.removeItem('userName')
       localStorage.removeItem('roomName')
+      localStorage.removeItem('refresh_token')
       window.location.href = '/'
     }
   }, [])
