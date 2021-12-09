@@ -1,7 +1,7 @@
 {
   "name": "@remotify/models",
   "version": "0.2.0",
-  "description": "data models",
+  "description": "data models of remotify",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "author": "Florian Klenk <florian@remotify.place>",
