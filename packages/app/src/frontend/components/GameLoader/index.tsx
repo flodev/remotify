@@ -64,7 +64,12 @@ export const GameLoader: FunctionComponent<GameProps> = () => {
 
   useEffect(() => {
     if (!localStorage.getItem('roomId')) {
-      message.error('invalid local data. clear cache and reload.')
+      message.error('Invalid local data. I will clear your cache and reload')
+      localStorage.removeItem('userId')
+      localStorage.removeItem('roomId')
+      localStorage.removeItem('userName')
+      localStorage.removeItem('roomName')
+      window.location.href = '/'
     }
   }, [])
 
