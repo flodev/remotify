@@ -11,6 +11,9 @@ const PLAYER_VIDEO_OFFSET = -80
 const CONTAINER_WIDTH = 30
 const CONTAINER_HEIGHT = 10
 
+const VIDEO_BASE_WIDTH = 90
+const VIDEO_BASE_HEIGHT = 90 / (16 / 9)
+
 export class Player
   extends Phaser.GameObjects.Container
   implements GameObjectUpdatable<PlayerModel> {
@@ -206,13 +209,23 @@ export class Player
     phaserVideo.play(true)
     phaserVideo.addListener(
       Phaser.GameObjects.Events.VIDEO_CREATED,
-      (video: Phaser.GameObjects.Video) => {
-        video.setDisplaySize(160, 90)
-        // phaserVideo.setScale(0.1, 0.1)
-      }
+      this.onVideoCreated
     )
 
     return { phaserVideo, video }
+  }
+
+  private onVideoCreated = (video: Phaser.GameObjects.Video) => {
+    const aspectRatio = video.width / video.height
+    video.setDisplaySize(...this.getVideoDimensions(aspectRatio))
+    // phaserVideo.setScale(0.1, 0.1)
+  }
+
+  private getVideoDimensions(aspectRatio: number): [number, number] {
+    if (aspectRatio < 1) {
+      return [VIDEO_BASE_HEIGHT * aspectRatio, VIDEO_BASE_WIDTH * aspectRatio]
+    }
+    return [VIDEO_BASE_WIDTH * aspectRatio, VIDEO_BASE_HEIGHT * aspectRatio]
   }
 
   public preUpdate(...args: any[]) {

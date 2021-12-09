@@ -8,9 +8,6 @@ import {
   changePlayerPosition,
   changeRoomTile,
   upsertGameObject,
-  subscribeToPlayersOfRoom,
-  subscribeToGameObjectsOfRoom,
-  subscribeToRoom,
   activateInteraction,
 } from '@remotify/graphql'
 
@@ -67,7 +64,7 @@ import {
 import { getInteractionForPlayer, InteractionReceiver } from '../interact'
 import i18n from '../../i18n'
 import { StoreContext } from '../../state'
-import { autorun, observe, reaction } from 'mobx'
+import { autorun } from 'mobx'
 
 var easystarjs = require('easystarjs')
 let cursors: Phaser.Types.Input.Keyboard.CursorKeys

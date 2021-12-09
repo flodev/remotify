@@ -4,6 +4,7 @@ export const getUserMediaConstraints = (): MediaStreamConstraints => {
       width: { ideal: 1280 },
       height: { ideal: 720 },
       aspectRatio: 16 / 9,
+      facingMode: 'user',
     },
     audio: true,
   }

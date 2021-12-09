@@ -151,7 +151,7 @@ export const VideoForm = observer(({}: VideoFormProps) => {
               }
             }}
           />
-          <Row>
+          {/* <Row>
             <Col>
               <Dropdown
                 overlay={
@@ -185,7 +185,7 @@ export const VideoForm = observer(({}: VideoFormProps) => {
                 </Button>
               </Dropdown>
             </Col>
-          </Row>
+          </Row> */}
         </>
       )}
     </>
