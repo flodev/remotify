@@ -44,13 +44,15 @@ export class WebrtcGateway
   ) {
     console.log('client disconnect', client.data.id);
     if (client.data.id) {
-      try {
-        await this.dbService.setOnlineStatus(client.data.id, false);
-        return true;
-      } catch (e) {
-        console.error('cannot go offline', e);
-        return false;
-      }
+      this.setOnlineStatus(client.data.id, false);
+    }
+  }
+
+  async setOnlineStatus(clientId: string, isOnline: boolean) {
+    try {
+      await this.dbService.setOnlineStatus(clientId, isOnline);
+    } catch (e) {
+      console.error('cannot save status', e);
     }
   }
 
@@ -65,6 +67,7 @@ export class WebrtcGateway
       id: payload.id,
     };
     console.log('registered client', payload.id);
+    this.setOnlineStatus(client.data.id, true);
   }
 
   @SubscribeMessage(WebrtcSignalEvents.offer)

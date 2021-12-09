@@ -10,7 +10,10 @@ async function bootstrap() {
       'Authorization,Content-Type,Accept,Origin,Referer,User-Agent',
   });
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(process.env.APP_PORT);
-  // await app.listen(process.env.APP_PORT, '192.168.178.20');
+  if (process.env.HOST) {
+    await app.listen(process.env.APP_PORT, process.env.HOST);
+  } else {
+    await app.listen(process.env.APP_PORT);
+  }
 }
 bootstrap();

@@ -34,7 +34,7 @@
     "migrate:up": "KNEX_MIGRATION_FILE_EXTENSION=ts PORT=8081 DATABASE_URL=$(grep DATABASE_URL .env | cut -d '=' -f2) knex migrate:up",
     "migrate:make": "KNEX_MIGRATION_FILE_EXTENSION=ts npx knex migrate:make",
     "migrate:dist:latest": "knex migrate:latest --knexfile ./knexfile.js",
-    "tunnel": "ssh -L 192.168.178.20:8001:127.0.0.1:8001 -N 127.0.0.1"
+    "tunnel": "ssh -L 192.168.226.231:8001:127.0.0.1:8001 -N 127.0.0.1"
   },
   "dependencies": {
     "@nestjs/axios": "^0.0.2",
