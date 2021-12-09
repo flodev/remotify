@@ -34,6 +34,7 @@ export class StoreContext {
       props.roomId,
       props.api
     )
+    this.playerStore.listenForPlayerUpdates()
     this.gameStore = new GameStore()
     this.userMediaStore = new UserMediaStore()
     this.gameObjectStore = new GameObjectStore(

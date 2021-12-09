@@ -23,10 +23,9 @@ export class PlayerStore {
     private roomId: string,
     private api: Api
   ) {
-    this._listenForPlayerUpdates()
     makeObservable(this, {
-      players: observable,
-      player: observable.ref,
+      players: observable.ref,
+      player: observable,
       otherOnlinePlayers: observable,
       setPlayers: action,
       setPlayer: action,
@@ -46,14 +45,14 @@ export class PlayerStore {
     }
   }
 
-  public _listenForPlayerUpdates = () => {
+  public listenForPlayerUpdates = () => {
     this.subscription = this.graphQl
       .subscribe<{ player: Player[] }>({
         query: subscribeToPlayersOfRoom,
         variables: { roomId: this.roomId },
       })
-      .subscribe(
-        async ({ data }) => {
+      .subscribe({
+        next: async ({ data }) => {
           console.log('got player updates', data)
           if (data?.player) {
             const players = await this.fetchPlayers()
@@ -71,14 +70,13 @@ export class PlayerStore {
             }
           }
         },
-        (error) => {
+        error(error) {
           console.error('on error', error)
-        }
-      )
+        },
+      })
   }
 
-  public setPlayers(players: Player[]) {
-    console.log('setting players', players)
+  public setPlayers = (players: Player[]) => {
     this.players = players
   }
 
@@ -99,7 +97,9 @@ export class PlayerStore {
         variables: {
           roomId: this.roomId,
         },
+        fetchPolicy: 'network-only',
       })
+      console.log('fetch player result', players)
       return players?.data?.player || []
     } catch (e) {
       console.error('error fetching players', e)
