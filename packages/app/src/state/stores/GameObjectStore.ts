@@ -27,9 +27,10 @@ export class GameObjectStore {
     })
   }
 
-  public async fetchGameObjectTypes() {
+  public fetchGameObjectTypes = async () => {
     try {
-      this.gameObjectTypes = await this.api.getGameObjectTypes()
+      const gameObjectTypes = await this.api.getGameObjectTypes()
+      this.setGameObjectTypes(gameObjectTypes)
     } catch (e) {
       console.error('cannot fetch', e)
       throw new Error('cannot fetch game object types')

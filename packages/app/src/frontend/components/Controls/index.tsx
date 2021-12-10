@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
-import { EditMode, MenuControls, Webrtc } from '..'
+import { EditMode, MenuControls, RoomName, Webrtc } from '..'
 import { SettingsModal } from '../SettingsModal'
 import { useStoreContext } from '../../../state'
 import { initiateGame } from '../../../game/phaser'
@@ -28,6 +28,7 @@ export const Controls = observer(({}: ControlsProps) => {
       <MenuControls />
       <SettingsModal game={game} />
       <Webrtc />
+      <RoomName />
     </>
   )
 })

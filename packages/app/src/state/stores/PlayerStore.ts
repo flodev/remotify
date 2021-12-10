@@ -29,6 +29,7 @@ export class PlayerStore {
       otherOnlinePlayers: observable,
       setPlayers: action,
       setPlayer: action,
+      setOtherOnlinePlayers: action,
     })
   }
 
@@ -80,7 +81,7 @@ export class PlayerStore {
     this.players = players
   }
 
-  public setOtherOnlinePlayers(players: Player[]) {
+  public setOtherOnlinePlayers = (players: Player[]) => {
     console.log('setting other online players', players)
     this.otherOnlinePlayers = players
   }

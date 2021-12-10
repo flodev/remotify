@@ -21,7 +21,6 @@ export const UserForm = ({}: UserFormProps) => {
   let ref = useRef<Input | null>(null)
   const [isFocused, setIsFocused] = useState(false)
   const { api } = useContext(ApiContext)
-  const apolloClient = useApolloClient()
   const username = localStorage.getItem('username') as string
 
   const onBlur = () => {

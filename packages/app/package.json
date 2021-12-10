@@ -24,7 +24,7 @@
     "@remotify/graphql": "^0.2.1",
     "@remotify/models": "^0.2.1",
     "@remotify/open-api": "^0.2.1",
-    "antd": "^4.16.6",
+    "antd": "^4.17.3",
     "autoprefixer": "^9.x",
     "axios": "^0.21.1",
     "easystarjs": "^0.4.4",

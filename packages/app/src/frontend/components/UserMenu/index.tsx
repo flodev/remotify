@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
-import { UserOutlined } from '@ant-design/icons'
+import {
+  UserOutlined,
+  CloseOutlined,
+  CloseCircleFilled,
+} from '@ant-design/icons'
 import styled from 'styled-components'
-import { Drawer, Spin } from 'antd'
+import { Drawer, Space, Spin } from 'antd'
 
 import { UserForm, VideoForm } from '..'
 import { useStoreContext } from '../../../state'
@@ -23,6 +27,12 @@ const CenterH1 = styled.h1`
   text-align: center;
 `
 
+const DrawerStyled = styled(Drawer)`
+  .ant-drawer-close {
+    order: 1;
+  }
+`
+
 export const UserMenu = observer(() => {
   const [isVisible, setVisible] = useState(false)
   const {
@@ -39,15 +49,18 @@ export const UserMenu = observer(() => {
         style={{ color: '#fff', height: '50px' }}
         onClick={() => setVisible(true)}
       />
-      <Drawer
+      <DrawerStyled
         placement="right"
-        closable={false}
+        title="You"
+        size="default"
+        // extra={<CloseOutlined onClick={() => setVisible(false)} size={20} />}
+        closable={true}
         onClose={() => setVisible(false)}
         visible={isVisible}
       >
         <UserForm />
         <VideoForm />
-      </Drawer>
+      </DrawerStyled>
     </>
   )
 })

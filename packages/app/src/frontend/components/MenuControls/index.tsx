@@ -45,6 +45,12 @@ const MenuOutlinedButton = styled(MenuOutlined)`
   pointer-events: all;
 `
 
+const DrawerStyled = styled(Drawer)`
+  .ant-drawer-close {
+    order: 1;
+  }
+`
+
 export const MenuControls = observer(() => {
   const [visible, setVisible] = useState(false)
   const {
@@ -68,7 +74,7 @@ export const MenuControls = observer(() => {
         style={{ color: '#fff', height: '50px' }}
         onClick={() => setVisible(true)}
       />
-      <Drawer
+      <DrawerStyled
         title="Menu"
         closable={true}
         footer={
@@ -87,7 +93,7 @@ export const MenuControls = observer(() => {
         <p>
           <Switch onChange={onChange} checked={isEditMode} /> {t('Edit Mode')}
         </p>
-      </Drawer>
+      </DrawerStyled>
 
       <UserMenu />
       <EditToolbar
