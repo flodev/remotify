@@ -6,12 +6,14 @@ import { FullPageLoader } from '..'
 import { tempSignup, regainToken } from '@remotify/open-api'
 import { TempSignupType } from '@remotify/models'
 import { JwtCache } from '@remotify/graphql'
+import { cleanLocalStorage } from '../../utils'
 interface InitProps {
   setCanOpenGame?(canOpenGame: boolean): void
+  isInvite?: boolean
   jwtCache: JwtCache
 }
 
-export const Init = ({ setCanOpenGame, jwtCache }: InitProps) => {
+export const Init = ({ setCanOpenGame, jwtCache, isInvite }: InitProps) => {
   const { inviteId } = useParams<{ inviteId: string }>()
   const history = useHistory()
   const { t } = useTranslation()
@@ -37,6 +39,12 @@ export const Init = ({ setCanOpenGame, jwtCache }: InitProps) => {
       })
     }
   }
+
+  useEffect(() => {
+    if (isInvite) {
+      cleanLocalStorage()
+    }
+  }, [isInvite])
 
   useEffect(() => {
     if (localStorage.getItem('refresh_token')) {

@@ -16,7 +16,7 @@ export const App = () => {
     <Router>
       <Switch>
         <Route path="/invite/:inviteId">
-          <Init jwtCache={jwtCache} />
+          <Init jwtCache={jwtCache} isInvite={true} />
         </Route>
         <Route path="/">
           <Setup jwtCache={jwtCache} />

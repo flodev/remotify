@@ -1,3 +1,3 @@
 export * from './rtcConnector'
 export * from './getUserMediaConstraints'
-export * from './refreshToken'
+export * from './cleanLocalStorage'

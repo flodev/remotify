@@ -1,30 +1,10 @@
-import React, {
-  FunctionComponent,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import { initiateGame } from '../../../game/phaser'
-import { MenuControls } from '../MenuControls'
+import { FunctionComponent, useContext, useEffect, useState } from 'react'
 import { useApolloClient } from '@remotify/graphql'
 import { ApiContext } from '../../context'
-import { EVENT_OPEN_GAME_OBJECT_SETTINGS } from '../../app/GameEvents'
-import { PlaceObjectsTypes } from '../../../game/gameobjects'
-import {
-  Client,
-  GameObject,
-  GameObjectType,
-  Player,
-  Room,
-  Settings,
-  ToiletSettings,
-} from '@remotify/models'
-import { EditGameObjectDesk, EditGameObjectToilet } from '../EditGameObject'
-import { REGISTRY_IS_SETTINGS_MODAL_OPEN } from '../../../constants'
-import { Canvas, Controls, EditMode, FullPageLoader, Webrtc } from '..'
+import { Canvas, Controls, FullPageLoader } from '..'
 import { StoreContextProvider } from '../../../state'
 import { message } from 'antd'
+import { cleanLocalStorage } from '../../utils'
 
 // Set the name of the hidden property and the change event for visibility
 let visibilityChange:
@@ -65,11 +45,7 @@ export const GameLoader: FunctionComponent<GameProps> = () => {
   useEffect(() => {
     if (!localStorage.getItem('roomId')) {
       message.error('Invalid local data. I will clear your cache and reload')
-      localStorage.removeItem('userId')
-      localStorage.removeItem('roomId')
-      localStorage.removeItem('userName')
-      localStorage.removeItem('roomName')
-      localStorage.removeItem('refresh_token')
+      cleanLocalStorage()
       window.location.href = '/'
     }
   }, [])
