@@ -23,16 +23,17 @@ export class RoomStore {
         async ({ data }) => {
           console.log('room update', data)
           try {
-            const gameObjects = await this.graphQl.query<{
+            const room = await this.graphQl.query<{
               room_by_pk: Room
             }>({
               query: getRoomByPk,
               variables: {
                 roomId: this.roomId,
               },
+              fetchPolicy: 'no-cache',
             })
-            if (gameObjects?.data?.room_by_pk) {
-              this.setRoom(gameObjects.data.room_by_pk)
+            if (room?.data?.room_by_pk) {
+              this.setRoom(room.data.room_by_pk)
             }
           } catch (e) {
             console.log('cannot receive game objects by room id', e)

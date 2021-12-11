@@ -5,7 +5,7 @@ import {
   CloseCircleFilled,
 } from '@ant-design/icons'
 import styled from 'styled-components'
-import { Drawer, Space, Spin } from 'antd'
+import { Drawer, Row, Space, Spin } from 'antd'
 
 import { UserForm, VideoForm } from '..'
 import { useStoreContext } from '../../../state'
@@ -59,6 +59,7 @@ export const UserMenu = observer(() => {
         visible={isVisible}
       >
         <UserForm />
+        <div style={{ margin: 10 }} />
         <VideoForm />
       </DrawerStyled>
     </>

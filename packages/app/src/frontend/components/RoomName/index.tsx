@@ -1,6 +1,6 @@
 import { Input, Col, Row, Form, FormInstance, message } from 'antd'
 import { observer } from 'mobx-react-lite'
-import { useContext, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { EditInputButton } from '..'
@@ -79,6 +79,12 @@ export const RoomName = observer(({}: RoomNameProps) => {
   const submit = () => {
     form.submit()
   }
+
+  useEffect(() => {
+    if (room?.name) {
+      form.setFieldsValue({ room: room.name })
+    }
+  }, [room])
 
   if (!room) {
     return <></>

@@ -63,6 +63,8 @@ export class Player
     if (this.getModel().username !== gameObjectModel.username) {
       this.nameText?.setText(gameObjectModel.username)
     }
+    console.log('gameObjectModel.animation', gameObjectModel.animation)
+    console.log('this.playerModel.animation', this.playerModel.animation)
     if (
       !!gameObjectModel.animation &&
       this.playerModel.animation !== gameObjectModel.animation

@@ -51,6 +51,9 @@ export const initiateGame = (
     type: Phaser.WEBGL,
     width: desiredWidth * devicePixelRatio,
     height: desiredHeight * devicePixelRatio,
+    // fps: {
+    //   target: 30, // 30x per second
+    // },
     canvas,
     // dom: {
     //   createContainer: true,
