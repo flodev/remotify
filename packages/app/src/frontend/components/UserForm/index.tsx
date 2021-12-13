@@ -1,11 +1,15 @@
-import { Col, Input, Row } from 'antd'
+import { Col, Input, Row, Form } from 'antd'
 import { useApolloClient } from '@remotify/graphql'
 import React, { useContext, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { EditOutlined } from '@ant-design/icons'
 import { ApiContext } from '../../context'
+import { Player } from '@remotify/models'
+import { EditInputButton } from '..'
 
-interface UserFormProps {}
+interface UserFormProps {
+  player: Player
+}
 
 const Username = styled(Input)`
   text-align: center;
@@ -17,44 +21,69 @@ const EditOutlinedButton = styled(EditOutlined)`
   vertical-align: middle;
 `
 
-export const UserForm = ({}: UserFormProps) => {
+interface Values {
+  username: string
+}
+
+export const UserForm = ({ player }: UserFormProps) => {
   let ref = useRef<Input | null>(null)
+  const [form] = Form.useForm<Values>()
+
   const [isFocused, setIsFocused] = useState(false)
   const { api } = useContext(ApiContext)
-  const username = localStorage.getItem('username') as string
 
-  const onBlur = () => {
+  const onFinish = (values: Values) => {
     setIsFocused(false)
     api.changePlayerUsername({
       id: localStorage.getItem('userId')!,
-      username: newUsername,
+      username: values.username,
     })
-    localStorage.setItem('username', newUsername)
+    localStorage.setItem('username', values.username)
+  }
+  const submit = () => {
+    form.submit()
   }
 
-  const [newUsername, setNewUsername] = useState(username)
+  const toggleFocus = () => {
+    if (isFocused) {
+      ref?.current?.blur()
+      setIsFocused(false)
+    } else {
+      ref?.current?.focus()
+      setIsFocused(true)
+    }
+  }
 
   return (
-    <Row style={{ marginTop: '20px' }}>
-      <Col>
-        <Username
-          ref={ref}
-          value={newUsername}
-          onChange={({ currentTarget: { value } }) => {
-            setNewUsername(value)
-          }}
-          bordered={isFocused}
-          onFocus={() => setIsFocused(true)}
-          onBlur={onBlur}
-          onPressEnter={onBlur}
-          maxLength={15}
-        />
-      </Col>
-      <Col>
-        <EditOutlinedButton
-          onClick={() => ref && ref.current && ref.current.focus()}
-        />
-      </Col>
-    </Row>
+    <Form
+      form={form}
+      name="room-form"
+      wrapperCol={{ flex: '5' }}
+      initialValues={{ username: player.username }}
+      onFinish={onFinish}
+      layout="horizontal"
+    >
+      <EditInputButton
+        onClick={toggleFocus}
+        alignButton="right"
+        containerProps={{ style: { justifyContent: 'center' } }}
+      >
+        <Form.Item
+          name="username"
+          style={{ margin: 0 }}
+          rules={[{ required: true }, { min: 3 }, { max: 15 }]}
+        >
+          <Username
+            ref={ref}
+            onFocus={() => setIsFocused(true)}
+            onBlur={submit}
+            required={true}
+            minLength={3}
+            onPressEnter={submit}
+            maxLength={15}
+          />
+        </Form.Item>
+      </EditInputButton>
+    </Form>
   )
 }

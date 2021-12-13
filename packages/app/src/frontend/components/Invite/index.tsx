@@ -4,8 +4,18 @@ import { Button, notification } from 'antd'
 import { ShareAltOutlined } from '@ant-design/icons'
 import { useStoreContext } from '../../../state'
 import { observer } from 'mobx-react-lite'
+import styled from 'styled-components'
 
 interface InviteProps {}
+
+const InviteButton = styled(Button)`
+  pointer-events: all;
+  top: 0;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%);
+  -webkit-transform: translate(-50%);
+`
 
 export const Invite = observer(({}: InviteProps) => {
   const {
@@ -29,20 +39,14 @@ export const Invite = observer(({}: InviteProps) => {
   }
   return (
     <CopyToClipboard text={inviteUrl} onCopy={openNotification}>
-      <Button
+      <InviteButton
         type="default"
         icon={<ShareAltOutlined />}
         size="middle"
         color="#fff"
-        style={{
-          pointerEvents: 'all',
-          top: 0,
-          right: '30%',
-          position: 'absolute',
-        }}
       >
         Invite
-      </Button>
+      </InviteButton>
     </CopyToClipboard>
   )
 })

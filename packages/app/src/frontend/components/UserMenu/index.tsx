@@ -46,7 +46,7 @@ export const UserMenu = observer(() => {
   return (
     <>
       <UserOutlinedButtonButton
-        style={{ color: '#fff', height: '50px' }}
+        style={{ color: '#646464', height: '50px' }}
         onClick={() => setVisible(true)}
       />
       <DrawerStyled
@@ -58,8 +58,8 @@ export const UserMenu = observer(() => {
         onClose={() => setVisible(false)}
         visible={isVisible}
       >
-        <UserForm />
-        <div style={{ margin: 10 }} />
+        {!!player && <UserForm player={player} />}
+        <div style={{ margin: 15 }} />
         <VideoForm />
       </DrawerStyled>
     </>

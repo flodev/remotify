@@ -71,7 +71,7 @@ export const MenuControls = observer(() => {
   return (
     <Container>
       <MenuOutlinedButton
-        style={{ color: '#fff', height: '50px' }}
+        style={{ color: '#646464', height: '50px' }}
         onClick={() => setVisible(true)}
       />
       <DrawerStyled

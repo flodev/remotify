@@ -118,15 +118,22 @@ export const VideoForm = observer(({}: VideoFormProps) => {
   }
 
   if (isEnablingAudioVideoInProcess) {
-    return <Spin />
+    return (
+      <Row justify="center">
+        <Spin />
+      </Row>
+    )
   }
   return (
     <>
-      <Switch
-        onChange={switchAudioVideo}
-        checked={player?.is_audio_video_enabled}
-      />{' '}
-      enable Audio/Video
+      <Row justify="center">
+        enable Audio/Video{'  '}
+        <Switch
+          style={{ marginLeft: '5px' }}
+          onChange={switchAudioVideo}
+          checked={player?.is_audio_video_enabled}
+        />
+      </Row>
       {!!player?.is_audio_video_enabled && (
         <>
           <Divider>Video</Divider>

@@ -27,6 +27,7 @@ const RoomInput = styled(Input)`
   text-align: left;
   border: 0;
   outline: none;
+  text-align: center;
   &:focus {
     background: rgba(167, 167, 167, 0.8) !important;
   }
@@ -95,13 +96,14 @@ export const RoomName = observer(({}: RoomNameProps) => {
       form={form}
       name="room-form"
       wrapperCol={{ flex: '5' }}
-      initialValues={{ room: room.name, tset: null }}
+      initialValues={{ room: room.name }}
       onFinish={onFinish}
       layout="horizontal"
     >
       <EditInputButton
         onClick={toggleFocus}
         containerProps={{ style: { justifyContent: 'center' } }}
+        buttonProps={{ style: { position: 'absolute', right: '10px' } }}
       >
         <Form.Item name="room" style={{ margin: 0 }}>
           <RoomInput
