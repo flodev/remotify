@@ -20,7 +20,7 @@ const PhaserEvents = Input.Events
 export class PlaceGameObject extends Draggable implements PlaceObject {
   scene?: RoomScene
   draggableGameObject?: PhaserGameObjectPlacable
-  highlightedTiles: { tile: Phaser.Tilemaps.Tile; defaultTint: number }[] = []
+  highlightedTiles: Phaser.Tilemaps.Tile[] = []
   dropTile?: Phaser.Tilemaps.Tile
   newObjectPlacedListener?: ListenerFunction
 
@@ -59,9 +59,9 @@ export class PlaceGameObject extends Draggable implements PlaceObject {
       this.newObjectPlacedListener &&
         this.newObjectPlacedListener(
           this.draggableGameObject,
-          this.highlightedTiles.map((tile) => ({
-            x: tile.tile.x,
-            y: tile.tile.y,
+          this.highlightedTiles.map(({ x, y }) => ({
+            x,
+            y,
           }))
         )
       this.resetTiles()
@@ -95,9 +95,9 @@ export class PlaceGameObject extends Draggable implements PlaceObject {
   }
 
   protected resetTiles() {
-    this.highlightedTiles.forEach(
-      ({ tile, defaultTint }) => (tile.tint = defaultTint)
-    )
+    this.highlightedTiles.forEach((tile) => {
+      tile.setAlpha(1)
+    })
     this.highlightedTiles = []
   }
 
@@ -109,11 +109,10 @@ export class PlaceGameObject extends Draggable implements PlaceObject {
       return
     }
 
-    this.highlightedTiles = tiles.map((tile) => ({
-      defaultTint: tile.tint,
-      tile,
-    }))
-    this.highlightedTiles.forEach(({ tile }) => (tile.tint = 0xe100fd))
+    this.highlightedTiles = tiles
+    this.highlightedTiles.forEach((tile) => {
+      tile.setAlpha(0.7)
+    })
   }
 
   protected getTiles(pointer: Pointer): Phaser.Tilemaps.Tile[] {
@@ -163,7 +162,7 @@ export class PlaceGameObject extends Draggable implements PlaceObject {
     const map = this.scene?.getMap()
     this.highlightedTiles.forEach((tile) => {
       console.log('putting tiles')
-      map?.putTileAt(TILE_ID_OCCUPIED, tile.tile.x, tile.tile.y)
+      map?.putTileAt(TILE_ID_OCCUPIED, tile.x, tile.y)
     })
   }
 
