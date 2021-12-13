@@ -27,9 +27,9 @@ export const Canvas = ({ onReady }: CanvasProps) => {
   return (
     <canvas
       id={GAME_CANVAS_ID}
-      width={desiredWidth * devicePixelRatio}
-      height={desiredHeight * devicePixelRatio}
-      style={{ width: `100%`, height: `100%` }}
+      // width={desiredWidth * devicePixelRatio}
+      // height={desiredHeight * devicePixelRatio}
+      // style={{ width: `100%`, height: `100%` }}
     ></canvas>
   )
 }

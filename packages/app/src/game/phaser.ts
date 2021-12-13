@@ -48,9 +48,11 @@ export const initiateGame = (
   const devicePixelRatio = window.devicePixelRatio || 1
 
   const config: Phaser.Types.Core.GameConfig = {
-    type: Phaser.WEBGL,
-    width: desiredWidth * devicePixelRatio,
-    height: desiredHeight * devicePixelRatio,
+    type: Phaser.CANVAS,
+    // width: desiredWidth * devicePixelRatio,
+    // height: desiredHeight * devicePixelRatio,
+    width: '100%',
+    height: '100%',
     // fps: {
     //   target: 30, // 30x per second
     // },

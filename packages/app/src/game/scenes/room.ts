@@ -639,7 +639,8 @@ export class RoomScene extends Phaser.Scene {
       this.cameras.main.startFollow(playerContainer, true, 0.08, 0.08)
     }
     const devicePixelRatio = window.devicePixelRatio || 1
-    this.cameras.main.setZoom(devicePixelRatio)
+    // this.cameras.main.setZoom(devicePixelRatio)
+    this.cameras.main.setZoom(1.2)
   }
 
   cameraStopFollowPlayer = () => {

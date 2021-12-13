@@ -1,8 +1,8 @@
 export const getUserMediaConstraints = (): MediaStreamConstraints => {
   return {
     video: {
-      width: { ideal: 1280 },
-      height: { ideal: 720 },
+      width: { max: 320 },
+      height: { max: 320 },
       aspectRatio: 16 / 9,
       facingMode: 'user',
     },

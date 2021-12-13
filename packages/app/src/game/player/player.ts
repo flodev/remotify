@@ -170,7 +170,9 @@ export class Player
     const { phaserVideo, video } = await this.createPhaserVideo(userMediaStream)
     this.phaserVideo = phaserVideo
     if (this.headMask) {
-      this.phaserVideo.setMask(this.phaserVideo.createBitmapMask(this.headMask))
+      this.phaserVideo.setMask(
+        this.phaserVideo.createGeometryMask(this.headMask)
+      )
     }
     this.add(this.phaserVideo)
     await video.play()
@@ -200,13 +202,12 @@ export class Player
 
   private async createPhaserVideo(mediaStream: MediaStream) {
     console.log('createPhaserVideo')
-    var video = document.createElement('video')
+    const video = document.createElement('video')
     video.srcObject = mediaStream
     video.playsInline = true
     video.muted = true
 
     const phaserVideo = this.scene.add.video(0, PLAYER_VIDEO_OFFSET)
-
     phaserVideo.video = video
     phaserVideo.play(true)
     phaserVideo.addListener(
