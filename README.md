@@ -84,17 +84,17 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://meet.screen_recording_webrtc.gif)
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email`, `email_client`, `project_title`, `project_description`
+Remotify is here to create an enjoyable work atmosphere and culture in a virtual place. Remotify is all about openness, self determination and fun.  
+You can meet and work, express your feelings, change the room to your needs and even adapt the code to your needs and host it for youselves.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
 
 
 ### Built With
 
 * [React.js](https://reactjs.org/)
 * [Phaser.js](https://phaser.io/)
-* [Hasura GraphQl](https://hasura.io/)
+* [Hasura GraphQL](https://hasura.io/)
 * [Next.js](https://nextjs.org/)
 * [Ant Design](https://ant.design)
 
