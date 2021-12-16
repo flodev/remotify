@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-console.log('hallo')
+console.log('hallo install script')
