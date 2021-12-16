@@ -1,6 +1,7 @@
 {
   "name": "@remotify/local-setup",
   "author": "Florian Klenk <florian@remotify.place>",
+  "version": "0.0.0",
   "license": "Apache-2.0",
   "bin": {
     "remotify-local-setup": "dist/index.js"
