@@ -1,0 +1,15 @@
+{
+  "name": "@remotify/local-setup",
+  "author": "Florian Klenk <florian@remotify.place>",
+  "license": "Apache-2.0",
+  "bin": {
+    "remotify-local-setup": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  }
+}
