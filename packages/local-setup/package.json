@@ -1,7 +1,7 @@
 {
   "name": "@remotify/local-setup",
   "author": "Florian Klenk <florian@remotify.place>",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "private": false,
   "license": "Apache-2.0",
   "bin": {
