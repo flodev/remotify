@@ -8,10 +8,16 @@
     "remotify-local-setup": "dist/index.js"
   },
   "scripts": {
+    "start": "ts-node index.ts",
     "build": "tsc",
     "prepublish": "npm run build"
   },
   "devDependencies": {
+    "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@types/node": "^17.0.0",
+    "gluegun": "^4.7.0"
   }
 }
