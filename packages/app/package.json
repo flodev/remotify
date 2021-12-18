@@ -1,6 +1,6 @@
 {
   "name": "@remotify/app",
-  "version": "0.2.8",
+  "version": "0.2.12",
   "private": true,
   "license": "Apache-2.0",
   "main": "dist/cjs/index.js",
