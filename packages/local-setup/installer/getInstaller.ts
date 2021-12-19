@@ -1,9 +1,10 @@
 import { OS } from '../getPlatform'
+import { Installer } from './Installer'
 import { LinuxInstaller } from './LinuxInstaller'
 import { MacOsInstaller } from './MacOsInstaller'
 import { WindowsInstaller } from './WindowsInstaller'
 
-export const getInstaller = (os: OS) => {
+export const getInstaller = (os: OS): Installer => {
   switch (os) {
     case OS.macOS:
       return new MacOsInstaller()

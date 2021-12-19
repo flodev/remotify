@@ -7,6 +7,9 @@ import { install } from './installer'
 const isWindows = process.platform === 'win32'
 
 print.info('⭐️ Welcome to remotify local installer ⭐️')
+print.info(
+  '❗ This will install the relevant tools needed to run remotify on your local system ❗'
+)
 
 const platform = getPlatform()
 

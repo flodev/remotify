@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@types/node": "^17.0.0",
-    "gluegun": "^4.7.0"
+    "gluegun": "^4.7.0",
+    "lookpath": "^1.2.2"
   }
 }
