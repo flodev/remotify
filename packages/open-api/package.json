@@ -14,7 +14,7 @@
   },
   "author": "Florian Klenk <florian@remotify.place>",
   "license": "Apache-2.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@remotify/graphql": "^0.2.8",
     "@remotify/models": "^0.2.8",
