@@ -1,5 +1,5 @@
 {
-  "name": "@remotify/local-setup",
+  "name": "remotify-local-setup",
   "author": "Florian Klenk <florian@remotify.place>",
   "version": "0.2.12",
   "private": false,

@@ -23,18 +23,16 @@ spec:
         name: hasura
         env:
         - name: HASURA_GRAPHQL_DATABASE_URL
-          value: "$HASURA_GRAPHQL_DATABASE_URL"
+          value: "{{ .Values.deployment.databaseUrl }}"
         - name: HASURA_GRAPHQL_ADMIN_SECRET
-          value: "$HASURA_GRAPHQL_ADMIN_SECRET"
+          value: "{{ .Values.deployment.adminSecret }}"
         - name: HASURA_GRAPHQL_ENABLE_CONSOLE
           value: "true"
         - name: HASURA_GRAPHQL_JWT_SECRET
-          value: '$HASURA_GRAPHQL_JWT_SECRET'
+          value: '{{ .Values.deployment.jwt }}'
         # - name: HASURA_GRAPHQL_METADATA_DATABASE_URL
-        #   value: https://raw.githubusercontent.com/flodev/remotify/main/packages/hasura_metadata/hasura_metadata_2021_11_26_16_30_24_070.json
+        #   value: {{ .Values.deployment.metadataUrl }}
         ports:
         - containerPort: 8080
           protocol: TCP
         resources: {}
-        command: ["echo"]
-        args: ["$(HASURA_GRAPHQL_DATABASE_URL)"]

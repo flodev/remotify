@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: auth
+  name: auth
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - image: auth
+        name: auth
+        ports:
+        - containerPort: 4000
+          protocol: TCP
+        - containerPort: 4001
+          protocol: TCP
+        env:
+        - name: APP_PORT
+          value: "{{ .Values.deployment.appPort }}"
+        - name: WEBRTC_PORT
+          value: "{{ .Values.deployment.webrtcPort }}"
+        - name: DATABASE_URL
+          value: "{{ .Values.deployment.databaseUrl }}"
+        - name: JWT_SECRET
+          value: "{{ .Values.deployment.jwtSecret }}"
+        - name: HASURA_ADMIN_SECRET
+          value: "{{ .Values.deployment.hasuraAdminSecret }}"
+        - name: HASURA_ENDPOINT
+          value: "{{ .Values.deployment.hasuraEndpoint }}"
+        - name: AUTH_PRIVATE_KEY
+          value: '{{ .Values.deployment.authPrivateKey }}'
