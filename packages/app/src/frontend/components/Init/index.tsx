@@ -1,7 +1,7 @@
 import { notification } from 'antd'
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router'
+import { useHistory, useParams } from 'react-router-dom'
 import { FullPageLoader } from '..'
 import { tempSignup, regainToken } from '@remotify/open-api'
 import { TempSignupType } from '@remotify/models'

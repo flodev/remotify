@@ -39,6 +39,17 @@ k8s_yaml(
 
 docker_build('auth', './packages/auth')
 
+# ------------ app ------------
+
+k8s_yaml(
+  helm(
+    './packages/infra-app/kubernetes/helm/app',
+    name = 'app'
+  )
+)
+
+docker_build('app', './packages/app')
+
 
 # k8s_resource('auth', port_forwards=8000,
 #     resource_deps=['deploy']

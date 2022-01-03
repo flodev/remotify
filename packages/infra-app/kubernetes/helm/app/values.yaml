@@ -1,0 +1,9 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+deployment:
+  reactAppAuthApiUrl: http://127.0.0.1:4000
+  reactAppGraphQlUrl: http://127.0.0.1:8001/v1/graphql
+  reactAppGraphQlWs: ws://127.0.0.1:8001/v1/graphql
+  reactAppWebrtcSocket: ws://127.0.0.1:4001

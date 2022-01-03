@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app
+  name: app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - image: app
+        name: app
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        env:
+        - name: REACT_APP_AUTH_API_URL
+          value: "{{ .Values.deployment.reactAppAuthApiUrl }}"
+        - name: REACT_APP_GRAPH_QL_URL
+          value: "{{ .Values.deployment.reactAppGraphQlUrl }}"
+        - name: REACT_APP_GRAPH_QL_WS
+          value: "{{ .Values.deployment.reactAppGraphQlWs }}"
+        - name: REACT_APP_WEBRTC_SOCKET
+          value: "{{ .Values.deployment.reactAppWebrtcSocket }}"
+
