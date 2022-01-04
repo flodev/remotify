@@ -1,0 +1,3 @@
+table:
+  name: refresh_token
+  schema: public

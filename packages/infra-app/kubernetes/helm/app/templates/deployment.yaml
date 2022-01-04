@@ -30,4 +30,3 @@ spec:
           value: "{{ .Values.deployment.reactAppGraphQlWs }}"
         - name: REACT_APP_WEBRTC_SOCKET
           value: "{{ .Values.deployment.reactAppWebrtcSocket }}"
-

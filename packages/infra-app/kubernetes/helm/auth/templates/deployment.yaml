@@ -38,3 +38,7 @@ spec:
           value: "{{ .Values.deployment.hasuraEndpoint }}"
         - name: AUTH_PRIVATE_KEY
           value: '{{ .Values.deployment.authPrivateKey }}'
+        - name: HASURA_GRAPHQL_ENDPOINT
+          value: "{{ .Values.deployment.hasuraMigrationEndpoint }}"
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          value: "{{ .Values.deployment.hasuraAdminSecret }}"

@@ -1,0 +1,85 @@
+table:
+  name: gameobject
+  schema: public
+object_relationships:
+- name: gameobjectype
+  using:
+    manual_configuration:
+      column_mapping:
+        type_id: id
+      insertion_order: null
+      remote_table:
+        name: gameobject_type
+        schema: public
+- name: player
+  using:
+    manual_configuration:
+      column_mapping:
+        player_id: id
+      insertion_order: null
+      remote_table:
+        name: player
+        schema: public
+- name: room
+  using:
+    foreign_key_constraint_on: room_id
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      room:
+        players:
+          id:
+            _eq: X-Hasura-User-Id
+    columns:
+    - animation
+    - id
+    - player_id
+    - room_id
+    - settings
+    - tile
+    - type_id
+    - updated_at
+  role: temp_user
+select_permissions:
+- permission:
+    columns:
+    - animation
+    - id
+    - player_id
+    - room_id
+    - settings
+    - tile
+    - type_id
+    filter:
+      room:
+        players:
+          id:
+            _eq: X-Hasura-User-Id
+  role: temp_user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - animation
+    - id
+    - player_id
+    - room_id
+    - settings
+    - tile
+    - type_id
+    - updated_at
+    filter:
+      room:
+        players:
+          id:
+            _eq: X-Hasura-User-Id
+  role: temp_user
+delete_permissions:
+- permission:
+    filter:
+      room:
+        players:
+          id:
+            _eq: X-Hasura-User-Id
+  role: temp_user

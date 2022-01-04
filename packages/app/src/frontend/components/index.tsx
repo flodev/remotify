@@ -1,6 +1,5 @@
 export * from './MenuControls'
 export * from './GameLoader'
-export * from './PrivateRoute'
 export * from './Video'
 export * from './PlaceObjectsToolbar'
 export * from './EditToolbar'

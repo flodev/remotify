@@ -1,0 +1,23 @@
+table:
+  name: client
+  schema: public
+array_relationships:
+- name: rooms
+  using:
+    foreign_key_constraint_on:
+      column: client_id
+      table:
+        name: room
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - name
+    - share_id
+    filter:
+      rooms:
+        players:
+          id:
+            _eq: X-Hasura-User-Id
+  role: temp_user

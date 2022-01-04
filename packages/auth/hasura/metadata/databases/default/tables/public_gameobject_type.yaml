@@ -1,0 +1,32 @@
+table:
+  name: gameobject_type
+  schema: public
+object_relationships:
+- name: sprite
+  using:
+    manual_configuration:
+      column_mapping:
+        sprite_id: id
+      insertion_order: null
+      remote_table:
+        name: sprite
+        schema: public
+array_relationships:
+- name: gameobjects
+  using:
+    manual_configuration:
+      column_mapping:
+        id: type_id
+      insertion_order: null
+      remote_table:
+        name: gameobject
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - name
+    - sprite_id
+    - settings
+    filter: {}
+  role: temp_user

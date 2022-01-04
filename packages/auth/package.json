@@ -20,7 +20,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "npm run migrate:dist:latest && node src/main",
+    "start:prod": "npm run migrate:dist:latest && npm run hasura:migrate && node src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -35,7 +35,8 @@
     "migrate:make": "KNEX_MIGRATION_FILE_EXTENSION=ts npx knex migrate:make",
     "migrate:dist:latest": "knex migrate:latest --knexfile ./knexfile.js",
     "hasura": "hasura --project hasura --skip-update-check",
-    "migrate:hasura": "npm run hasura metadata apply metadata.json",
+    "hasura:migrate": "npm run hasura metadata apply",
+    "hasura:export": "npm run hasura metadata export",
     "tunnel": "ssh -L $(grep HOST .env | cut -d '=' -f2):8001:127.0.0.1:8001 -N 127.0.0.1"
   },
   "dependencies": {

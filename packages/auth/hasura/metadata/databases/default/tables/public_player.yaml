@@ -1,0 +1,55 @@
+table:
+  name: player
+  schema: public
+object_relationships:
+- name: room
+  using:
+    foreign_key_constraint_on: room_id
+- name: sprite
+  using:
+    manual_configuration:
+      column_mapping:
+        sprite_id: id
+      insertion_order: null
+      remote_table:
+        name: sprite
+        schema: public
+array_relationships:
+- name: user_roles
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: user_role
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - active
+    - animation
+    - client_share_id
+    - firstname
+    - id
+    - is_audio_video_enabled
+    - is_online
+    - lastname
+    - room_id
+    - sprite_id
+    - tile
+    - username
+    filter: {}
+  role: temp_user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - animation
+    - is_audio_video_enabled
+    - is_online
+    - room_id
+    - tile
+    - username
+    filter:
+      id:
+        _eq: X-Hasura-User-Id
+  role: temp_user
