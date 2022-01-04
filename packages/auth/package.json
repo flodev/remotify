@@ -33,7 +33,9 @@
     "migrate:down": "KNEX_MIGRATION_FILE_EXTENSION=ts PORT=8081 DATABASE_URL=$(grep DATABASE_URL .env | cut -d '=' -f2) knex migrate:down",
     "migrate:up": "KNEX_MIGRATION_FILE_EXTENSION=ts PORT=8081 DATABASE_URL=$(grep DATABASE_URL .env | cut -d '=' -f2) knex migrate:up",
     "migrate:make": "KNEX_MIGRATION_FILE_EXTENSION=ts npx knex migrate:make",
-    "migrate:dist:latest": "knex migrate:latest --debug --knexfile ./knexfile.js",
+    "migrate:dist:latest": "knex migrate:latest --knexfile ./knexfile.js",
+    "hasura": "hasura --project hasura --skip-update-check",
+    "migrate:hasura": "npm run hasura metadata apply metadata.json",
     "tunnel": "ssh -L $(grep HOST .env | cut -d '=' -f2):8001:127.0.0.1:8001 -N 127.0.0.1"
   },
   "dependencies": {
@@ -45,6 +47,7 @@
     "@nestjs/platform-express": "8.1.1",
     "@nestjs/platform-socket.io": "8.1.1",
     "@nestjs/sequelize": "8.0.0",
+    "hasura-cli": "^2.1.1",
     "@nestjs/websockets": "8.1.1",
     "@remotify/graphql": "0.2.8",
     "@remotify/models": "0.2.8",
