@@ -1,4 +1,9 @@
 <div id="top"></div>
+<style>
+  .markdown-body .icon {
+    font-size: 30px !important;
+  }
+</style>
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
 *** that would make this better, please fork the repo and create a pull request
@@ -86,7 +91,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-## ❓
+<div class="icon">❓</div>
 
 Remotify is here to create an enjoyable work atmosphere and culture in a virtual place. Remotify is all about openness, self determination and fun.  
 You can meet and work, express your feelings, change the room to your needs and even adapt the code to your needs and host it for youselves.  
@@ -96,7 +101,7 @@ You can meet and work, express your feelings, change the room to your needs and 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### Built With
-## 🏗️
+<div class="icon">🏗️</div>
 
 * [React.js](https://reactjs.org/)
 * [Phaser.js](https://phaser.io/)
@@ -109,13 +114,13 @@ You can meet and work, express your feelings, change the room to your needs and 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-## 🎮
+<div class="icon">🎮</div>
 
 Go to https://meet.remotify.place  
 Once the app is loaded you can do different things
 
 ### Make yourself at home  
-## 🏠
+<div class="icon">🏠</div>
 
 On the left top side there is a 🍔 menu.  
 Click on it and you reveal the only option currently available.   
@@ -123,7 +128,7 @@ Click on Edit mode, close the menu and you will see edit toolbar.
 There you can modify the place to your needs.
 
 ### Invite your friends  
-## 👩‍👩‍👦‍👦
+<div class="icon">👩‍👩‍👦‍👦</div>
 
 There is an invite button on the top of the screen.  
 When you click on it an url is copied to your clipboard automatically.  
@@ -148,13 +153,13 @@ See the [open issues](https://github.com/flodev/remotify/issues) for a full list
 
 
 <!-- CONTRIBUTING -->
-## Contributing   
-## 👩‍💻
+## Contributing  
+<div class="icon">👩‍💻</div>
 
 First of all I really appreciate every contribution of you. Thanks in advance 🤝 🤗  
 There are two ways depending on whether you want to work in the backend or frontend.  
 ### Frontend only 
-## 📱
+<div class="icon">📱</div>
 
 * filter or keep an I out for issues with the label <img src="readme-assets/frontend_label.png" alt="frontend label" height="30" style="vertical-align:middle;">
 * checkout the project using git clone https://github.com/flodev/remotify.git  
@@ -163,7 +168,7 @@ There are two ways depending on whether you want to work in the backend or front
 * run `npm run storybook` or `yarn storybook` 
 
 ### Run whole remotify on your system
-## 👑
+<div class="icon">👑</div>
 
 This step isn't particularely difficult either. You just have to install a few more things.  
 I've tried my best to do a local setup for you as easy as possible.
