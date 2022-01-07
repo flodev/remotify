@@ -1,0 +1,7 @@
+access_key = ""
+secret_key = ""
+aws_region = ""
+eks_cluster_name = ""
+db_identifier = ""
+db_username = ""
+db_password = ""

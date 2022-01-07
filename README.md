@@ -157,6 +157,10 @@ See the [open issues](https://github.com/flodev/remotify/issues) for a full list
 <div class="icon">👩‍💻</div>
 
 First of all I really appreciate every contribution of you. Thanks in advance 🤝 🤗  
+I'm actively looking for contributers.   
+Especially for design biased frontend people who would like to reinvent the look and feel of remotify.  
+Somehow everything I touch ends up looking nerdy 🤷‍♂️  
+  
 There are two ways depending on whether you want to work in the backend or frontend.  
 ### Frontend only 
 <div class="icon">📱</div>
