@@ -1,9 +1,16 @@
 variable "do_token" {
-  description = "aws access key"
+  description = "access token"
 }
 
 variable "pvt_key" {
-  description = "aws secret key"
+  description = "secret key"
+}
+variable "spaces_access_id" {
+  description = "spaces access id"
+}
+
+variable "spaces_secret_key" {
+  description = "spaces secret key"
 }
 
 variable "do_region" { default="fra1" }
