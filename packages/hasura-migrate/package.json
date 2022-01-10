@@ -1,6 +1,6 @@
 {
   "name": "hasura-migrate",
-  "version": "1.0.0",
+  "version": "0.2.13",
   "description": "",
   "main": "index.js",
   "scripts": {
