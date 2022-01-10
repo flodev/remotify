@@ -26,6 +26,18 @@ k8s_yaml(
 )
 k8s_resource('hasura', port_forwards=[8001], resource_deps=['postgresql-postgresql'])
 
+# ------------ hasura migrate ------------
+
+k8s_yaml(
+  helm(
+    './packages/infra-app/kubernetes/helm/hasura-migrate',
+    name = 'hasura-migrate'
+  )
+)
+k8s_resource('hasura-migrate', resource_deps=['hasura', 'postgresql-postgresql'])
+docker_build('hasura-migrate', './packages/hasura-migrate')
+
+
 # ------------ auth ------------
 
 k8s_yaml(
@@ -37,7 +49,7 @@ k8s_yaml(
     ]
   )
 )
-k8s_resource('auth', port_forwards=[4000, 4001], resource_deps=['hasura', 'postgresql-postgresql'])
+k8s_resource('auth', port_forwards=[4000, 4001], resource_deps=['hasura-migrate', 'hasura', 'postgresql-postgresql'])
 docker_build('auth', './packages/auth')
 
 # ------------ app ------------
@@ -50,4 +62,4 @@ k8s_yaml(
 )
 
 docker_build('app', './packages/app')
-k8s_resource('app', port_forwards=3000, resource_deps=['auth', 'hasura', 'postgresql-postgresql'])
+k8s_resource('app', port_forwards=3000, resource_deps=['auth', 'hasura-migrate', 'hasura', 'postgresql-postgresql'])

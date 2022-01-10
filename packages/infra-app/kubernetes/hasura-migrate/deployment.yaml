@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hasura-migrate
+    hasuraService: custom
+  name: hasura-migrate
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hasura-migrate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: hasura-migrate
+    spec:
+      containers:
+      - image: hasura-migrate
+        imagePullPolicy: IfNotPresent
+        name: hasura-migrate
+        env:
+        - name: HASURA_GRAPHQL_DATABASE_URL
+          value: "$HASURA_GRAPHQL_DATABASE_URL"
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          value: "$HASURA_GRAPHQL_ADMIN_SECRET"
+        - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+          value: "true"
+        - name: HASURA_GRAPHQL_JWT_SECRET
+          value: '$HASURA_GRAPHQL_JWT_SECRET'
+        # - name: HASURA_GRAPHQL_METADATA_DATABASE_URL
+        #   value: https://raw.githubusercontent.com/flodev/remotify/main/packages/hasura_metadata/hasura_metadata_2021_11_26_16_30_24_070.json
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        command: ["echo"]
+        args: ["$(HASURA_GRAPHQL_DATABASE_URL)"]

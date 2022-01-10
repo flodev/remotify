@@ -26,13 +26,6 @@ resource "digitalocean_kubernetes_cluster" "k8s" {
   }
 }
 
-# Create a new Spaces Bucket
-resource "digitalocean_spaces_bucket" "remotifyapp" {
-  name   = "remotify-app-${terraform.workspace}"
-  region = var.do_region
-  acl    = "public-read"
-}
-
 # 4. Create a domain
 resource "digitalocean_domain" "remotify-app-domain" {
   name = "remotify.place"
@@ -46,8 +39,29 @@ resource "digitalocean_certificate" "cert" {
 }
 
 # Add a CDN endpoint with a custom sub-domain to the Spaces Bucket
-resource "digitalocean_cdn" "remotify-app" {
-  origin           = digitalocean_spaces_bucket.remotifyapp.bucket_domain_name
-  custom_domain    = "meet.remotify.place"
-  certificate_name = digitalocean_certificate.cert.name
-}
+# resource "digitalocean_cdn" "remotify-app" {
+#   origin           = digitalocean_spaces_bucket.remotifyapp.bucket_domain_name
+#   custom_domain    = "meet.remotify.place"
+#   certificate_name = digitalocean_certificate.cert.name
+# }
+
+
+# resource "digitalocean_app" "remotify-app" {
+#   spec {
+#     name   = "remotify-app-${terraform.workspace}"
+#     region = var.do_region
+
+#     static_site {
+#       name          = "remotify-app-${terraform.workspace}"
+#       build_command = "npm install && npm run build"
+#       output_dir    = "/build"
+
+#       git {
+#         repo_clone_url = "https://github.com/flodev/remotify.git"
+#         branch         = "main"
+#       }
+
+#       source_dir = "packages/app"
+#     }
+#   }
+# }

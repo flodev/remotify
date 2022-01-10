@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hasura-migrate
+  name: hasura-migrate
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hasura-migrate
+  template:
+    metadata:
+      labels:
+        app: hasura-migrate
+    spec:
+      containers:
+      - image: hasura-migrate
+        name: hasura-migrate
+        ports:
+        env:
+        - name: HASURA_GRAPHQL_ENDPOINT
+          value: "{{ .Values.deployment.hasuraMigrationEndpoint }}"
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          value: "{{ .Values.deployment.hasuraAdminSecret }}"

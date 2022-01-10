@@ -1,0 +1,3 @@
+deployment:
+  hasuraAdminSecret: "#TU$sq-j6^pUjx?V{p>d?sELw"
+  hasuraMigrationEndpoint: "http://hasura:8001"
