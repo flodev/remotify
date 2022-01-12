@@ -26,18 +26,6 @@ resource "digitalocean_kubernetes_cluster" "k8s" {
   }
 }
 
-# 4. Create a domain
-resource "digitalocean_domain" "remotify-app-domain" {
-  name = "remotify.place"
-}
-
-# Create a DigitalOcean managed Let's Encrypt Certificate
-resource "digitalocean_certificate" "cert" {
-  name    = "cdn-cert"
-  type    = "lets_encrypt"
-  domains = ["remotify.place","meet.remotify.place"]
-}
-
 # Add a CDN endpoint with a custom sub-domain to the Spaces Bucket
 # resource "digitalocean_cdn" "remotify-app" {
 #   origin           = digitalocean_spaces_bucket.remotifyapp.bucket_domain_name

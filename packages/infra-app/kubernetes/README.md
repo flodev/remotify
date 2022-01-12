@@ -31,3 +31,11 @@ docker login -u AWS -p $(aws ecr get-login-password --region eu-west-1) 00217282
 aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 002172820271.dkr.ecr.eu-west-1.amazonaws.com/auth
 
 docker push 002172820271.dkr.ecr.eu-west-1.amazonaws.com/auth:0.2.6
+
+# golive commands (DO)
+
+ `helm install --set 'postgresqlDatabase=remotify' --set 'postgresqlPassword=<pw here>' --set 'postgresqlUsername=remotify' postgresql bitnami/postgresql`
+
+apply hasura and auth
+
+assign loadbalancer ips to api and graphql.remotify.place domains
