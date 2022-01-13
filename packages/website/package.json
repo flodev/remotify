@@ -11,7 +11,7 @@
         "clean": "node scripts/clean.js",
         "start": "npm run build && node scripts/start.js",
         "start:debug": "npm run build && node scripts/start-debug.js",
-        "deploy": "npm run build && aws s3 sync --acl private --sse --delete ./dist s3://www.remotify.place"
+        "deploy": "npm run build && aws s3 sync --acl private --sse --delete ./dist s3://www.remotify.place && aws cloudfront create-invalidation --distribution-id EC16UHELMNB6H --paths '/*'"
     },
     "description": "Website of remotify.place",
     "keywords": [],
