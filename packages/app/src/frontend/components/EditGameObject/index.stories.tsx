@@ -1,5 +1,4 @@
 import { Form } from 'antd'
-import React from 'react'
 import { useState } from 'react'
 import { ComponentDecorator } from '../../../../.storybook/decorators'
 import { PlaceObjectsTypes } from '../../../game/gameobjects'
@@ -64,6 +63,7 @@ const players: Player[] = [
 export default {
   title: 'EditGameObject',
   decorators: [ComponentDecorator],
+  component: EditGameObjectModal,
 }
 
 export const Default = () => {
