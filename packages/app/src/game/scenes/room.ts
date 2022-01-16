@@ -63,7 +63,7 @@ import {
 } from '../utils'
 import { getInteractionForPlayer, InteractionReceiver } from '../interact'
 import i18n from '../../i18n'
-import { StoreContext } from '../../state'
+import { Stores } from '../../state'
 import { autorun } from 'mobx'
 
 var easystarjs = require('easystarjs')
@@ -95,7 +95,7 @@ export class RoomScene extends Phaser.Scene {
   private playerFactory?: PlayerFactory
   private playerUpdater?: GameObjectsUpdater<PlayerModel>
   private zIndexer: ZIndexer
-  private storeContext?: StoreContext
+  private storeContext?: Stores
 
   constructor(
     config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -176,9 +176,7 @@ export class RoomScene extends Phaser.Scene {
   }
 
   async create() {
-    this.storeContext = this.registry.get(
-      REGISTRY_STORE_CONTEXT
-    ) as StoreContext
+    this.storeContext = this.registry.get(REGISTRY_STORE_CONTEXT) as Stores
     if (!this.storeContext) {
       throw new Error('cannot find store context')
     }

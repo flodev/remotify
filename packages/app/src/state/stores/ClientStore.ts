@@ -1,11 +1,11 @@
 import { makeObservable, observable, action } from 'mobx'
-import { Api } from '@remotify/open-api'
+import { ApiInterface } from '@remotify/open-api'
 import { Client } from '@remotify/models'
 
 export class ClientStore {
   public client?: Client
 
-  constructor(private api: Api) {
+  constructor(private api: ApiInterface) {
     this.fetchClient()
     makeObservable(this, {
       client: observable,

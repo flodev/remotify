@@ -5,7 +5,7 @@ import {
   subscribeToGameObjectsOfRoom,
   getGameObjectsByRoomId,
 } from '@remotify/graphql'
-import { Api } from '@remotify/open-api'
+import { ApiInterface } from '@remotify/open-api'
 
 export class GameObjectStore {
   public gameObjects: GameObject<Settings>[] = []
@@ -13,7 +13,7 @@ export class GameObjectStore {
 
   constructor(
     private graphQl: ApolloClient<any>,
-    private api: Api,
+    private api: ApiInterface,
     private roomId: string
   ) {
     console.log('init game object store')

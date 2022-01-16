@@ -7,7 +7,7 @@ import * as GameEvents from '../frontend/app/GameEvents'
 import * as RegistryKeys from '../constants/registry'
 import { REGISTRY_GRAPHQL_CLIENT, REGISTRY_STORE_CONTEXT } from '../constants'
 import { GAME_CANVAS_ID } from '../constants'
-import { GameObjectStore, StoreContext } from '../state'
+import { GameObjectStore, Stores } from '../state'
 
 // class VideoStreamPlugin extends Phaser.Plugins.BasePlugin {
 
@@ -32,10 +32,7 @@ const initializeRegistryKeys = (registry: Phaser.Data.DataManager) => {
   )
 }
 
-export const initiateGame = (
-  graphQl: ApolloClient,
-  storeContext: StoreContext
-) => {
+export const initiateGame = (graphQl: ApolloClient, storeContext: Stores) => {
   const canvas = document.getElementById(GAME_CANVAS_ID)
   const desiredWidth = Math.max(
     document.documentElement.clientWidth || 0,

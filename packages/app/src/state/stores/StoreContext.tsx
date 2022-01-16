@@ -6,20 +6,20 @@ import { GameObjectStore } from './GameObjectStore'
 import { GameStore } from './GameStore'
 import { UserMediaStore } from './UserMediaStore'
 import { ClientStore, RoomStore } from '.'
-import { Api } from '@remotify/open-api'
+import { Api, ApiInterface } from '@remotify/open-api'
 
-interface StoreContextProps {
+export interface StoreContextProps {
   roomId: string
   userId: string
   graphQl: ApolloClient<any>
-  api: Api
+  api: ApiInterface
 }
 
-interface AppContextProps extends StoreContextProps {
-  children: React.ReactNode[]
+export interface AppContextProps extends StoreContextProps {
+  children: React.ReactNode | React.ReactNode[]
 }
 
-export class StoreContext {
+export class Stores {
   readonly playerStore: PlayerStore
   readonly gameStore: GameStore
   readonly userMediaStore: UserMediaStore
@@ -47,15 +47,19 @@ export class StoreContext {
   }
 }
 
-const Context = createContext<StoreContext | undefined>(undefined)
+export const StoreContext = createContext<Stores | undefined>(undefined)
 
 export const StoreContextProvider = (props: AppContextProps) => {
-  const value = useMemo(() => new StoreContext(props), [])
-  return <Context.Provider value={value}>{props.children}</Context.Provider>
+  const value = useMemo(() => new Stores(props), [])
+  return (
+    <StoreContext.Provider value={value}>
+      {props.children}
+    </StoreContext.Provider>
+  )
 }
 
-export const useStoreContext = (): StoreContext => {
-  const context = useContext(Context)
+export const useStoreContext = (): Stores => {
+  const context = useContext(StoreContext)
   if (!context) {
     throw Error('Application context is not ready')
   }

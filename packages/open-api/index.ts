@@ -66,7 +66,7 @@ type ActivateInteractionVars = {
   gameObjectSettings: Settings
 }
 
-interface ApiInterface {
+export interface ApiInterface {
   getClientWithRoomsAndPlayers(): Promise<Client[]>
   getGameObjectTypes(): Promise<GameObjectType[]>
   changePlayerPosition(variables: ChangePlayerPositionVars): Promise<void>

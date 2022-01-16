@@ -1,5 +1,3 @@
-import React, { FunctionComponent, useContext, useState } from 'react'
-import { ApiContext } from '../../context'
 import styled from 'styled-components'
 import {
   AppstoreAddOutlined,

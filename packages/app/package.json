@@ -48,6 +48,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "storybook-docs": "start-storybook --docs --no-manager-cache",
+    "build-storybook-docs": "build-storybook --docs",
     "extrude-tiles": "cp ./public/assets/tilemaps/tilemap.png ./public/assets/tilemaps/tilemap_unextruded.png; tile-extruder --tileWidth 30 --tileHeight 30 --input ./public/assets/tilemaps/tilemap.png --output ./public/assets/tilemaps/tilemap_extruded.png; mv ./public/assets/tilemaps/tilemap_extruded.png ./public/assets/tilemaps/tilemap.png",
     "deploy:production": "npm run build; npm run aws-sync",
     "aws-sync": "aws s3 sync --acl private --sse --delete ./build s3://meet.remotify.place && aws cloudfront create-invalidation --distribution-id EJ3FWRYB131QT --paths '/*'",
@@ -58,8 +59,6 @@
   "devDependencies": {
     "@babel/core": "7.12.3",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
-    "@storybook/addon-actions": "^6.4.12",
-    "@storybook/addon-docs": "^6.4.12",
     "@storybook/addon-essentials": "^6.4.12",
     "@storybook/addon-links": "^6.4.12",
     "@storybook/addons": "^6.4.12",
@@ -111,6 +110,7 @@
     "jest-watch-typeahead": "0.6.1",
     "lerna": "^4.0.0",
     "mini-css-extract-plugin": "0.11.3",
+    "moq.ts": "^7.3.4",
     "optimize-css-assets-webpack-plugin": "5.0.4",
     "pnp-webpack-plugin": "1.6.4",
     "postcss-flexbugs-fixes": "4.2.1",
@@ -155,7 +155,11 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "import/no-anonymous-default-export": "off"
+
+    }
   },
   "browserslist": {
     "production": [

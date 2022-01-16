@@ -8,16 +8,14 @@ import { RoomScene } from './room'
 import { GameObjectType } from '../../models'
 import { Client } from '@remotify/models'
 import { REGISTRY_STORE_CONTEXT } from '../../constants'
-import { StoreContext } from '../../state'
+import { Stores } from '../../state'
 
 export class RootScene extends Scene {
   constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
     super(config)
   }
   public async create() {
-    const storeContext = this.registry.get(
-      REGISTRY_STORE_CONTEXT
-    ) as StoreContext
+    const storeContext = this.registry.get(REGISTRY_STORE_CONTEXT) as Stores
     const {
       clientStore: { client },
       gameObjectStore: { gameObjectTypes },

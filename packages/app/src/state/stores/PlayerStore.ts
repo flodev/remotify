@@ -5,7 +5,7 @@ import {
   getPlayersOfRoom,
   subscribeToPlayersOfRoom,
 } from '@remotify/graphql'
-import { Api } from '@remotify/open-api'
+import { ApiInterface } from '@remotify/open-api'
 
 export class PlayerStore {
   public player?: Player
@@ -21,7 +21,7 @@ export class PlayerStore {
     private graphQl: ApolloClient<any>,
     private userId: string,
     private roomId: string,
-    private api: Api
+    private api: ApiInterface
   ) {
     makeObservable(this, {
       players: observable.ref,
