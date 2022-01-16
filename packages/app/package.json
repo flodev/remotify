@@ -1,6 +1,6 @@
 {
   "name": "@remotify/app",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "private": true,
   "license": "Apache-2.0",
   "main": "dist/cjs/index.js",
@@ -22,7 +22,7 @@
     "@fortawesome/react-fontawesome": "^0.1.16",
     "@remotify/graphql": "^0.2.13",
     "@remotify/models": "^0.2.13",
-    "@remotify/open-api": "^0.2.13",
+    "@remotify/open-api": "^0.2.14",
     "antd": "^4.17.3",
     "autoprefixer": "^9.x",
     "axios": "^0.21.1",
@@ -158,7 +158,6 @@
     ],
     "rules": {
       "import/no-anonymous-default-export": "off"
-
     }
   },
   "browserslist": {
