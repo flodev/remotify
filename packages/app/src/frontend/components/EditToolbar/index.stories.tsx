@@ -1,31 +1,58 @@
 import { ComponentDecorator } from '../../../../.storybook/decorators'
 import { StoreContextMock } from '../../../../.storybook/mocks'
-import { EditToolTypes } from '../../../game/editTools'
+import { useArgs } from '@storybook/client-api'
 import { EditToolbar } from './index'
 import { Mock } from 'moq.ts'
 import { Stores } from '../../../state'
-import { useState } from 'react'
+import { EditToolTypes } from '../../../game/editTools'
 
 export default {
   title: 'EditToolbar',
   decorators: [ComponentDecorator],
   component: EditToolbar,
+  argTypes: {
+    activeEditTool: {
+      options: EditToolTypes,
+      control: { type: 'radio' },
+      data: { type: 'enum' },
+    },
+    isActive: {
+      control: { type: 'boolean' },
+      data: { type: 'boolean' },
+    },
+  },
+  args: {
+    activeEditTool: EditToolTypes.DrawFloor,
+    isActive: true,
+  },
 }
 
-export const Default = () => {
-  const [isEditMode, setIsEditMode] = useState<boolean>(true)
+interface Args {
+  activeEditTool: EditToolTypes | undefined
+}
+
+export const Default = (args: Args) => {
+  const [{ activeEditTool, isActive }, updateArgs] = useArgs()
 
   const storesMock = new Mock<Stores>()
     .setup((instance) => instance.gameStore)
-    .returns({ isEditMode, setIsEditMode, setGame: () => {} })
+    .returns({
+      isEditMode: isActive,
+      setIsEditMode: () => {},
+      setGame: () => {},
+    })
     .object()
 
   return (
     <StoreContextMock stores={storesMock}>
-      <EditToolbar
-        activeEditTool={EditToolTypes.Drag}
-        setActiveEditTool={() => {}}
-      />
+      <div style={{ position: 'relative', height: '300px', width: '100%' }}>
+        <EditToolbar
+          activeEditTool={activeEditTool}
+          setActiveEditTool={(activeEditTool: EditToolTypes) => {
+            updateArgs({ activeEditTool })
+          }}
+        />
+      </div>
     </StoreContextMock>
   )
 }

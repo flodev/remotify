@@ -10,10 +10,11 @@ export const Toolbar = styled.div`
 
 export const ToolbarRight = styled(Toolbar)`
   right: 0;
-  top: 35%;
+  top: 50%;
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  transform: translate(0, -50%);
 `
 
 export const ToolbarBottom = styled(Toolbar)`
