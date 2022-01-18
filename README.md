@@ -38,7 +38,7 @@
   <p align="center">
     Gather with fun
     <br />
-    <!-- <a href="https://github.com/flodev/remotify"><strong>Explore the docs »</strong></a> -->
+    <a href="http://docs.remotify.place"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://meet.remotify.place">View Demo</a>

@@ -48,7 +48,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "storybook-docs": "start-storybook --docs --no-manager-cache",
-    "build-storybook-docs": "build-storybook --docs",
+    "build-storybook-docs": "build-storybook --docs -o ../../docs",
     "extrude-tiles": "cp ./public/assets/tilemaps/tilemap.png ./public/assets/tilemaps/tilemap_unextruded.png; tile-extruder --tileWidth 30 --tileHeight 30 --input ./public/assets/tilemaps/tilemap.png --output ./public/assets/tilemaps/tilemap_extruded.png; mv ./public/assets/tilemaps/tilemap_extruded.png ./public/assets/tilemaps/tilemap.png",
     "deploy:production": "npm run build; npm run aws-sync",
     "aws-sync": "aws s3 sync --acl private --sse --delete ./build s3://meet.remotify.place && aws cloudfront create-invalidation --distribution-id EJ3FWRYB131QT --paths '/*'",
