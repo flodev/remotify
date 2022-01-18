@@ -1,9 +1,12 @@
-import { FullPageLoader } from '.'
-import { ComponentDecorator } from '../../../../.storybook/decorators'
+import { FullPageLoader } from './index'
+import {
+  ComponentDecorator,
+  RelativeDivDecorator,
+} from '../../../../.storybook/decorators'
 
 export default {
   title: 'FullPageLoader',
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, RelativeDivDecorator],
   component: FullPageLoader,
 }
 

@@ -14,6 +14,7 @@ import { useStoreContext } from '../../../state'
 const Label = styled.p`
   margin-bottom: 2px;
   font-size: 10px;
+  text-align: center;
 `
 
 const DragOutlinedButton = createToolbarButton(DragOutlined)

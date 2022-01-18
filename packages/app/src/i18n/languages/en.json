@@ -25,5 +25,8 @@
   "interaction_toilet_take_a_pee": "take a pee",
   "interaction_toilet_flush": "flush",
   "Edit Mode": "Edit Mode",
-  "Room": "Room"
+  "Room": "Room",
+  "Determines which item in the toolbar is active.": "Determines which item in the toolbar is active.",
+  "Determines whether the toolbar is shown or not. The property comes from the gameStore.": "Determines whether the toolbar is shown or not. The property comes from the gameStore.",
+  "A callback for setting the new state of activeEditTool.": "A callback for setting the new state of activeEditTool."
 }
