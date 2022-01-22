@@ -4,6 +4,5 @@
 
 deployment:
   jwt: '{"type":"RS256", "key": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA7wRzpks3vLqRUJFaBueH\nWSS/2edfcEFuqnIhTBtmAiAF8TRciBYuAYyD53DmZmLUHQeUI1g7zVTDA+3LrQg+\nwHVTGua1RSRTLfMYrb6naOfAHms05J1KBPijy7NnQOKQeNdg33zLmO4pkJLtdX9A\nY8Nkwj5+KCoIKJ7MUx18zYMxX/TK9X1G1Y5jSIzx5s9zVEkNSxwYzxVFs8om3TDT\nTNmJnJszLRwRElpV9Yww7pSufa6vQujTSq6Bvk1IT0YH/PuS0OQbTMpfV+xv8gwa\nEaynNI4sqyzGMOfCeOoCFyqD4xBJ68jKIBvpaNT0M73yGB5RaFFMbufT/Eqvoxv/\n/b538RH1Mvi4LO5bJPTULMKjuNwmjlaQ+PpiXR8NwkcxY/G9v6rWVI5FOVH8bIa6\n0PfI2wmo2PfhDJ2gYmTApkmnulhtMeymZ2BdDyt3gZ14PMmYEhve0TCFG8GuwCgW\njE3bviOfioQAv7yNASuWP3gbtYLMmG2ST0xRRVwj1l59smHU151KB9JmYM3IgyZ9\nQZAtNgO9UPfT6DQv1by9c0dMsDoTJbGq6BO1lOVE8/anws3FYYdOkCNqyZz7cnYR\nNR5R+5AfL42R6+yJ23fA9Ca1zXeMLJqTlhMBaX2e4Kc6iviIwtxDorwdl9CeiOOs\nO46gJxH7/mmuYryO4mB1QH8CAwEAAQ==\n-----END PUBLIC KEY-----"}'
-  metadataUrl: "https://raw.githubusercontent.com/flodev/remotify/main/packages/hasura_metadata/hasura_metadata_2021_11_26_16_30_24_070.json"
   adminSecret: "#TU$sq-j6^pUjx?V{p>d?sELw"
   databaseUrl: "<set me through tilt>"

@@ -30,8 +30,6 @@ spec:
           value: "true"
         - name: HASURA_GRAPHQL_JWT_SECRET
           value: '{{ .Values.deployment.jwt }}'
-        # - name: HASURA_GRAPHQL_METADATA_DATABASE_URL
-        #   value: {{ .Values.deployment.metadataUrl }}
         ports:
         - containerPort: 8080
           protocol: TCP

@@ -30,11 +30,7 @@ spec:
           value: "true"
         - name: HASURA_GRAPHQL_JWT_SECRET
           value: '$HASURA_GRAPHQL_JWT_SECRET'
-        # - name: HASURA_GRAPHQL_METADATA_DATABASE_URL
-        #   value: https://raw.githubusercontent.com/flodev/remotify/main/packages/hasura_metadata/hasura_metadata_2021_11_26_16_30_24_070.json
         ports:
         - containerPort: 8080
           protocol: TCP
         resources: {}
-        # command: ["echo"]
-        # args: ["$(HASURA_GRAPHQL_DATABASE_URL)"]
