@@ -191,11 +191,15 @@ Now tilt watches over your file change activities and will reload to kubernetes 
 
 NOTE: It will probably take a few beats to get the system up and running.  
 You can open the browser to see the progress.  
-The frontend currently takes a bit too long to get up and running
+The frontend currently takes a bit too long to get up and running. Once it's up you can reach it using the browser `http://localhost:3001`.
 It should look this way in your terminal:  
 <div>
 <img src="readme-assets/tilt.png" alt="tilt" height="200">
 </div>
+
+After consideration I suggest that you run the frontend from your local system and use all the other systems from tilt.  
+The frontend build just takes to long to work with that productivly.
+I've set the trigger mode in tilt to manual so you need to click on <img src="readme-assets/tilt_update.png" alt="tilt update" width="30"> to update the frontend.
 
 <!-- LICENSE -->
 ## License
