@@ -16,6 +16,7 @@ export const Canvas = ({ onReady }: CanvasProps) => {
   )
 
   var devicePixelRatio = window.devicePixelRatio || 1
+  // console.log('devicePixelRatio', devicePixelRatio)
 
   useEffect(() => {
     onReady && onReady()

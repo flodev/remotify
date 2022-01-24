@@ -62,4 +62,8 @@ k8s_yaml(
 )
 
 docker_build('app', './packages/app')
-k8s_resource('app', port_forwards=3000, resource_deps=['auth', 'hasura-migrate', 'hasura', 'postgresql-postgresql'])
+k8s_resource('app',
+  port_forwards=3000,
+  resource_deps=['auth', 'hasura-migrate', 'hasura', 'postgresql-postgresql'],
+  trigger_mode=TRIGGER_MODE_MANUAL
+)

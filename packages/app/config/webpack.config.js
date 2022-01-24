@@ -24,6 +24,23 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+const threadLoader = require('thread-loader')
+
+const threadLoaderOptions = {
+  workers: 4,
+  // workerParallelJobs: 200,
+}
+
+if (process.env.DISABLE_THREAD_WARMUP !== 'true') {
+  threadLoader.warmup(threadLoaderOptions, [
+    // modules to load
+    // can be any module, i. e.
+    'babel-loader',
+    'style-loader',
+    'css-loader',
+    'postcss-loader',
+  ])
+}
 
 const postcssNormalize = require('postcss-normalize')
 
@@ -164,7 +181,7 @@ module.exports = function (webpackEnv) {
       ? shouldUseSourceMap
         ? 'source-map'
         : false
-      : isEnvDevelopment && 'cheap-module-source-map',
+      : isEnvDevelopment && shouldUseSourceMap && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry:
@@ -230,6 +247,21 @@ module.exports = function (webpackEnv) {
     },
     optimization: {
       minimize: isEnvProduction,
+      // splitChunks: {
+      //   cacheGroups: {
+      //     vendor: {
+      //       name: 'node_vendors', // part of the bundle name and
+      //       // can be used in chunks array of HtmlWebpackPlugin
+      //       test: /[\\/]node_modules[\\/]/,
+      //       chunks: 'all',
+      //     },
+      //     common: {
+      //       test: /[\\/]src[\\/]frontend[\\/]components[\\/]/,
+      //       chunks: 'all',
+      //       minSize: 0,
+      //     },
+      //   },
+      // },
       minimizer: [
         // This is only used in production mode
         new TerserPlugin({
@@ -394,71 +426,87 @@ module.exports = function (webpackEnv) {
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
               include: paths.appSrc,
-              loader: require.resolve('babel-loader'),
-              options: {
-                customize: require.resolve(
-                  'babel-preset-react-app/webpack-overrides'
-                ),
-                presets: [
-                  [
-                    require.resolve('babel-preset-react-app'),
-                    {
-                      runtime: hasJsxRuntime ? 'automatic' : 'classic',
-                    },
-                  ],
-                ],
-
-                plugins: [
-                  [
-                    require.resolve('babel-plugin-named-asset-import'),
-                    {
-                      loaderMap: {
-                        svg: {
-                          ReactComponent:
-                            '@svgr/webpack?-svgo,+titleProp,+ref![path]',
+              use: [
+                {
+                  loader: require.resolve('thread-loader'),
+                  options: threadLoaderOptions,
+                },
+                {
+                  loader: require.resolve('babel-loader'),
+                  options: {
+                    customize: require.resolve(
+                      'babel-preset-react-app/webpack-overrides'
+                    ),
+                    presets: [
+                      [
+                        require.resolve('babel-preset-react-app'),
+                        {
+                          runtime: hasJsxRuntime ? 'automatic' : 'classic',
                         },
-                      },
-                    },
-                  ],
-                  isEnvDevelopment &&
-                    shouldUseReactRefresh &&
-                    require.resolve('react-refresh/babel'),
-                ].filter(Boolean),
-                // This is a feature of `babel-loader` for webpack (not Babel itself).
-                // It enables caching results in ./node_modules/.cache/babel-loader/
-                // directory for faster rebuilds.
-                cacheDirectory: true,
-                // See #6846 for context on why cacheCompression is disabled
-                cacheCompression: false,
-                compact: isEnvProduction,
-              },
+                      ],
+                    ],
+
+                    plugins: [
+                      [
+                        require.resolve('babel-plugin-named-asset-import'),
+                        {
+                          loaderMap: {
+                            svg: {
+                              ReactComponent:
+                                '@svgr/webpack?-svgo,+titleProp,+ref![path]',
+                            },
+                          },
+                        },
+                      ],
+                      isEnvDevelopment &&
+                        shouldUseReactRefresh &&
+                        require.resolve('react-refresh/babel'),
+                    ].filter(Boolean),
+                    // This is a feature of `babel-loader` for webpack (not Babel itself).
+                    // It enables caching results in ./node_modules/.cache/babel-loader/
+                    // directory for faster rebuilds.
+                    cacheDirectory: true,
+                    // See #6846 for context on why cacheCompression is disabled
+                    cacheCompression: false,
+                    compact: isEnvProduction,
+                  },
+                },
+              ],
             },
             // Process any JS outside of the app with Babel.
             // Unlike the application JS, we only compile the standard ES features.
             {
               test: /\.(js|mjs)$/,
               exclude: /@babel(?:\/|\\{1,2})runtime/,
-              loader: require.resolve('babel-loader'),
-              options: {
-                babelrc: false,
-                configFile: false,
-                compact: false,
-                presets: [
-                  [
-                    require.resolve('babel-preset-react-app/dependencies'),
-                    { helpers: true },
-                  ],
-                ],
-                cacheDirectory: true,
-                // See #6846 for context on why cacheCompression is disabled
-                cacheCompression: false,
+              use: [
+                {
+                  loader: require.resolve('thread-loader'),
+                  options: threadLoaderOptions,
+                },
+                {
+                  loader: require.resolve('babel-loader'),
+                  options: {
+                    babelrc: false,
+                    configFile: false,
+                    compact: false,
+                    presets: [
+                      [
+                        require.resolve('babel-preset-react-app/dependencies'),
+                        { helpers: true },
+                      ],
+                    ],
+                    cacheDirectory: true,
+                    // See #6846 for context on why cacheCompression is disabled
+                    cacheCompression: false,
 
-                // Babel sourcemaps are needed for debugging into node_modules
-                // code.  Without the options below, debuggers like VSCode
-                // show incorrect code and set breakpoints on the wrong lines.
-                sourceMaps: shouldUseSourceMap,
-                inputSourceMap: shouldUseSourceMap,
-              },
+                    // Babel sourcemaps are needed for debugging into node_modules
+                    // code.  Without the options below, debuggers like VSCode
+                    // show incorrect code and set breakpoints on the wrong lines.
+                    sourceMaps: shouldUseSourceMap,
+                    inputSourceMap: shouldUseSourceMap,
+                  },
+                },
+              ],
             },
             // "postcss" loader applies autoprefixer to our CSS.
             // "css" loader resolves paths in CSS and adds assets as dependencies.
@@ -470,12 +518,18 @@ module.exports = function (webpackEnv) {
             {
               test: cssRegex,
               exclude: cssModuleRegex,
-              use: getStyleLoaders({
-                importLoaders: 1,
-                sourceMap: isEnvProduction
-                  ? shouldUseSourceMap
-                  : isEnvDevelopment,
-              }),
+              use: [
+                {
+                  loader: require.resolve('thread-loader'),
+                  options: threadLoaderOptions,
+                },
+                ...getStyleLoaders({
+                  importLoaders: 1,
+                  sourceMap: isEnvProduction
+                    ? shouldUseSourceMap
+                    : isEnvDevelopment,
+                }),
+              ],
               // Don't consider CSS imports dead code even if the
               // containing package claims to have no side effects.
               // Remove this when webpack adds a warning or an error for this.
@@ -486,15 +540,21 @@ module.exports = function (webpackEnv) {
             // using the extension .module.css
             {
               test: cssModuleRegex,
-              use: getStyleLoaders({
-                importLoaders: 1,
-                sourceMap: isEnvProduction
-                  ? shouldUseSourceMap
-                  : isEnvDevelopment,
-                modules: {
-                  getLocalIdent: getCSSModuleLocalIdent,
+              use: [
+                {
+                  loader: require.resolve('thread-loader'),
+                  options: threadLoaderOptions,
                 },
-              }),
+                ...getStyleLoaders({
+                  importLoaders: 1,
+                  sourceMap: isEnvProduction
+                    ? shouldUseSourceMap
+                    : isEnvDevelopment,
+                  modules: {
+                    getLocalIdent: getCSSModuleLocalIdent,
+                  },
+                }),
+              ],
             },
             // Opt-in support for SASS (using .scss or .sass extensions).
             // By default we support SASS Modules with the
@@ -683,6 +743,7 @@ module.exports = function (webpackEnv) {
         }),
       // TypeScript type checking
       useTypeScript &&
+        process.env.DISABLE_TS_CHECK !== 'true' &&
         new ForkTsCheckerWebpackPlugin({
           typescript: resolve.sync('typescript', {
             basedir: paths.appNodeModules,

@@ -18,6 +18,10 @@ spec:
       containers:
       - image: app
         name: app
+        resources:
+          requests:
+            memory: "1000Mi"
+            cpu: "1500m"
         ports:
         - containerPort: 3000
           protocol: TCP
@@ -30,3 +34,11 @@ spec:
           value: "{{ .Values.deployment.reactAppGraphQlWs }}"
         - name: REACT_APP_WEBRTC_SOCKET
           value: "{{ .Values.deployment.reactAppWebrtcSocket }}"
+        - name: DISABLE_ESLINT_PLUGIN
+          value: 'true'
+        - name: DISABLE_TS_CHECK
+          value: 'true'
+        - name: GENERATE_SOURCEMAP
+          value: 'false'
+        - name: DISABLE_THREAD_WARMUP
+          value: 'true'
