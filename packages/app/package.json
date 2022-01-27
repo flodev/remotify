@@ -54,7 +54,10 @@
     "aws-sync": "aws s3 sync --acl private --sse --delete ./build s3://meet.remotify.place && aws cloudfront create-invalidation --distribution-id EJ3FWRYB131QT --paths '/*'",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "tunnel:graphql": "ssh -L $(grep HOST .env | cut -d '=' -f2):8001:127.0.0.1:8001 -N 127.0.0.1",
+    "tunnel:auth1": "ssh -L $(grep HOST .env | cut -d '=' -f2):4001:127.0.0.1:4001 -N 127.0.0.1",
+    "tunnel:auth2": "ssh -L $(grep HOST .env | cut -d '=' -f2):4000:127.0.0.1:4000 -N 127.0.0.1"
   },
   "devDependencies": {
     "@babel/core": "7.12.3",

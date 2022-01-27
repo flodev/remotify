@@ -27,8 +27,8 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const threadLoader = require('thread-loader')
 
 const threadLoaderOptions = {
-  workers: 4,
-  // workerParallelJobs: 200,
+  workers: 8,
+  workerParallelJobs: 100,
 }
 
 if (process.env.DISABLE_THREAD_WARMUP !== 'true') {
@@ -519,10 +519,10 @@ module.exports = function (webpackEnv) {
               test: cssRegex,
               exclude: cssModuleRegex,
               use: [
-                {
-                  loader: require.resolve('thread-loader'),
-                  options: threadLoaderOptions,
-                },
+                // {
+                //   loader: require.resolve('thread-loader'),
+                //   options: threadLoaderOptions,
+                // },
                 ...getStyleLoaders({
                   importLoaders: 1,
                   sourceMap: isEnvProduction
@@ -541,10 +541,10 @@ module.exports = function (webpackEnv) {
             {
               test: cssModuleRegex,
               use: [
-                {
-                  loader: require.resolve('thread-loader'),
-                  options: threadLoaderOptions,
-                },
+                // {
+                //   loader: require.resolve('thread-loader'),
+                //   options: threadLoaderOptions,
+                // },
                 ...getStyleLoaders({
                   importLoaders: 1,
                   sourceMap: isEnvProduction

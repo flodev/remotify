@@ -1,15 +1,26 @@
-// 
+//
 // Typography
-// 
+//
 
-// Override Bootstrap typography variables
-
-$font-family-base: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI",
+$font-family-sans-serif: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-$headings-font-family: "Catamaran", -apple-system, BlinkMacSystemFont,
+$font-family-serif: "Catamaran", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-$headings-font-weight: 800;
+
+// $font-family-sans-serif: "Merriweather Sans", -apple-system, BlinkMacSystemFont,
+//     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+//     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+// $font-family-serif: "Merriweather", -apple-system, BlinkMacSystemFont,
+//     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+//     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+$font-family-base: $font-family-serif;
+
+$headings-font-family: $font-family-serif;
+
+$btn-font-family: $font-family-sans-serif;

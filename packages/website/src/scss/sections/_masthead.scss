@@ -3,82 +3,92 @@
 //
 
 header.masthead {
-    position: relative;
-    overflow: hidden;
-    padding-top: calc(7rem + 72px);
-    padding-bottom: 7rem;
-    background: linear-gradient(0deg, $secondary 0%, $primary 100%);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: scroll;
-    background-size: cover;
+    padding-top: 18rem;
+    padding-bottom: calc(10rem - #{$navbar-height});
 
-    .cta {
-        background-color: black;
-        color: white;
-    }
+    // .cta {
+    //     background-color: black;
+    //     color: white;
+    // }
 
     .masthead-content {
+        // padding-top: calc(7rem + 72px);
+        color: white;
         z-index: 1;
         position: relative;
+        top: 4rem;
 
         .masthead-heading {
-            font-size: 4rem;
+            font-weight: 700;
+            font-size: 2rem;
+            padding-right: 10px;
         }
 
         .masthead-subheading {
-            font-size: 2rem;
+            font-size: 1rem;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 
-    .bg-circle {
-        z-index: 0;
-        position: absolute;
-        border-radius: 100%;
-        background: linear-gradient(0deg, $primary 0%, $secondary 100%);
+    // replace the masthead.jpg image in the /assets/img directory to change the image
+    // if the image name change, make sure to update the url path below!
+
+    background: linear-gradient(to bottom,
+        #{fade-out($brown, 0.5)} 0%,
+        #{fade-out($brown, 0.5)} 100%),
+    url("../assets/img/bg-masthead.gif");
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover;
+
+    h1 {
+        font-size: 2.25rem;
     }
 
-    .bg-circle-1 {
-        height: 90rem;
-        width: 90rem;
-        bottom: -55rem;
-        left: -55rem;
+    @include media-breakpoint-up(lg) {
+        height: 100vh;
+        min-height: 40rem;
+        padding-top: $navbar-height;
+        padding-bottom: 0;
+
+        p {
+            font-size: 1.15rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+        }
     }
 
-    .bg-circle-2 {
-        height: 50rem;
-        width: 50rem;
-        top: -25rem;
-        right: -25rem;
+    @include media-breakpoint-up(xl) {
+        h1 {
+            font-size: 3.5rem;
+        }
     }
 
-    .bg-circle-3 {
-        height: 20rem;
-        width: 20rem;
-        bottom: -10rem;
-        right: 5%;
-    }
-
-    .bg-circle-4 {
-        height: 30rem;
-        width: 30rem;
-        top: -5rem;
-        right: 35%;
-    }
-}
-
-@media (min-width: 992px) {
-    header.masthead {
-        padding-top: calc(10rem + 55px);
-        padding-bottom: 10rem;
+    @include media-breakpoint-up(lg) {
 
         .masthead-content {
+
+            .flex {
+                display: block;
+                justify-content: center;
+                align-items: center;
+            }
             .masthead-heading {
-                font-size: 6rem;
+                font-size: 5rem;
+                padding-right: 0;
             }
 
             .masthead-subheading {
-                font-size: 4rem;
+                font-size: 3rem;
             }
         }
     }

@@ -1,11 +1,23 @@
-// 
+//
 // Buttons
-// 
+//
+
+//- Custom XL button styling
 
 .btn-xl {
-    text-transform: uppercase;
-    padding: 1.5rem 3rem;
-    font-size: 0.9rem;
+    padding: 1.25rem 2.25rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10rem;
+}
+
+.btn-l {
+    padding: 1rem 2rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10rem;
 }
