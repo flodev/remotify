@@ -4,6 +4,10 @@ metadata:
   labels:
     app: auth
   name: auth
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "https"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "c0595d38-ebf4-455d-8b6f-2d9bb7f0cdb0"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443,4001"
   namespace: default
 spec:
   selector:
