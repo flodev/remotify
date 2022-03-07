@@ -101,18 +101,16 @@ resource "aws_cloudfront_distribution" "s3_remotify_app_distribution" {
     acm_certificate_arn = "arn:aws:acm:us-east-1:002172820271:certificate/bfa2eeb4-ebec-47b3-a092-e95f99bbc059"
   }
 
-  custom_error_response {
+  custom_error_response  {
     error_code = 404
     error_caching_min_ttl = 300
     response_page_path = "/"
     response_code = 200
   }
-
-  #   {
-  #     error_code = 403
-  #     error_caching_min_ttl = 300
-  #     response_page_path = "/"
-  #     response_code = 200
-  #   }
-  # ]
+  custom_error_response  {
+    error_code = 403
+    error_caching_min_ttl = 300
+    response_page_path = "/"
+    response_code = 200
+  }
 }
