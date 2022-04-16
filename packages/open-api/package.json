@@ -10,7 +10,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test": "jest",
+    "pre-commit": "yarn test"
   },
   "author": "Florian Klenk <florian@remotify.place>",
   "license": "Apache-2.0",
@@ -22,9 +24,63 @@
     "jwt-decode": "^3.1.2"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/jest": "^27.4.1",
+    "@types/json-server": "^0.14.4",
+    "cors": "^2.8.5",
+    "husky": "^7.0.4",
+    "jest": "^27.5.1",
+    "jest-watch-typeahead": "^1.0.0",
+    "json-server": "^0.17.0",
+    "react": "^17.0.2",
+    "react-app-polyfill": "^3.0.0",
+    "ts-jest": "^27.1.3",
     "typescript": "^4.4.4"
   },
   "resolutions": {
     "**/ua-parser-js": "0.7.28"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts"
+    ],
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
+    "testEnvironment": "jsdom",
+    "testRunner": "/Users/florian/projects/test/app/node_modules/jest-circus/runner.js",
+    "transform": {
+      "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    "modulePaths": [],
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ],
+    "watchPlugins": [
+      "jest-watch-typeahead/filename",
+      "jest-watch-typeahead/testname"
+    ],
+    "resetMocks": true
   }
 }
