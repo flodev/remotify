@@ -55,16 +55,16 @@ docker_build('auth', './packages/auth')
 
 # ------------ app ------------
 
-k8s_yaml(
-  helm(
-    './packages/infra-app/kubernetes/helm/app',
-    name = 'app'
-  )
-)
+# k8s_yaml(
+#   helm(
+#     './packages/infra-app/kubernetes/helm/app',
+#     name = 'app'
+#   )
+# )
 
-docker_build('app', './packages/app')
-k8s_resource('app',
-  port_forwards=3001,
-  resource_deps=['auth', 'hasura-migrate', 'hasura', 'postgresql'],
-  trigger_mode=TRIGGER_MODE_MANUAL
-)
+# docker_build('app', './packages/app')
+# k8s_resource('app',
+#   port_forwards=3001,
+#   resource_deps=['auth', 'hasura-migrate', 'hasura', 'postgresql'],
+#   trigger_mode=TRIGGER_MODE_MANUAL
+# )
