@@ -1,9 +1,9 @@
 import { notification } from 'antd'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory, useParams } from 'react-router-dom'
 import { FullPageLoader } from '..'
-import { tempSignup, regainToken } from '@remotify/open-api'
+import { tempSignup, regainToken, Api } from '@remotify/open-api'
 import { TempSignupType } from '@remotify/models'
 import { JwtCache } from '@remotify/graphql'
 import { cleanLocalStorage } from '../../utils'
@@ -11,13 +11,19 @@ interface InitProps {
   setCanOpenGame?(canOpenGame: boolean): void
   isInvite?: boolean
   jwtCache: JwtCache
+  api?: Api
 }
 
-export const Init = ({ setCanOpenGame, jwtCache, isInvite }: InitProps) => {
+export const Init = ({
+  setCanOpenGame,
+  jwtCache,
+  isInvite,
+  api,
+}: InitProps) => {
   const { inviteId } = useParams<{ inviteId: string }>()
   const history = useHistory()
   const { t } = useTranslation()
-  const register = async () => {
+  const register = useCallback(async () => {
     try {
       const { roomName, username, id, roomId } = await tempSignup(
         process.env.REACT_APP_AUTH_API_URL!,
@@ -38,7 +44,21 @@ export const Init = ({ setCanOpenGame, jwtCache, isInvite }: InitProps) => {
         message: t('cannot register'),
       })
     }
-  }
+  }, [])
+
+  const init = useCallback(async () => {
+    if (localStorage.getItem('refresh_token')) {
+      const isReady = (await api?.checkIsReady()) || false
+      if (isReady) {
+        setCanOpenGame && setCanOpenGame(true)
+      } else {
+        cleanLocalStorage()
+        window.location.href = '/'
+      }
+    } else {
+      register()
+    }
+  }, [])
 
   useEffect(() => {
     if (isInvite) {
@@ -47,18 +67,7 @@ export const Init = ({ setCanOpenGame, jwtCache, isInvite }: InitProps) => {
   }, [isInvite])
 
   useEffect(() => {
-    if (localStorage.getItem('refresh_token')) {
-      if (jwtCache.has()) {
-        setCanOpenGame && setCanOpenGame(true)
-      } else {
-        ;(async function () {
-          await regainToken(process.env.REACT_APP_AUTH_API_URL!, jwtCache)
-          setCanOpenGame && setCanOpenGame(true)
-        })()
-      }
-    } else {
-      register()
-    }
+    init()
   }, [])
 
   return <FullPageLoader />

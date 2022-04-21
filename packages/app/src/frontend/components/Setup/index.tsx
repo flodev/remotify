@@ -28,13 +28,15 @@ export const Setup = ({ jwtCache }: SetupProps) => {
   const [canOpenGame, setCanOpenGame] = useState(false)
 
   useEffect(() => {
-    if (!api && jwtCache.has()) {
+    if (!api) {
       setApi(new Api(process.env.REACT_APP_AUTH_API_URL!, client, jwtCache))
     }
-  }, [jwtCache.has(), setApi, api])
+  }, [setApi, api])
 
-  if (!canOpenGame) {
-    return <Init setCanOpenGame={setCanOpenGame} jwtCache={jwtCache} />
+  if (!canOpenGame && api) {
+    return (
+      <Init setCanOpenGame={setCanOpenGame} jwtCache={jwtCache} api={api} />
+    )
   }
 
   if (!api) {
