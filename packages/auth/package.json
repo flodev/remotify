@@ -1,6 +1,6 @@
 {
   "name": "@remotify/auth",
-  "version": "0.2.13",
+  "version": "0.2.16",
   "description": "",
   "author": "Florian Klenk <florian@remotify.place>",
   "private": true,
