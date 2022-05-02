@@ -156,7 +156,8 @@
   },
   "resolutions": {
     "**/ua-parser-js": "0.7.28",
-    "styled-components": "^5"
+    "styled-components": "^5",
+    "minimist": "^1.2.6"
   },
   "eslintConfig": {
     "extends": [
