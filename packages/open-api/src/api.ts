@@ -1,4 +1,13 @@
-import { ApolloClient, ApolloError } from '@remotify/graphql'
+import {
+  ApolloClient,
+  ApolloError,
+  getGameObjectsByRoomId,
+  getPlayersOfRoom,
+  getRoomByPk,
+  subscribeToGameObjectsOfRoom,
+  subscribeToPlayersOfRoom,
+  subscribeToRoom,
+} from '@remotify/graphql'
 import {
   Client,
   GameObject,
@@ -25,6 +34,7 @@ import {
 } from '@remotify/graphql'
 import {} from '@remotify/models'
 import axios, { AxiosResponse } from 'axios'
+import { Subscription } from 'zen-observable-ts'
 
 const JWT_EXPIRED_ERROR_MESSAGE = 'Could not verify JWT: JWTExpired'
 
@@ -79,6 +89,18 @@ export interface ApiInterface {
   changeGameObject(variables: ChangeGameObjectVars): Promise<void>
   deleteGameObjectById(variables: DeleteGameObjectByIdVars): Promise<void>
   activateInteraction(variables: ActivateInteractionVars): Promise<void>
+  listenForGameObjectChange(
+    roomId: string,
+    onChange: (gameObject: GameObject<Settings>[]) => any
+  ): void
+  listenForPlayerUpdates(
+    roomId: string,
+    onChange: (players: Player[]) => any
+  ): Subscription
+  listenForRoomChange(
+    roomId: string,
+    onChange: (room: Room) => any
+  ): Subscription
 }
 
 export const tempSignup = async (
@@ -142,39 +164,6 @@ export class Api implements ApiInterface {
     } catch (e) {
       console.error('cannot proceed with checkIsReady', e.stack)
       return false
-    }
-  }
-
-  private errorContainsTokenExpired(apolloError: ApolloError) {
-    return !!apolloError.clientErrors.find(
-      (error) => error.message === JWT_EXPIRED_ERROR_MESSAGE
-    )
-  }
-
-  private async refreshToken() {
-    await regainToken(this.authApiUrl, this.jwtCache)
-  }
-
-  private async apiSafeRequest<T>(apiFunction: () => Promise<T>): Promise<T> {
-    try {
-      if (!localStorage.getItem('refresh_token')) {
-        throw new Error('refresh token not found')
-      }
-      if (!this.jwtCache || this.jwtCache.isExpired()) {
-        await this.refreshToken()
-      }
-      if (!this.jwtCache || !this.jwtCache.has()) {
-        throw new Error('cannot call api')
-      }
-      return apiFunction()
-    } catch (e) {
-      const apolloError = e as ApolloError
-      console.error('api error', e)
-      if (this.errorContainsTokenExpired(apolloError)) {
-        await this.refreshToken()
-        return apiFunction()
-      }
-      throw e
     }
   }
 
@@ -285,5 +274,142 @@ export class Api implements ApiInterface {
         variables,
       })
     })
+  }
+  public listenForGameObjectChange(
+    roomId: string,
+    onChange: (gameObject: GameObject<Settings>[]) => any
+  ): Subscription {
+    return this.apolloClient
+      .subscribe<{ gameobject: { id: string } }>({
+        query: subscribeToGameObjectsOfRoom,
+        variables: { room_id: roomId },
+      })
+      .subscribe(async ({ data }) => {
+        console.log('got updated gameobjects', data)
+        try {
+          const gameObjects = await this.apolloClient.query<{
+            gameobject: GameObject<Settings>[]
+          }>({
+            query: getGameObjectsByRoomId,
+            variables: {
+              roomId,
+            },
+            fetchPolicy: 'no-cache',
+          })
+          if (gameObjects?.data?.gameobject) {
+            onChange(gameObjects.data.gameobject)
+          }
+        } catch (e) {
+          console.log('cannot receive game objects by room id', e)
+        }
+      }, this.handleSubscribeError)
+  }
+
+  public listenForPlayerUpdates(
+    roomId: string,
+    onChange: (players: Player[]) => any
+  ): Subscription {
+    return this.apolloClient
+      .subscribe<{ player: Player[] }>({
+        query: subscribeToPlayersOfRoom,
+        variables: { roomId },
+      })
+      .subscribe({
+        next: async ({ data }) => {
+          console.log('got player updates', data)
+          if (data?.player) {
+            const players = await this.fetchPlayers(roomId)
+            onChange(players)
+          }
+        },
+        error: this.handleSubscribeError,
+      })
+  }
+
+  public listenForRoomChange(
+    roomId: string,
+    onChange: (room: Room) => any
+  ): Subscription {
+    return this.apolloClient
+      .subscribe<{ gameobject: { id: string } }>({
+        query: subscribeToRoom,
+        variables: { roomId },
+      })
+      .subscribe(async ({ data }) => {
+        console.log('room update', data)
+        try {
+          const room = await this.apolloClient.query<{
+            room_by_pk: Room
+          }>({
+            query: getRoomByPk,
+            variables: {
+              roomId,
+            },
+            fetchPolicy: 'no-cache',
+          })
+          if (room?.data?.room_by_pk) {
+            onChange(room.data.room_by_pk)
+          }
+        } catch (e) {
+          console.log('cannot receive game objects by room id', e)
+        }
+      }, this.handleSubscribeError)
+  }
+
+  private async fetchPlayers(roomId: string): Promise<Player[]> {
+    try {
+      const players = await this.apolloClient.query<{ player: Player[] }>({
+        query: getPlayersOfRoom,
+        variables: {
+          roomId,
+        },
+        fetchPolicy: 'no-cache',
+      })
+      console.log('fetch player result', players)
+      return players?.data?.player || []
+    } catch (e) {
+      console.error('error fetching players', e)
+      return []
+    }
+  }
+
+  private errorContainsTokenExpired(apolloError: ApolloError) {
+    return !!apolloError.clientErrors.find(
+      (error) => error.message === JWT_EXPIRED_ERROR_MESSAGE
+    )
+  }
+
+  private async refreshToken() {
+    await regainToken(this.authApiUrl, this.jwtCache)
+  }
+
+  private async apiSafeRequest<T>(apiFunction: () => Promise<T>): Promise<T> {
+    try {
+      if (!localStorage.getItem('refresh_token')) {
+        throw new Error('refresh token not found')
+      }
+      if (!this.jwtCache || this.jwtCache.isExpired()) {
+        await this.refreshToken()
+      }
+      if (!this.jwtCache || !this.jwtCache.has()) {
+        throw new Error('cannot call api')
+      }
+      return apiFunction()
+    } catch (e) {
+      const apolloError = e as ApolloError
+      console.error('api error', e)
+      if (this.errorContainsTokenExpired(apolloError)) {
+        await this.refreshToken()
+        return apiFunction()
+      }
+      throw e
+    }
+  }
+
+  private handleSubscribeError = (error: Error) => {
+    if (error.message.indexOf(JWT_EXPIRED_ERROR_MESSAGE) !== -1) {
+      this.refreshToken()
+    }
+    console.error('on error', error)
   }
 }

@@ -11,11 +11,7 @@ export class GameObjectStore {
   public gameObjects: GameObject<Settings>[] = []
   public gameObjectTypes: GameObjectType[] = []
 
-  constructor(
-    private graphQl: ApolloClient<any>,
-    private api: ApiInterface,
-    private roomId: string
-  ) {
+  constructor(private api: ApiInterface, private roomId: string) {
     console.log('init game object store')
     this._listenForGameObjectChange()
     this.fetchGameObjectTypes()
@@ -38,35 +34,7 @@ export class GameObjectStore {
   }
 
   public _listenForGameObjectChange() {
-    this.graphQl
-      .subscribe<{ gameobject: { id: string } }>({
-        query: subscribeToGameObjectsOfRoom,
-        variables: { room_id: this.roomId },
-      })
-      .subscribe(
-        async ({ data }) => {
-          console.log('got updated gameobjects', data)
-          try {
-            const gameObjects = await this.graphQl.query<{
-              gameobject: GameObject<Settings>[]
-            }>({
-              query: getGameObjectsByRoomId,
-              variables: {
-                roomId: this.roomId,
-              },
-              fetchPolicy: 'no-cache',
-            })
-            if (gameObjects?.data?.gameobject) {
-              this.setGameObjects(gameObjects.data.gameobject)
-            }
-          } catch (e) {
-            console.log('cannot receive game objects by room id', e)
-          }
-        },
-        (error) => {
-          console.error('on error', error)
-        }
-      )
+    this.api.listenForGameObjectChange(this.roomId, this.setGameObjects)
   }
 
   public setGameObjects = (gameObjects: GameObject<Settings>[]) => {

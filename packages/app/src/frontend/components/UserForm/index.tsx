@@ -1,4 +1,4 @@
-import { Col, Input, Row, Form } from 'antd'
+import { Col, Input, Row, Form, InputRef } from 'antd'
 import { useApolloClient } from '@remotify/graphql'
 import React, { useContext, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -26,7 +26,7 @@ interface Values {
 }
 
 export const UserForm = ({ player }: UserFormProps) => {
-  let ref = useRef<Input | null>(null)
+  let ref = useRef<InputRef | null>(null)
   const [form] = Form.useForm<Values>()
 
   const [isFocused, setIsFocused] = useState(false)

@@ -1,4 +1,3 @@
-import { ApolloClient } from '@remotify/graphql'
 import React, { createContext, useContext, useMemo } from 'react'
 
 import { PlayerStore } from './PlayerStore'
@@ -11,7 +10,6 @@ import { Api, ApiInterface } from '@remotify/open-api'
 export interface StoreContextProps {
   roomId: string
   userId: string
-  graphQl: ApolloClient<any>
   api: ApiInterface
 }
 
@@ -28,21 +26,12 @@ export class Stores {
   readonly clientStore: ClientStore
 
   constructor(props: StoreContextProps) {
-    this.playerStore = new PlayerStore(
-      props.graphQl,
-      props.userId,
-      props.roomId,
-      props.api
-    )
+    this.playerStore = new PlayerStore(props.userId, props.roomId, props.api)
     this.playerStore.listenForPlayerUpdates()
     this.gameStore = new GameStore()
     this.userMediaStore = new UserMediaStore()
-    this.gameObjectStore = new GameObjectStore(
-      props.graphQl,
-      props.api,
-      props.roomId
-    )
-    this.roomStore = new RoomStore(props.graphQl, props.roomId)
+    this.gameObjectStore = new GameObjectStore(props.api, props.roomId)
+    this.roomStore = new RoomStore(props.api, props.roomId)
     this.clientStore = new ClientStore(props.api)
   }
 }

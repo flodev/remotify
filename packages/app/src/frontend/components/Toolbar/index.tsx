@@ -29,7 +29,7 @@ export interface ToolbarButton {
   isActive: boolean
 }
 
-export const createToolbarButton = (button: React.ComponentType<any>) => styled(
+export const createToolbarButton = (button: any) => styled(
   button
 )<ToolbarButton>`
   font-size: 30px;

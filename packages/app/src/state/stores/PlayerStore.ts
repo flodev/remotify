@@ -18,7 +18,6 @@ export class PlayerStore {
   private subscription?: { unsubscribe(): void }
 
   constructor(
-    private graphQl: ApolloClient<any>,
     private userId: string,
     private roomId: string,
     private api: ApiInterface
@@ -47,34 +46,23 @@ export class PlayerStore {
   }
 
   public listenForPlayerUpdates = () => {
-    this.subscription = this.graphQl
-      .subscribe<{ player: Player[] }>({
-        query: subscribeToPlayersOfRoom,
-        variables: { roomId: this.roomId },
-      })
-      .subscribe({
-        next: async ({ data }) => {
-          console.log('got player updates', data)
-          if (data?.player) {
-            const players = await this.fetchPlayers()
-            this.setPlayers(players)
-            const player = players.find(({ id }) => id === this.userId)
-            this.setOtherOnlinePlayers(
-              players.filter(
-                ({ id, is_online }) => id !== this.userId && is_online === true
-              )
-            )
-            if (player) {
-              this.setPlayer(player)
-            } else {
-              console.error('cannot find current player in players ;(', players)
-            }
-          }
-        },
-        error(error) {
-          console.error('on error', error)
-        },
-      })
+    this.subscription = this.api.listenForPlayerUpdates(
+      this.roomId,
+      (players) => {
+        this.setPlayers(players)
+        const player = players.find(({ id }) => id === this.userId)
+        this.setOtherOnlinePlayers(
+          players.filter(
+            ({ id, is_online }) => id !== this.userId && is_online === true
+          )
+        )
+        if (player) {
+          this.setPlayer(player)
+        } else {
+          console.error('cannot find current player in players ;(', players)
+        }
+      }
+    )
   }
 
   public setPlayers = (players: Player[]) => {
@@ -89,23 +77,6 @@ export class PlayerStore {
   public setPlayer = (player: Player) => {
     console.log('setting player', player)
     this.player = player
-  }
-
-  private async fetchPlayers(): Promise<Player[]> {
-    try {
-      const players = await this.graphQl.query<{ player: Player[] }>({
-        query: getPlayersOfRoom,
-        variables: {
-          roomId: this.roomId,
-        },
-        fetchPolicy: 'no-cache',
-      })
-      console.log('fetch player result', players)
-      return players?.data?.player || []
-    } catch (e) {
-      console.error('error fetching players', e)
-      return []
-    }
   }
 
   public destruct() {

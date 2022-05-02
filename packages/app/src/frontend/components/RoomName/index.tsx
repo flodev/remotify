@@ -1,4 +1,4 @@
-import { Input, Col, Row, Form, FormInstance, message } from 'antd'
+import { Input, Col, Row, Form, FormInstance, message, InputRef } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -46,7 +46,7 @@ export const RoomName = observer(({}: RoomNameProps) => {
   const {
     roomStore: { room },
   } = useStoreContext()
-  let ref = useRef<Input | null>(null)
+  let ref = useRef<InputRef | null>(null)
 
   const toggleFocus = () => {
     if (isFocused) {

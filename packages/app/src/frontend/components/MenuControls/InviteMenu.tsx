@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useRef, useEffect } from 'react'
-import { Menu, Input, notification } from 'antd'
+import { Menu, Input, notification, InputRef } from 'antd'
 // @ts-ignore
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useStoreContext } from '../../../state'
@@ -16,7 +16,7 @@ const openNotification = () => {
 }
 
 export const InviteMenu: FunctionComponent<InviteMenuProps> = observer(() => {
-  const inputRef = useRef<Input | null>(null)
+  const inputRef = useRef<InputRef | null>(null)
   const {
     clientStore: { client },
   } = useStoreContext()

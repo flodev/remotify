@@ -24,23 +24,6 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
-const threadLoader = require('thread-loader')
-
-const threadLoaderOptions = {
-  workers: 8,
-  workerParallelJobs: 100,
-}
-
-if (process.env.DISABLE_THREAD_WARMUP !== 'true') {
-  threadLoader.warmup(threadLoaderOptions, [
-    // modules to load
-    // can be any module, i. e.
-    'babel-loader',
-    'style-loader',
-    'css-loader',
-    'postcss-loader',
-  ])
-}
 
 const postcssNormalize = require('postcss-normalize')
 
@@ -428,10 +411,6 @@ module.exports = function (webpackEnv) {
               include: paths.appSrc,
               use: [
                 {
-                  loader: require.resolve('thread-loader'),
-                  options: threadLoaderOptions,
-                },
-                {
                   loader: require.resolve('babel-loader'),
                   options: {
                     customize: require.resolve(
@@ -480,10 +459,6 @@ module.exports = function (webpackEnv) {
               exclude: /@babel(?:\/|\\{1,2})runtime/,
               use: [
                 {
-                  loader: require.resolve('thread-loader'),
-                  options: threadLoaderOptions,
-                },
-                {
                   loader: require.resolve('babel-loader'),
                   options: {
                     babelrc: false,
@@ -519,10 +494,6 @@ module.exports = function (webpackEnv) {
               test: cssRegex,
               exclude: cssModuleRegex,
               use: [
-                // {
-                //   loader: require.resolve('thread-loader'),
-                //   options: threadLoaderOptions,
-                // },
                 ...getStyleLoaders({
                   importLoaders: 1,
                   sourceMap: isEnvProduction
@@ -541,10 +512,6 @@ module.exports = function (webpackEnv) {
             {
               test: cssModuleRegex,
               use: [
-                // {
-                //   loader: require.resolve('thread-loader'),
-                //   options: threadLoaderOptions,
-                // },
                 ...getStyleLoaders({
                   importLoaders: 1,
                   sourceMap: isEnvProduction

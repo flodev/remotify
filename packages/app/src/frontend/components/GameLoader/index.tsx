@@ -1,5 +1,4 @@
 import { FunctionComponent, useContext, useEffect, useState } from 'react'
-import { useApolloClient } from '@remotify/graphql'
 import { ApiContext } from '../../context'
 import { Canvas, Controls, FullPageLoader } from '..'
 import { StoreContextProvider } from '../../../state'
@@ -30,7 +29,6 @@ interface GameProps {}
 
 export const GameLoader: FunctionComponent<GameProps> = () => {
   const [isCanvasReady, setIsCanvasReady] = useState(false)
-  const apolloClient = useApolloClient()
   const { api } = useContext(ApiContext)
 
   // useEffect(() => {
@@ -56,7 +54,6 @@ export const GameLoader: FunctionComponent<GameProps> = () => {
 
   return (
     <StoreContextProvider
-      graphQl={apolloClient}
       roomId={localStorage.getItem('roomId')!}
       userId={localStorage.getItem('userId')!}
       api={api}
