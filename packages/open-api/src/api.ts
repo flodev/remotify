@@ -148,6 +148,7 @@ export const regainToken = async (url: string, jwtCache: JwtCache) => {
 }
 
 export class Api implements ApiInterface {
+  private refreshPromise?: Promise<void>
   constructor(
     private authApiUrl: string,
     private apolloClient: ApolloClient<any>,
@@ -380,7 +381,14 @@ export class Api implements ApiInterface {
   }
 
   private async refreshToken() {
-    await regainToken(this.authApiUrl, this.jwtCache)
+    if (this.refreshPromise) {
+      await this.refreshPromise
+      this.refreshPromise = undefined
+      return
+    }
+    this.refreshPromise = regainToken(this.authApiUrl, this.jwtCache)
+    await this.refreshPromise
+    this.refreshPromise = undefined
   }
 
   private async apiSafeRequest<T>(apiFunction: () => Promise<T>): Promise<T> {
@@ -406,9 +414,10 @@ export class Api implements ApiInterface {
     }
   }
 
-  private handleSubscribeError = (error: Error) => {
+  private handleSubscribeError = async (error: Error) => {
     if (error.message.indexOf(JWT_EXPIRED_ERROR_MESSAGE) !== -1) {
-      this.refreshToken()
+      console.log('subscribe error regain token')
+      await this.refreshToken()
     }
     console.error('on error', error)
   }
