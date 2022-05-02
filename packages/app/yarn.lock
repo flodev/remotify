@@ -3125,10 +3125,10 @@
   resolved "https://registry.yarnpkg.com/@remotify/models/-/models-0.2.13.tgz#4f9cbd701439a57ac57185a74eb87d71b2cf05df"
   integrity sha512-uM0gtyVpTLMh/pweEP4UrrmwTBpgLFmV0o/4NK3jEW/Ncj4doOQvowbe7x4W6Zd/DN4/p0AOkW5hgFOYX+Gqvg==
 
-"@remotify/open-api@0.2.15":
-  version "0.2.15"
-  resolved "https://registry.yarnpkg.com/@remotify/open-api/-/open-api-0.2.15.tgz#678208584a24ca50bd68531cb4a8328ae3947862"
-  integrity sha512-5YHz1t9Z1hQnegxZSUE5xGLYz8VM1AsGfe/YPqV65+TKxbN2d9UW3ekNPWMEXTiOJKi4sok9pmVQSxWyR7ULdA==
+"@remotify/open-api@^0.2.16":
+  version "0.2.16"
+  resolved "https://registry.yarnpkg.com/@remotify/open-api/-/open-api-0.2.16.tgz#53c07db53bf42806d26880cc15e8db0ba574ba5e"
+  integrity sha512-sJ/W3rhaVOohu9DjI6gdCCgJD7smINxvg8pcVxYN+H65LybFoc+TN+52KuTvfk7/ymt6Fm4oLIiBZsrCrdfYnA==
   dependencies:
     "@remotify/graphql" "^0.2.13"
     "@remotify/models" "^0.2.13"
