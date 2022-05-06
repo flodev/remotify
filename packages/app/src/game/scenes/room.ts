@@ -58,7 +58,6 @@ import {
   getAnimationInteractionType,
   getInteractionAnimations,
   getInteractionTile,
-  UnsubscribeFunction,
   ZIndexer,
 } from '../utils'
 import { getInteractionForPlayer, InteractionReceiver } from '../interact'
@@ -67,7 +66,6 @@ import { Stores } from '../../state'
 import { autorun } from 'mobx'
 
 var easystarjs = require('easystarjs')
-let cursors: Phaser.Types.Input.Keyboard.CursorKeys
 const PhaserEvents = Input.Events
 
 export interface RoomConfig {
@@ -80,7 +78,6 @@ export class RoomScene extends Phaser.Scene {
   private players: PlayerModel[] = []
   private map?: Tilemaps.Tilemap
   private layer?: Tilemaps.TilemapLayer
-  private unsubscribeClickDetected?: UnsubscribeFunction
 
   private graphQl?: ApolloClient<InMemoryCache>
   private editTool?: ToolbarTool
@@ -103,9 +100,6 @@ export class RoomScene extends Phaser.Scene {
   ) {
     super(config)
 
-    console.log(
-      '-------------------- initiate room scene ---------------------'
-    )
     // @todo: multirooms?
     this.room = this.roomConfig.clients[0]?.rooms[0]
     this.gameObjectTypes = this.roomConfig.gameObjectTypes
@@ -114,8 +108,6 @@ export class RoomScene extends Phaser.Scene {
     }
 
     this.players = this.room.players || []
-
-    const currentUserId = localStorage.getItem('userId')
 
     // @todo: all players of a client
     this.zIndexer = new ZIndexer({ tileHeight: GAME_TILE_HEIGHT })
@@ -184,35 +176,11 @@ export class RoomScene extends Phaser.Scene {
     this.graphQl = this.registry.get(
       REGISTRY_GRAPHQL_CLIENT
     ) as ApolloClient<InMemoryCache>
-    const currentUserId = localStorage.getItem('userId')
-    const currentPlayer = this.players.filter(
-      (player: PlayerModel) => player.id === currentUserId
-    )[0]
-    cursors = this.input.keyboard.createCursorKeys()
     const tileMapData = this.room.tile
     if (!Array.isArray(tileMapData)) {
       throw new Error('invalid tilemap data')
     }
     this.createTilemap(tileMapData)
-    // this.layer.setCollisionByProperty({ collides: true });
-    // this.layer.setCollision(1);
-    // this.layer.tilemap.putTileAt(, 10, 10);
-    // this.map.putTileAt(1, 10, 10)
-    // const tile = this.map.getTileAt(10, 10)
-    // tile.properties = { collides: true }
-    // playerMask = getMask(this);
-    // playerImage.setMask(playerMask);
-    // let position: { x: number; y: number }
-    // if (currentPlayer.tile) {
-    //   position = currentPlayer.tile
-    // } else {
-    //   position = this.determinePositionForPlayer(currentPlayer)
-    //   this.updatePlayerPosition(currentPlayer.id, position)
-    // }
-    // this.otherPlayerGameObjects = this.otherPlayers.map((player) =>
-    //   this.createOtherPlayer(player)
-    // )
-    console.log('subscribe to change edit mode')
 
     this.listenForChangeEditMode()
     this.listenForFreeOccupiedTiles()
@@ -232,10 +200,7 @@ export class RoomScene extends Phaser.Scene {
     this.game.events.on(
       EVENT_RECEIVED_USER_MEDIA_STREAM,
       (stream: MediaStream, playerId: string) => {
-        console.log('received media stream for player', playerId)
         const foundPlayer = this.playerUpdater?.findGameObject<Player>(playerId)
-        console.log('found player', foundPlayer)
-        console.log('in', this.playerUpdater?.getGameObjects())
         foundPlayer?.initiateVideo(stream)
       }
     )
@@ -243,13 +208,11 @@ export class RoomScene extends Phaser.Scene {
       `changedata-${REGISTRY_PLAYER_MEDIA_STREAM}`,
       async (_game: Phaser.Game, stream: MediaStream) => {
         if (!stream || !this.player) {
-          console.log(
+          console.error(
             'received media stream but either player or stream are not ready'
           )
           return
         }
-        console.log('stream', stream)
-        console.log('received media stream for current player')
         await this.player.initiateVideo(stream)
       }
     )
@@ -284,11 +247,6 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private subscribeToChanges() {
-    const {
-      playerStore: { player, players },
-      gameObjectStore: { gameObjects },
-    } = this.storeContext!
-
     autorun(this.updatePlayersInPlayerUpdater)
 
     // reaction(() => player, this.setupPlayer, { fireImmediately: true })
@@ -304,9 +262,7 @@ export class RoomScene extends Phaser.Scene {
       playerStore: { player },
     } = this.storeContext!
 
-    console.log('setupPlayer', player)
     if (!player) {
-      console.log('received undefined player', player)
       return
     }
     // player found but has not tile -> determine position first and skip rest of code
@@ -318,7 +274,6 @@ export class RoomScene extends Phaser.Scene {
 
     if (!this.player) {
       this.player = this.playerUpdater?.findGameObject<Player>(player.id)
-      console.log('found player', this.player)
 
       if (!this.player) {
         return console.error('current player not found :*(')
@@ -337,7 +292,6 @@ export class RoomScene extends Phaser.Scene {
     const {
       playerStore: { players },
     } = this.storeContext!
-    console.log('received update for players', players)
     this.playerUpdater?.update(players.filter((player) => !!player.tile))
   }
 
@@ -374,10 +328,6 @@ export class RoomScene extends Phaser.Scene {
         y++
       })
       this.recreateEasystarGrid()
-      // console.log('destorying existing map')
-      // this.map.destroy()
-      // console.log('recreating map')
-      // this.createTilemap(data?.room[0].tile)
     }
   }
 
@@ -407,7 +357,6 @@ export class RoomScene extends Phaser.Scene {
     )
 
     this.isInteractionMenuOpen = true
-    console.log('open menu and set', this.isInteractionMenuOpen)
     this.interactionMenu = new InteractionMenu({
       scene: this,
       entries: animations.map((animation) => ({
@@ -426,7 +375,7 @@ export class RoomScene extends Phaser.Scene {
       if (gameObject.isInteractionReceivable(this.player!)) {
         this.persistInteraction(entry, gameObject)
       } else {
-        console.log('not possible to interact')
+        console.error('not possible to interact')
         return
       }
       this.interactionMenu?.close()
@@ -486,7 +435,6 @@ export class RoomScene extends Phaser.Scene {
   }
 
   private freeOccupiedTiles = (occupiedTiles: OccupiedTile[]) => {
-    console.log('freeOccupiedTiles', occupiedTiles)
     occupiedTiles.forEach((tile) =>
       this.map?.putTileAt(TILE_ID_FREE_PLACE, tile.x, tile.y)
     )
@@ -497,7 +445,6 @@ export class RoomScene extends Phaser.Scene {
     pointer: Phaser.Input.Pointer,
     gameObject: PhaserGameObject
   ) => {
-    console.log('click?', gameObject.getModel())
     if (!this.game.registry.get(REGISTRY_IS_SETTINGS_MODAL_OPEN)) {
       this.game.events.emit(
         EVENT_OPEN_GAME_OBJECT_SETTINGS,
@@ -510,7 +457,6 @@ export class RoomScene extends Phaser.Scene {
     this.game.registry.events.on(
       `changedata-${REGISTRY_IS_EDIT_MODE}`,
       (game: Phaser.Game, isEditMode: boolean) => {
-        console.log('edit mode change', isEditMode)
         if (isEditMode) {
           this.cameraStopFollowPlayer()
           this.input.off(PhaserEvents.POINTER_DOWN, this.movePlayer)
@@ -518,7 +464,6 @@ export class RoomScene extends Phaser.Scene {
           this.listenForEditToolChange()
           this.listenForPlaceObjectChange()
         } else {
-          console.log('start follow player')
           this.cameraStartFollowPlayer()
           this.input.on(PhaserEvents.POINTER_DOWN, this.movePlayer)
           this.events.on(EVENT_OPEN_INTERACTION_MENU, this.openInteractionMenu)
@@ -536,13 +481,12 @@ export class RoomScene extends Phaser.Scene {
     if (playerContainer) {
       this.cameras.main.startFollow(playerContainer, true, 0.08, 0.08)
     }
-    const devicePixelRatio = window.devicePixelRatio || 1
+    // const devicePixelRatio = window.devicePixelRatio || 1
     // this.cameras.main.setZoom(devicePixelRatio)
     this.cameras.main.setZoom(1.2)
   }
 
   cameraStopFollowPlayer = () => {
-    console.log('stop follow')
     this.cameras.main.stopFollow()
   }
 
@@ -575,7 +519,6 @@ export class RoomScene extends Phaser.Scene {
   }
 
   changeEditTool = (game: Phaser.Game, editToolType?: EditToolType) => {
-    console.log('edit tool change detected', editToolType)
     this.editTool?.stop()
     if (editToolType !== undefined) {
       this.editTool = EditToolFactory.getInstance(editToolType)
@@ -587,10 +530,8 @@ export class RoomScene extends Phaser.Scene {
     _game: Phaser.Game,
     placeObjectType?: GameObjectType
   ) => {
-    console.log('change place objects')
     this.placeObject?.stop()
     if (!placeObjectType) {
-      console.log('place object type not defined')
       return
     }
 
@@ -656,7 +597,7 @@ export class RoomScene extends Phaser.Scene {
     )
 
     if (!this.isTileValid(clickedTile)) {
-      console.log('invalid tile', clickedTile)
+      console.error('invalid tile', clickedTile)
       return
     }
 
@@ -716,21 +657,6 @@ export class RoomScene extends Phaser.Scene {
         tile: position,
       },
     })
-  }
-
-  // createOtherPlayer(player: PlayerModel) {
-  //   const otherPlayer = new Player(this, player)
-  //   const container = otherPlayer
-  //   if (container) {
-  //     this.physics.world.enable(container)
-  //     this.physics.add.collider(container, this.layer!)
-  //   }
-  //   return otherPlayer
-  // }
-
-  update() {
-    // this.player?.update(cursors)
-    // this.otherPlayerGameObjects.forEach((player) => player.update(cursors))
   }
 
   determinePositionForPlayer(player: PlayerModel) {
