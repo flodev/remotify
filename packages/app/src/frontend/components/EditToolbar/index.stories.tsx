@@ -48,13 +48,15 @@ export default {
 }
 
 export const Default = () => {
-  const [{ activeEditTool, isEditMode }, updateArgs] = useArgs()
+  const [{ activeEditTool, isEditMode, isRoomView }, updateArgs] = useArgs()
 
   const storesMock = new Mock<Stores>()
     .setup((instance) => instance.gameStore)
     .returns({
+      isRoomView,
       isEditMode,
       setIsEditMode: () => {},
+      setIsRoomView: () => {},
       setGame: () => {},
     })
     .object()

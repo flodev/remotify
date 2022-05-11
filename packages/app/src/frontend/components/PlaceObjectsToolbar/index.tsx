@@ -26,9 +26,8 @@ export const PlaceObjectsToolbar = observer(
     const {
       gameObjectStore: { gameObjectTypes },
     } = useStoreContext()
-    const [objectToPlace, setObjectToPlace] = useState<PlaceObjectsType>(
-      undefined
-    )
+    const [objectToPlace, setObjectToPlace] =
+      useState<PlaceObjectsType>(undefined)
 
     const setObjectToPlaceAndFireEvent = (
       placeObjectType: PlaceObjectsType
@@ -54,7 +53,7 @@ export const PlaceObjectsToolbar = observer(
       <ToolbarBottom>
         <ToolbarItem>
           <DesktopOutlinedButton
-            isActive={objectToPlace === PlaceObjectsTypes.Desk}
+            $isActive={objectToPlace === PlaceObjectsTypes.Desk}
             onClick={() => setObjectToPlaceAndFireEvent(PlaceObjectsTypes.Desk)}
           />
           <Label>{t('Desk')}</Label>
@@ -62,7 +61,7 @@ export const PlaceObjectsToolbar = observer(
         <ToolbarItem>
           <ToiletButton
             icon={faToilet}
-            isActive={objectToPlace === PlaceObjectsTypes.Toilet}
+            $isActive={objectToPlace === PlaceObjectsTypes.Toilet}
             onClick={() =>
               setObjectToPlaceAndFireEvent(PlaceObjectsTypes.Toilet)
             }

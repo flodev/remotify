@@ -26,7 +26,7 @@ export const ToolbarBottom = styled(Toolbar)`
 `
 
 export interface ToolbarButton {
-  isActive: boolean
+  $isActive: boolean
 }
 
 export const createToolbarButton = (button: any) => styled(
@@ -34,7 +34,7 @@ export const createToolbarButton = (button: any) => styled(
 )<ToolbarButton>`
   font-size: 30px;
   border: 1px solid grey;
-  ${(props) => (props.isActive === true ? 'background-color: lightgrey;' : '')}
+  ${(props) => (props.$isActive === true ? 'background-color: lightgrey;' : '')}
 `
 
 export const Label = styled.p`

@@ -42,22 +42,22 @@ export const EditToolbar = observer(
     return (
       <ToolbarRight>
         <DragOutlinedButton
-          isActive={activeEditTool === EditToolTypes.Drag}
+          $isActive={activeEditTool === EditToolTypes.Drag}
           onClick={() => setActiveEditToolType(EditToolTypes.Drag)}
         />
         <Label>{t('Drag')}</Label>
         <EditOutlinedButton
-          isActive={activeEditTool === EditToolTypes.DrawWall}
+          $isActive={activeEditTool === EditToolTypes.DrawWall}
           onClick={() => setActiveEditToolType(EditToolTypes.DrawWall)}
         />
         <Label>{t('Draw Wall')}</Label>
         <EditOutlinedButton
-          isActive={activeEditTool === EditToolTypes.DrawFloor}
+          $isActive={activeEditTool === EditToolTypes.DrawFloor}
           onClick={() => setActiveEditToolType(EditToolTypes.DrawFloor)}
         />
         <Label>{t('Draw Floor')}</Label>
         <AppstoreAddOutlinedButton
-          isActive={activeEditTool === EditToolTypes.PlaceObjects}
+          $isActive={activeEditTool === EditToolTypes.PlaceObjects}
           onClick={() => setActiveEditToolType(EditToolTypes.PlaceObjects)}
         />
         <Label>{t('Place Objects')}</Label>

@@ -11,7 +11,10 @@ import { InviteMenu } from './InviteMenu'
 import { Invite } from '..'
 import { useTranslation } from 'react-i18next'
 import { EditToolType } from '../../../game/editTools'
-import { REGISTRY_IS_EDIT_MODE } from '../../../constants'
+import {
+  REGISTRY_IS_EDIT_MODE,
+  REGISTRY_IS_ROOM_VIEW,
+} from '../../../constants'
 import { useStoreContext } from '../../../state'
 import { observer } from 'mobx-react-lite'
 
@@ -54,7 +57,7 @@ const DrawerStyled = styled(Drawer)`
 export const MenuControls = observer(() => {
   const [visible, setVisible] = useState(false)
   const {
-    gameStore: { isEditMode, setIsEditMode, game },
+    gameStore: { isEditMode, setIsEditMode, game, isRoomView, setIsRoomView },
   } = useStoreContext()
   const [activeEditTool, setActiveEditTool] = useState<
     EditToolType | undefined
@@ -65,6 +68,10 @@ export const MenuControls = observer(() => {
     game?.registry.set(REGISTRY_IS_EDIT_MODE, !isEditMode)
     setIsEditMode(!isEditMode)
     setActiveEditTool(undefined)
+  }
+  const onRoomViewToggleChange = () => {
+    game?.registry.set(REGISTRY_IS_ROOM_VIEW, !isRoomView)
+    setIsRoomView(!isRoomView)
   }
   const { t } = useTranslation()
 
@@ -92,6 +99,10 @@ export const MenuControls = observer(() => {
       >
         <p>
           <Switch onChange={onChange} checked={isEditMode} /> {t('Edit Mode')}
+        </p>
+        <p>
+          <Switch onChange={onRoomViewToggleChange} checked={isRoomView} />{' '}
+          {t('Room View')}
         </p>
       </DrawerStyled>
 
