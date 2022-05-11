@@ -1,5 +1,4 @@
 import Phaser from 'phaser'
-import { PhaserGameObject } from '../gameobjects'
 import { Input } from 'phaser'
 import { Point } from '@remotify/models'
 const PhaserEvents = Input.Events
@@ -55,9 +54,9 @@ export const onClickDetected = <T extends Phaser.Events.EventEmitter>(
   gameObject.on(PhaserEvents.POINTER_UP, gameObjectUp)
 
   const unsubscribe: UnsubscribeFunction = () => {
-    gameObject.off(PhaserEvents.GAMEOBJECT_DOWN, gameObjectDown)
+    gameObject.off(PhaserEvents.POINTER_DOWN, gameObjectDown)
     // gameObject.off(PhaserEvents.POINTER_MOVE, pointermove)
-    gameObject.off(PhaserEvents.GAMEOBJECT_UP, gameObjectUp)
+    gameObject.off(PhaserEvents.POINTER_UP, gameObjectUp)
   }
   return unsubscribe
 }

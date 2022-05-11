@@ -25,7 +25,12 @@ import {
   EVENT_GAME_OBJECT_CLICK,
   EVENT_RECEIVED_USER_MEDIA_STREAM,
 } from '../../frontend/app/GameEvents'
-import { EditToolFactory, EditToolType, PlaceGameObject } from '../editTools'
+import {
+  Drag,
+  EditToolFactory,
+  EditToolType,
+  PlaceGameObject,
+} from '../editTools'
 import { ToolbarTool } from '../editTools'
 import {
   GAME_TILE_HEIGHT,
@@ -64,6 +69,7 @@ import { getInteractionForPlayer, InteractionReceiver } from '../interact'
 import i18n from '../../i18n'
 import { Stores } from '../../state'
 import { autorun } from 'mobx'
+import { DetectedEvent, detectEvent } from '../utils/detectEvent'
 
 var easystarjs = require('easystarjs')
 const PhaserEvents = Input.Events
@@ -93,6 +99,7 @@ export class RoomScene extends Phaser.Scene {
   private playerUpdater?: GameObjectsUpdater<PlayerModel>
   private zIndexer: ZIndexer
   private storeContext?: Stores
+  public cameraFollowsPlayer: boolean = false
 
   constructor(
     config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -187,7 +194,7 @@ export class RoomScene extends Phaser.Scene {
     // this.listenForChangePlaceObjects()
 
     this.events.on(EVENT_GAME_OBJECT_CLICK, this.onGameObjectClick)
-    this.input.on(PhaserEvents.POINTER_DOWN, this.movePlayer)
+    this.input.on(PhaserEvents.POINTER_DOWN, this.onPointerDown)
 
     this.cameraStartFollowPlayer()
     this.events.on(EVENT_CAMERA_START_FOLLOW_PLAYER, () => {
@@ -459,13 +466,13 @@ export class RoomScene extends Phaser.Scene {
       (game: Phaser.Game, isEditMode: boolean) => {
         if (isEditMode) {
           this.cameraStopFollowPlayer()
-          this.input.off(PhaserEvents.POINTER_DOWN, this.movePlayer)
+          this.input.off(PhaserEvents.POINTER_DOWN, this.onPointerDown)
           this.events.off(EVENT_OPEN_INTERACTION_MENU, this.openInteractionMenu)
           this.listenForEditToolChange()
           this.listenForPlaceObjectChange()
         } else {
           this.cameraStartFollowPlayer()
-          this.input.on(PhaserEvents.POINTER_DOWN, this.movePlayer)
+          this.input.on(PhaserEvents.POINTER_DOWN, this.onPointerDown)
           this.events.on(EVENT_OPEN_INTERACTION_MENU, this.openInteractionMenu)
           this.stopListenForEditToolChange()
           this.stopListenForPlaceObjectChange()
@@ -477,13 +484,16 @@ export class RoomScene extends Phaser.Scene {
   }
 
   cameraStartFollowPlayer = () => {
+    this.cameras.main.setZoom(1.2)
+    if (!this.cameraFollowsPlayer) {
+      return
+    }
     const playerContainer = this.player
     if (playerContainer) {
       this.cameras.main.startFollow(playerContainer, true, 0.08, 0.08)
     }
     // const devicePixelRatio = window.devicePixelRatio || 1
     // this.cameras.main.setZoom(devicePixelRatio)
-    this.cameras.main.setZoom(1.2)
   }
 
   cameraStopFollowPlayer = () => {
@@ -579,6 +589,28 @@ export class RoomScene extends Phaser.Scene {
     } else {
       this.gameObjectUpdater.addGameObject(gameObject)
     }
+  }
+
+  onPointerDown = (
+    pointer: Phaser.Input.Pointer,
+    gameObjects: PhaserGameObject[]
+  ) => {
+    if (this.cameraFollowsPlayer) {
+      return this.movePlayer(pointer, gameObjects)
+    }
+    detectEvent(pointer, (event) => {
+      if (event === DetectedEvent.Click) {
+        this.movePlayer(pointer, gameObjects)
+      } else {
+        const drag = new Drag()
+        drag.start(this)
+        drag.dragStart(pointer)
+        drag.drag(pointer)
+        this.input.on(PhaserEvents.POINTER_UP, () => {
+          drag.stop()
+        })
+      }
+    })
   }
 
   movePlayer = (

@@ -8,7 +8,10 @@ var Phaser = {}
 Phaser.Easing = TWEEN.Easing
 Phaser.TWEEN = TWEEN
 Phaser.Input = {
-  Events: {},
+  Events: {
+    POINTER_MOVE: 'POINTER_MOVE',
+    POINTER_UP: 'POINTER_UP',
+  },
 }
 Phaser.GameObjects = {
   Container,

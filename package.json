@@ -4,6 +4,11 @@
   "author": "Florian Klenk <florian@remotify.place>",
   "version": "0.8.0",
   "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
   "devDependencies": {
     "lerna": "^4.0.0"
   },

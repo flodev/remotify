@@ -1,6 +1,9 @@
 import { RtcConnectionPool } from './RtcConnectionPool'
 
 describe('rtcConnector', () => {
+  it('does something', () => {
+    expect(true).toBeTruthy()
+  })
   //   const rtcPeerConnectionMock = {} as RTCPeerConnection
   //   const rtcFactory = {
   //     createPeerConnection: () => {

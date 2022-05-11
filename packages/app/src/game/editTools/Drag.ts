@@ -1,4 +1,3 @@
-import { EditToolType } from './index'
 import { ToolbarTool } from './ToolbarTool'
 import { Input } from 'phaser'
 const PhaserEvents = Input.Events
@@ -41,18 +40,13 @@ export class Drag implements ToolbarTool {
     this.previousPointer = { x: pointer.x, y: pointer.y }
   }
   dragStart = (pointer: Phaser.Input.Pointer) => {
-    // this.previousPointer = {
-    //   x: pointer.x,
-    //   y: pointer.y,
-    // }
     this.isMoving = true
   }
   dragStop = () => {
     this.previousPointer = undefined
     this.isMoving = false
-    console.log('dragstop')
   }
-  stop(): void {
+  stop = () => {
     this.scene?.input.off(PhaserEvents.POINTER_UP, this.dragStart)
     this.scene?.input.off(PhaserEvents.POINTER_DOWN, this.dragStop)
     this.scene?.input.off(PhaserEvents.POINTER_MOVE, this.drag)
